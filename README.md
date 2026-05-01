@@ -44,6 +44,7 @@ O portal deve responder rapidamente:
 - [Desenvolvimento Local](docs/development.md)
 - [Roadmap](docs/roadmap.md)
 - [Prompt Base do Produto](docs/product-prompt.md)
+- [Banco de Dados Supabase](docs/database.md)
 
 ## Branch de Desenvolvimento
 
