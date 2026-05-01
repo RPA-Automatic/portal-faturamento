@@ -92,7 +92,10 @@ function App() {
   useEffect(() => {
     if (!supabase) return
 
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      if (data.session) void loadReleases()
+    })
 
     const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession)
@@ -105,10 +108,6 @@ function App() {
 
     return () => data.subscription.unsubscribe()
   }, [loadReleases])
-
-  useEffect(() => {
-    if (session) void loadReleases()
-  }, [loadReleases, session])
 
   async function signIn(provider: Provider) {
     if (!supabase) return

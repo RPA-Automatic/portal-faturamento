@@ -139,6 +139,17 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
+create or replace function public.is_admin(user_id uuid)
+returns boolean
+language sql
+security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.portal_profiles
+    where id = user_id and role = 'admin'
+  );
+$$;
+
 alter table public.portal_profiles enable row level security;
 alter table public.customers enable row level security;
 alter table public.carriers enable row level security;
@@ -149,10 +160,7 @@ create policy "Users can read their profile" on public.portal_profiles
   for select using (auth.uid() = id);
 
 create policy "Admins can read all profiles" on public.portal_profiles
-  for select using (exists (
-    select 1 from public.portal_profiles profile
-    where profile.id = auth.uid() and profile.role = 'admin'
-  ));
+  for select using (public.is_admin(auth.uid()));
 
 create policy "Users can update their profile" on public.portal_profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
@@ -178,16 +186,10 @@ create policy "Authenticated users can insert releases" on public.shipment_relea
 create policy "Release owners and admins can update releases" on public.shipment_releases
   for update to authenticated using (
     created_by = auth.uid()
-    or exists (
-      select 1 from public.portal_profiles profile
-      where profile.id = auth.uid() and profile.role = 'admin'
-    )
+    or public.is_admin(auth.uid())
   ) with check (
     created_by = auth.uid()
-    or exists (
-      select 1 from public.portal_profiles profile
-      where profile.id = auth.uid() and profile.role = 'admin'
-    )
+    or public.is_admin(auth.uid())
   );
 
 create policy "Authenticated users can read release documents" on public.release_documents
