@@ -1,73 +1,76 @@
-# React + TypeScript + Vite
+# Portal Faturamento
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend do Portal de Faturamento para liberação de embarque, com autenticação via Supabase OAuth e deploy previsto no Netlify.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- React + TypeScript + Vite
+- Supabase Auth e Postgres
+- Netlify para hospedagem do frontend
+- GitHub Actions para CI em `main` e `desenvolvimento`
 
-## React Compiler
+## Configuração local
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Instale as dependências:
 
-## Expanding the ESLint configuration
+   ```bash
+   npm ci
+   ```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+2. Copie as variáveis de ambiente:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+   ```bash
+   cp .env.example .env.local
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. Preencha `VITE_SUPABASE_ANON_KEY` com a chave pública `anon` do projeto Supabase `eukazzizamxratkavcap`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4. Rode o frontend:
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+   ```bash
+   npm run dev
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Supabase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+O projeto usa o endpoint público `https://eukazzizamxratkavcap.supabase.co`.
+
+A migration inicial está em `supabase/migrations/20260501223500_create_portal_tables.sql` e cria:
+
+- `portal_profiles`
+- `customers`
+- `carriers`
+- `shipment_releases`
+- `release_documents`
+
+As tabelas foram modeladas para o fluxo de liberação de embarque e podem ser ajustadas quando o arquivo XLSX mencionado no escopo estiver disponível no repositório.
+
+### Autenticação
+
+Habilite os provedores no Supabase Auth:
+
+- Google
+- Azure/Microsoft
+- GitHub
+
+Configure as URLs de callback dos provedores para o domínio do Netlify e para o ambiente local quando necessário.
+
+## Netlify
+
+O arquivo `netlify.toml` define:
+
+- comando de build: `npm run build`
+- pasta publicada: `dist`
+- fallback SPA para `/index.html`
+
+Configure no Netlify as variáveis:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+## Validação
+
+```bash
+npm run lint
+npm run build
 ```
