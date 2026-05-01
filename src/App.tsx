@@ -142,7 +142,7 @@ function App() {
     }
 
     if (!form.invoice_number.trim() || !form.customer_name.trim()) {
-      setMessage('Informe pelo menos nota fiscal e cliente.')
+      setMessage('Preencha os campos obrigatórios: Nota Fiscal e Cliente.')
       return
     }
 
