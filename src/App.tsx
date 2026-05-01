@@ -137,7 +137,7 @@ function App() {
     event.preventDefault()
 
     if (!supabase) {
-      setMessage('Configure VITE_SUPABASE_ANON_KEY para salvar dados no Supabase.')
+      setMessage('Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para salvar dados no Supabase.')
       return
     }
 
@@ -187,7 +187,7 @@ function App() {
         </div>
         <div className="auth-card">
           {!isSupabaseConfigured ? (
-            <p className="warning">Configure VITE_SUPABASE_ANON_KEY para habilitar autenticação e gravação.</p>
+            <p className="warning">Configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para habilitar autenticação e gravação.</p>
           ) : session ? (
             <>
               <span>Conectado como</span>
