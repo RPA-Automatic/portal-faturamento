@@ -66,6 +66,7 @@ Habilite os provedores no Supabase Auth:
 - GitHub
 
 Configure as URLs de callback dos provedores para o domínio do Netlify e para o ambiente local quando necessário.
+O domínio de produção previsto é `https://portal-liberacao-embarque.netlify.app`; mantenha essa URL cadastrada nos provedores OAuth e no dashboard do Supabase.
 
 ## Netlify
 
