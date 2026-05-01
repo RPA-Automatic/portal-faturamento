@@ -35,6 +35,8 @@ Frontend do Portal de Faturamento para liberação de embarque, com autenticaç�
 
 O projeto usa o endpoint público `https://eukazzizamxratkavcap.supabase.co`.
 
+O arquivo `supabase/config.toml` aponta para o project id `eukazzizamxratkavcap` e deve ser mantido no repositório para que o Supabase CLI consiga localizar a configuração Postgres e aplicar migrations.
+
 A migration inicial está em `supabase/migrations/20260501223500_create_portal_tables.sql` e cria:
 
 - `portal_profiles`
@@ -44,6 +46,16 @@ A migration inicial está em `supabase/migrations/20260501223500_create_portal_t
 - `release_documents`
 
 As tabelas foram modeladas para o fluxo de liberação de embarque e podem ser ajustadas quando o arquivo XLSX mencionado no escopo estiver disponível no repositório.
+
+Para aplicar as migrations no projeto remoto:
+
+```bash
+supabase login
+supabase link --project-ref eukazzizamxratkavcap
+supabase db push
+```
+
+Se o CLI retornar `unexpected status 404: {"message":"Postgres config not found"}`, confirme se o usuário autenticado tem acesso ao projeto `eukazzizamxratkavcap` e se o banco Postgres do projeto está ativo no dashboard do Supabase antes de executar `supabase db push` novamente.
 
 ### Autenticação
 
