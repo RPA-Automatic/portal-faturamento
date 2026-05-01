@@ -35,7 +35,7 @@ Frontend do Portal de Faturamento para liberação de embarque, com autenticaç�
 
 O projeto usa o endpoint público `https://eukazzizamxratkavcap.supabase.co`.
 
-O arquivo `supabase/config.toml` aponta para o project id `eukazzizamxratkavcap` e deve ser mantido no repositório para que o Supabase CLI consiga localizar a configuração Postgres e aplicar migrations.
+O arquivo `supabase/config.toml` deve ser mantido no repositório para que o Supabase CLI consiga localizar a configuração Postgres local e aplicar migrations. A associação com o projeto remoto é feita pelo comando `supabase link --project-ref eukazzizamxratkavcap`.
 
 A migration inicial está em `supabase/migrations/20260501223500_create_portal_tables.sql` e cria:
 

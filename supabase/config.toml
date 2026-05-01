@@ -1,6 +1,6 @@
 # For detailed configuration reference documentation, visit:
 # https://supabase.com/docs/guides/local-development/cli/config
-project_id = "eukazzizamxratkavcap"
+project_id = "portal-faturamento"
 
 [api]
 enabled = true
@@ -24,8 +24,9 @@ enabled = false
 
 [auth]
 enabled = true
-site_url = "https://portal-liberacao-embarque.netlify.app"
+site_url = "http://localhost:5173"
 additional_redirect_urls = [
+  "https://portal-liberacao-embarque.netlify.app",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
 ]
