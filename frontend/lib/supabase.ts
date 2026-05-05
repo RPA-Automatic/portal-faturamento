@@ -37,16 +37,29 @@ const isPlaceholder = (url: string) =>
   url.includes('sua-url-do-supabase') ||
   !url.startsWith('http');
 
+const isPlaceholderKey = (key: string) =>
+  !key ||
+  key.includes('sua-chave') ||
+  key.includes('supabase-anon-key');
+
+export const isSupabaseConfigured = !isPlaceholder(supabaseUrl) && !isPlaceholderKey(supabaseAnonKey);
+
+export const authConfigurationMessage =
+  'Autenticação não configurada para este deploy. No painel da Netlify, configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para esta branch e execute um novo deploy.';
+
+const authConfigurationError = () => new Error(authConfigurationMessage);
+
 let supabaseInstance: any;
 
 try {
-  if (isPlaceholder(supabaseUrl)) {
+  if (!isSupabaseConfigured) {
     supabaseInstance = {
       auth: {
         getSession: async () => ({ data: { session: null }, error: null }),
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-        signInWithPassword: async () => ({ data: {}, error: new Error('Configuração necessária: No painel da Netlify, as chaves devem ser VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY. Após alterar, faça um novo Deploy.') }),
-        signUp: async () => ({ data: {}, error: new Error('Configuração necessária: No painel da Netlify, as chaves devem ser VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY. Após alterar, faça um novo Deploy.') }),
+        signInWithOAuth: async () => ({ data: {}, error: authConfigurationError() }),
+        signInWithPassword: async () => ({ data: {}, error: authConfigurationError() }),
+        signUp: async () => ({ data: {}, error: authConfigurationError() }),
         signOut: async () => ({ error: null }),
       },
       from: () => ({
@@ -57,7 +70,14 @@ try {
       }),
     };
   } else {
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
+    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: 'pkce',
+        persistSession: true,
+      },
+    });
   }
 } catch (e) {
   console.error('Erro crítico ao inicializar cliente Supabase:', e);

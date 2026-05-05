@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { authConfigurationMessage, isSupabaseConfigured, supabase } from '../lib/supabase';
 
 interface AuthProps {
   onAuthSuccess: (user: any) => void;
@@ -15,7 +15,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [azureLoading, setAzureLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(isSupabaseConfigured ? null : authConfigurationMessage);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +60,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
 
       <button
         onClick={handleAzureLogin}
-        disabled={azureLoading}
+        disabled={azureLoading || !isSupabaseConfigured}
         className={`w-full flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-xl hover:border-[#3AE4B0] hover:shadow-md transition-all group text-left ${azureLoading ? 'opacity-70 cursor-wait' : ''}`}
       >
         <div className="w-12 h-12 bg-[#3AE4B0]/10 rounded-lg flex items-center justify-center text-[#3AE4B0] group-hover:bg-[#3AE4B0] group-hover:text-white transition-colors">
@@ -111,7 +111,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
       <button
         type="button"
         onClick={handleAzureLogin}
-        disabled={azureLoading}
+        disabled={azureLoading || !isSupabaseConfigured}
         className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
       >
         {azureLoading ? (
@@ -186,7 +186,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || !isSupabaseConfigured}
           className="w-full bg-[#3AE4B0] hover:bg-[#34ce9f] text-white font-bold py-3 rounded-lg shadow-lg shadow-green-100 transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center"
         >
           {loading ? (
