@@ -2,8 +2,8 @@
 
 ## Fase 0 - Fundação
 
-- Criar aplicação Next.js com TypeScript.
-- Configurar Tailwind CSS, shadcn/ui e Lucide Icons.
+- Manter aplicação React + Vite + TypeScript existente.
+- Consolidar UI operacional e avaliar Tailwind CSS, shadcn/ui e Lucide Icons conforme evolucao.
 - Configurar Supabase Client.
 - Configurar autenticação inicial.
 - Definir migrations base.

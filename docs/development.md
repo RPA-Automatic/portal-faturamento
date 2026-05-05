@@ -18,17 +18,16 @@ git switch dev
 
 ## Variáveis de Ambiente
 
-Criar um arquivo `.env.local` quando a aplicação Next.js for iniciada.
+Criar um arquivo `.env` dentro de `frontend/` para a aplicacao React + Vite.
 
 Variáveis esperadas:
 
 ```bash
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
+VITE_SUPABASE_URL=
+VITE_SUPABASE_ANON_KEY=
 ```
 
-`SUPABASE_SERVICE_ROLE_KEY` deve ser usada somente em rotinas server-side seguras.
+Nao exponha `SUPABASE_SERVICE_ROLE_KEY` no frontend. Chaves de service role devem existir somente em Edge Functions, jobs server-side ou configuracoes seguras do Supabase.
 
 ## Containers
 
@@ -42,14 +41,13 @@ Opções recomendadas:
 
 ## Scripts Esperados
 
-Quando o projeto Next.js for criado, manter scripts equivalentes a:
+No frontend atual, usar os scripts do Vite dentro de `frontend/`:
 
 ```bash
-pnpm dev
-pnpm lint
-pnpm test
-pnpm test:e2e
-pnpm build
+npm install
+npm run dev
+npm run lint
+npm run build
 ```
 
 ## Qualidade

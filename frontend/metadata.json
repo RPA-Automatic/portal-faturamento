@@ -1,0 +1,5 @@
+{
+  "name": "Portal de Faturamento",
+  "description": "Painel operacional para Farol de liberacao de embarque, validacoes de faturamento e acompanhamento de pendencias por OP.",
+  "requestFramePermissions": []
+}

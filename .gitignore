@@ -1,0 +1,45 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Frontend builds and caches
+dist/
+build/
+.vite/
+.next/
+coverage/
+
+# Supabase local runtime
+.branches/
+.temp/
+.env.local
+
+# Legacy Supabase export from the old cadastro portal
+supabase/supabase/
+supabase/.github/
+
+# Supabase Studio SQL Editor drafts/snippets
+supabase/supabase/snippets/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local data dumps and sensitive raw documents
+data/raw/
+data/private/
+*.local.xlsx
+*.local.csv
+*.local.json
