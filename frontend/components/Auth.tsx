@@ -11,6 +11,8 @@ type ExternalAuthMode = 'SIGN_IN' | 'SIGN_UP';
 
 export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   const [accessType, setAccessType] = useState<AccessType>(null);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -29,11 +31,19 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
 
     try {
       if (externalMode === 'SIGN_UP') {
+        const trimmedFirstName = firstName.trim();
+        const trimmedLastName = lastName.trim();
+
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: window.location.origin,
+            data: {
+              first_name: trimmedFirstName,
+              last_name: trimmedLastName,
+              full_name: [trimmedFirstName, trimmedLastName].filter(Boolean).join(' '),
+            },
           },
         });
         if (signUpError) throw signUpError;
@@ -199,6 +209,33 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
       </div>
 
       <form onSubmit={handleAuth} className="space-y-5">
+        {externalMode === 'SIGN_UP' && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Nome</label>
+              <input
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all"
+                placeholder="Rodrigo"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Sobrenome</label>
+              <input
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all"
+                placeholder="Freitas"
+              />
+            </div>
+          </div>
+        )}
+
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">E-mail</label>
           <input

@@ -277,17 +277,32 @@ class SupabaseRest:
         query = urllib.parse.urlencode({key: f"eq.{value}" for key, value in filters.items()})
         self.request("PATCH", f"{table}?{query}", data, prefer="return=minimal")
 
+    def succeeded_import_exists(self, source_file_name: str) -> bool:
+        query = urllib.parse.urlencode(
+            {
+                "source_file_name": f"eq.{source_file_name}",
+                "status": "eq.succeeded",
+                "select": "id",
+                "limit": "1",
+            }
+        )
+        return bool(self.request("GET", f"import_runs?{query}") or [])
+
 
 def build_staging_rows(file_path: Path, config: dict[str, Any], import_run_id: str) -> list[dict[str, Any]]:
+    target_columns = [target for target in config["targets"] if target]
     rows = []
     for row_number, raw_data, row_values in read_rows(file_path, config["sheet"], config["header_row"]):
-        record: dict[str, Any] = {"import_run_id": import_run_id, "row_number": row_number, "raw_data": raw_data}
+        record: dict[str, Any] = {
+            "import_run_id": import_run_id,
+            "row_number": row_number,
+            "raw_data": raw_data,
+            **{target: None for target in target_columns},
+        }
         for index, target in enumerate(config["targets"]):
             if not target or index >= len(row_values):
                 continue
-            converted = coerce(target, row_values[index])
-            if converted is not None:
-                record[target] = converted
+            record[target] = coerce(target, row_values[index])
         rows.append(record)
     return rows
 
@@ -296,7 +311,7 @@ def chunks(rows: list[dict[str, Any]], size: int) -> list[list[dict[str, Any]]]:
     return [rows[index : index + size] for index in range(0, len(rows), size)]
 
 
-def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, Any], dry_run: bool) -> dict[str, Any]:
+def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, Any], dry_run: bool, force: bool) -> dict[str, Any]:
     file_hash = sha256_file(file_path)
     preview_rows = read_rows(file_path, config["sheet"], config["header_row"])
     rows_total = len(preview_rows)
@@ -305,6 +320,9 @@ def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, 
         return {"file": file_path.name, "table": config["table"], "rows_total": rows_total, "sha256": file_hash}
 
     assert client is not None
+    if not force and client.succeeded_import_exists(file_path.name):
+        return {"file": file_path.name, "table": config["table"], "rows_total": rows_total, "skipped": "import_run succeeded already", "sha256": file_hash}
+
     import_run = client.insert(
         "import_runs?select=id",
         [
@@ -354,6 +372,7 @@ def main() -> None:
     parser.add_argument("source", type=Path, help="Directory containing XLSX reports")
     parser.add_argument("--only", nargs="*", choices=sorted(REPORTS), help="Specific report files to import")
     parser.add_argument("--dry-run", action="store_true", help="Parse files without sending data to Supabase")
+    parser.add_argument("--force", action="store_true", help="Import even if a previous succeeded import_run exists")
     args = parser.parse_args()
 
     selected_files = args.only or list(REPORTS)
@@ -370,7 +389,7 @@ def main() -> None:
         file_path = args.source / file_name
         if not file_path.exists():
             raise FileNotFoundError(file_path)
-        results.append(import_file(client, file_path, REPORTS[file_name], args.dry_run))
+        results.append(import_file(client, file_path, REPORTS[file_name], args.dry_run, args.force))
 
     print(json.dumps(results, ensure_ascii=False, indent=2))
 

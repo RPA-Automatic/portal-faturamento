@@ -5,6 +5,12 @@ import { supabase } from './lib/supabase';
 type SessionLike = {
   user?: {
     email?: string;
+    user_metadata?: {
+      first_name?: string;
+      last_name?: string;
+      full_name?: string;
+      name?: string;
+    };
   };
 };
 
@@ -40,6 +46,15 @@ type AreaBacklog = {
 
 const stageOrder = ['todos', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6'];
 
+const kanbanStages = [
+  { code: 'E1', name: 'Documentacao Basica' },
+  { code: 'E2', name: 'Validacao Fiscal' },
+  { code: 'E3', name: 'Contratos e Regras TOTVS' },
+  { code: 'E4', name: 'Logistica' },
+  { code: 'E5', name: 'Faturamento' },
+  { code: 'E6', name: 'Concluido' },
+];
+
 const semaphoreStyle: Record<OperationFarol['semaphore'], string> = {
   verde: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   amarelo: 'bg-amber-100 text-amber-800 border-amber-200',
@@ -55,6 +70,21 @@ const formatDateTime = (value: string | null) => {
     hour: '2-digit',
     minute: '2-digit',
   }).format(new Date(value));
+};
+
+const displayUserName = (session: SessionLike) => {
+  const metadata = session.user?.user_metadata || {};
+  const metadataName = [metadata.first_name, metadata.last_name].filter(Boolean).join(' ').trim();
+  const fullName = metadataName || metadata.full_name || metadata.name;
+  if (fullName) return fullName.split(/\s+/).slice(0, 2).join(' ');
+
+  const emailName = session.user?.email?.split('@')[0] || 'Usuario autenticado';
+  return emailName
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
 };
 
 const App: React.FC = () => {
@@ -144,6 +174,15 @@ const App: React.FC = () => {
     );
   }, [operations]);
 
+  const operationsByStage = useMemo(() => {
+    return kanbanStages.reduce<Record<string, OperationFarol[]>>((acc, stage) => {
+      acc[stage.code] = filteredOperations.filter((operation) => operation.current_stage === stage.code);
+      return acc;
+    }, {});
+  }, [filteredOperations]);
+
+  const userName = displayUserName(session);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setSession(null);
@@ -173,7 +212,7 @@ const App: React.FC = () => {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <span className="text-sm text-slate-500">{session.user?.email || 'Usuario autenticado'}</span>
+            <span className="text-sm font-semibold text-slate-600">{userName}</span>
             <button
               type="button"
               onClick={loadDashboard}
@@ -238,6 +277,66 @@ const App: React.FC = () => {
             </select>
           </div>
         </div>
+
+        <section className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="font-bold text-slate-950">Fluxo das Operacoes</h2>
+            <span className="text-sm text-slate-500">{filteredOperations.length} exibidas</span>
+          </div>
+
+          <div className="overflow-x-auto p-4">
+            <div className="grid min-w-[1120px] grid-cols-6 gap-3">
+              {kanbanStages.map((stage) => {
+                const stageOperations = operationsByStage[stage.code] || [];
+
+                return (
+                  <section key={stage.code} className="rounded-lg border border-slate-200 bg-slate-50 min-h-[260px]">
+                    <div className="border-b border-slate-200 bg-white px-3 py-3 rounded-t-lg">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <div className="text-xs font-bold uppercase text-emerald-700">{stage.code}</div>
+                          <h3 className="text-sm font-bold text-slate-950 leading-tight">{stage.name}</h3>
+                        </div>
+                        <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-bold text-slate-600">{stageOperations.length}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 p-3">
+                      {stageOperations.map((operation) => (
+                        <article key={operation.id} className="rounded-md border border-slate-200 bg-white p-3 shadow-sm">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <div className="font-bold text-slate-950">OP {operation.oper_b2b}</div>
+                              <div className="mt-1 text-xs text-slate-500 line-clamp-2">{operation.description || operation.finalidade || '-'}</div>
+                            </div>
+                            <span className={`shrink-0 border rounded-full px-2 py-0.5 text-[11px] font-bold ${semaphoreStyle[operation.semaphore]}`}>
+                              {operation.semaphore}
+                            </span>
+                          </div>
+
+                          <div className="mt-3 text-xs text-slate-600 space-y-1">
+                            <div className="truncate">Produto: {operation.item_description || '-'}</div>
+                            <div>Contratos: C {operation.purchase_contracts_count || 0} / V {operation.sales_contracts_count || 0}</div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-red-700 font-semibold">Bloq {operation.blocking_pending_count || 0}</span>
+                              <span className="text-amber-700 font-semibold">Alert {operation.warning_pending_count || 0}</span>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+
+                      {!loadingData && stageOperations.length === 0 && (
+                        <div className="rounded-md border border-dashed border-slate-300 px-3 py-6 text-center text-xs text-slate-400">
+                          Sem OPs nesta etapa
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
         <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
           <section className="bg-white border border-slate-200 rounded-lg overflow-hidden">
