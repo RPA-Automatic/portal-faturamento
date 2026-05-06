@@ -140,6 +140,7 @@ Esse padrão facilita versionamento e organização por cadastro/tipo.
 ## Solução de problemas (rápida)
 
 - **Tela sem dados/autenticação falhando:** verificar `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`.
+- **Microsoft/GitHub OAuth falhando:** conferir callbacks, Client ID/Secret e URL Configuration conforme `../docs/oauth-auth-setup.md`.
 - **Erro no upload:** conferir permissões do bucket `docs_cadastros` e políticas do Storage.
 - **Consulta CNPJ/CEP instável:** pode haver limitação externa; existe fallback com proxy em parte dos casos.
 

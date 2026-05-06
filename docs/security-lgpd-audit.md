@@ -164,4 +164,22 @@ exists (
 
 ## Veredito
 
-O repositorio esta razoavelmente protegido contra vazamento acidental de arquivos e chaves. Para LGPD, o ponto que precisa ser corrigido antes de liberar usuarios externos ou dados reais consolidados no portal e o modelo de autorizacao: hoje, o RLS habilitado existe, mas as policies de leitura ainda sao amplas demais para dados pessoais e comerciais sensiveis.
+O repositorio esta razoavelmente protegido contra vazamento acidental de arquivos e chaves. Para LGPD, o ponto central e manter autenticacao separada de autorizacao: login valido nao pode significar acesso operacional amplo.
+
+## Evolucao Aplicada
+
+As migrations de hardening adicionadas em 2026-05-06 corrigem os principais pontos desta auditoria no modelo versionado:
+
+- `20260506000100_harden_rls_profiles.sql`: cria aprovacao de perfil, escopo interno/externo e policies por parceiro/operacao.
+- `20260506000200_fix_supabase_advisor_findings.sql`: corrige `security_invoker`, `search_path` e uso de `(select auth.uid())`.
+- `20260506000300_add_audit_and_controlled_pending_rpc.sql`: adiciona auditoria automatica, restringe staging/logs e cria RPC para resolver pendencias.
+- `20260506000400_add_private_operation_document_storage.sql`: cria bucket privado `operation-documents` e policies por escopo em `storage.objects`.
+- `20260506000500_fix_local_advisor_warnings.sql`: remove exposicao `anon`, consolida policies permissivas duplicadas e tira helpers `SECURITY DEFINER` da API publica.
+
+Essas migrations reaproveitam padroes bons do portal de cadastro, mas sem importar o schema legado. A adaptacao foi feita nas entidades atuais: OP, contratos, parceiros, OLs, documentos fiscais, documentos operacionais, pendencias, evidencias e auditoria.
+
+## Pendencias de Validacao
+
+Antes de considerar o ambiente DEV pronto para usuarios reais, aplicar as migrations no projeto Supabase DEV, promover pelo menos um administrador com `public.bootstrap_admin_profile(email)` e reexecutar o Supabase Advisor. Em seguida, validar login de usuario `pending`, usuario interno ativo, administrador e usuario externo vinculado a parceiro.
+
+Alguns avisos de GraphQL para o role `authenticated` podem permanecer em tabelas consumidas diretamente pelo frontend via REST. Remover `SELECT` de `authenticated` elimina a descoberta no GraphQL, mas tambem quebra consultas PostgREST diretas; por isso essa decisao deve ser tomada junto com uma mudanca arquitetural para expor dados apenas por views/RPCs especificas.

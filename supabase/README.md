@@ -53,15 +53,40 @@ supabase status
 
 Para `supabase start`, `supabase status` e `supabase db reset`, o Docker Desktop precisa estar aberto e com Linux containers ativo. Se aparecer erro com `dockerDesktopLinuxEngine`, abra o Docker Desktop e aguarde ele ficar `Running` antes de repetir o comando.
 
+Nao e necessario criar containers manualmente no Docker Desktop nem adicionar `docker-compose.yml` ao repositorio. O Supabase CLI cria e gerencia os containers, redes e volumes locais a partir de `supabase/config.toml`. O Docker Desktop serve como runtime e painel de monitoramento.
+
 Comandos uteis neste repo:
 
 ```powershell
 supabase start
 supabase db reset
-supabase migration list
 ```
 
-Antes de `db push`, confirme sempre o projeto alvo. O projeto DEV e PROD devem receber migrations em momentos separados.
+Comandos que consultam o projeto remoto, como `supabase migration list` e `supabase db push`, exigem `supabase link`. Antes de `db push`, confirme sempre o projeto alvo. O projeto DEV e PROD devem receber migrations em momentos separados.
+
+## Ambientes DEV e PROD
+
+O arquivo `supabase/config.toml` fica apontado para DEV por padrao. Isso reduz o risco de um comando remoto usar uma configuracao visualmente associada ao PROD.
+
+Arquivos versionados:
+
+- `supabase/config.dev.toml`: projeto DEV `lvsocwetuhhqxlwyfdrw`.
+- `supabase/config.prod.toml`: projeto PROD `eukazzizamxratkavcap`.
+- `supabase/config.toml`: copia ativa usada pelo CLI, mantida como DEV no repositorio.
+
+Para selecionar DEV e fazer link remoto:
+
+```powershell
+.\scripts\supabase\Set-SupabaseEnvironment.ps1 -Environment dev -Link
+```
+
+Para selecionar PROD, a flag explicita `-ConfirmProduction` e obrigatoria:
+
+```powershell
+.\scripts\supabase\Set-SupabaseEnvironment.ps1 -Environment prod -ConfirmProduction -Link
+```
+
+O estado local de link do Supabase fica em `supabase/.temp/` e nao deve ser versionado.
 
 ## Advisor de Seguranca
 

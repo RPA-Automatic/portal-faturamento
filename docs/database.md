@@ -51,20 +51,44 @@ A função `normalize_contract_status(text)` centraliza a primeira normalizaçã
 
 ## Views Operacionais
 
-- `v_operations_farol`: base principal do dashboard Farol, com contadores de contratos, OLs, documentos fiscais, pendências e aging.
+- `v_operations_farol`: base principal do dashboard Farol, com contadores de contratos, OLs, documentos fiscais, pendências, sla e aging.
 - `v_area_backlog`: backlog agrupado por área, etapa, severidade e status.
 - `v_contract_drilldown`: visão de detalhe por contrato vinculado à OP.
 
 ## Segurança
 
-As tabelas principais já nascem com Row Level Security habilitado.
+As tabelas principais já nascem com Row Level Security habilitado. A camada de segurança foi evoluída a partir de padrões existentes no portal de cadastro, mas aplicada ao domínio deste produto.
 
-Políticas iniciais:
+Neste contexto, "adaptar ao domínio de OP/contratos/faturamento" significa não copiar tabelas, triggers e fluxos de leads/cadastro. Significa reaproveitar os mesmos conceitos de segurança em cima das entidades corretas do Portal de Faturamento:
 
-- Usuários autenticados podem consultar dados operacionais.
-- Cada área pode atualizar pendências sob sua responsabilidade.
-- Administradores podem parametrizar regras e exceções.
+- `operations`: OP/Operação B2B e estágio E1..E6.
+- `contracts`: contratos de compra e venda.
+- `partners`: clientes, fornecedores e parceiros.
+- `logistics_orders`: OL, rota, origem/destino e transporte.
+- `fiscal_documents`: documentos fiscais, CFOP e valores.
+- `documents`: arquivos e hashes de documentos operacionais.
+- `pending_items`: pendências por etapa, área e severidade.
+- `evidence`: evidências manuais ou importadas.
+- `audit_logs`: trilha de auditoria das alterações sensíveis.
+
+Políticas e funções atuais:
+
+- Usuários novos nascem com perfil `pending` e sem acesso operacional amplo.
+- Usuários internos ativos podem ler dados operacionais conforme escopo.
+- Usuários externos devem ser vinculados a `partner_id` para enxergar somente dados do próprio parceiro.
+- Staging, imports, job logs e audit logs ficam restritos a administradores/service role.
+- Pendências podem ser resolvidas por RPC controlada, gerando evidência e auditoria.
+- Documentos de OP devem usar bucket privado `operation-documents` com policies em `storage.objects`.
 - Jobs de backend devem usar service role somente em ambiente server-side seguro.
+
+Padrões reaproveitados do portal de cadastro:
+
+- funções `security definer` com `set search_path` fixo;
+- policies usando `(select auth.uid())` quando aplicável;
+- bloqueio explícito de operações destrutivas para usuários autenticados;
+- RPCs para alterações sensíveis;
+- policies específicas para Storage privado;
+- auditoria automática em tabelas sensíveis.
 
 ## Como Aplicar
 
@@ -84,4 +108,4 @@ supabase db reset
 
 ## Próxima Etapa
 
-Criar o job de ingestão dos XLSX para popular primeiro as tabelas de staging e depois consolidar `operations`, `contracts`, `partners`, `logistics_orders`, `fiscal_documents`, `pending_items` e `evidence` de forma idempotente.
+Importar os dados dos arquivos xlsx  para popular primeiro as tabelas de staging e depois consolidar `operations`, `contracts`, `partners`, `logistics_orders`, `fiscal_documents`, `pending_items` e `evidence` de forma idempotente.

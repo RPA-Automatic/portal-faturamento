@@ -19,6 +19,7 @@ coverage/
 .branches/
 .temp/
 .env.local
+supabase/.temp/
 
 # Legacy Supabase export from the old cadastro portal
 supabase/supabase/
