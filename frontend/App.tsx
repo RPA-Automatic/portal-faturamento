@@ -72,13 +72,13 @@ const formatDateTime = (value: string | null) => {
   }).format(new Date(value));
 };
 
-const displayUserName = (session: SessionLike) => {
-  const metadata = session.user?.user_metadata || {};
+const displayUserName = (session: SessionLike | null) => {
+  const metadata = session?.user?.user_metadata || {};
   const metadataName = [metadata.first_name, metadata.last_name].filter(Boolean).join(' ').trim();
   const fullName = metadataName || metadata.full_name || metadata.name;
   if (fullName) return fullName.split(/\s+/).slice(0, 2).join(' ');
 
-  const emailName = session.user?.email?.split('@')[0] || 'Usuario autenticado';
+  const emailName = session?.user?.email?.split('@')[0] || 'Usuario autenticado';
   return emailName
     .split(/[._-]+/)
     .filter(Boolean)
