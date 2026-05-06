@@ -7,28 +7,49 @@ interface AuthProps {
 }
 
 type AccessType = 'INTERNAL' | 'EXTERNAL' | null;
+type ExternalAuthMode = 'SIGN_IN' | 'SIGN_UP';
 
 export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   const [accessType, setAccessType] = useState<AccessType>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [externalMode, setExternalMode] = useState<ExternalAuthMode>('SIGN_IN');
   const [loading, setLoading] = useState(false);
   const [azureLoading, setAzureLoading] = useState(false);
+  const [githubLoading, setGithubLoading] = useState(false);
   const [error, setError] = useState<string | null>(isSupabaseConfigured ? null : authConfigurationMessage);
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setMessage(null);
 
     try {
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      if (externalMode === 'SIGN_UP') {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: window.location.origin,
+          },
+        });
+        if (signUpError) throw signUpError;
+
+        if (data.session && data.user) {
+          onAuthSuccess(data.user);
+          return;
+        }
+
+        setMessage('Cadastro criado. Verifique seu e-mail para confirmar o acesso.');
+        return;
+      }
+
+      const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
       if (loginError) throw loginError;
-      onAuthSuccess(data.user);
+      if (data.user) onAuthSuccess(data.user);
     } catch (err: any) {
       setError(err.message || 'Ocorreu um erro na autenticação.');
     } finally {
@@ -39,6 +60,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   const handleAzureLogin = async () => {
     setAzureLoading(true);
     setError(null);
+    setMessage(null);
     try {
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
@@ -51,6 +73,25 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
     } catch (err: any) {
       setError(err.message || 'Erro ao conectar com Microsoft.');
       setAzureLoading(false);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    setGithubLoading(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+        provider: 'github',
+        options: {
+          redirectTo: window.location.origin,
+          scopes: 'read:user user:email',
+        },
+      });
+      if (oauthError) throw oauthError;
+    } catch (err: any) {
+      setError(err.message || 'Erro ao conectar com GitHub.');
+      setGithubLoading(false);
     }
   };
 
@@ -84,7 +125,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
       </button>
 
       <button
-        onClick={() => setAccessType('EXTERNAL')}
+        onClick={() => { setAccessType('EXTERNAL'); setExternalMode('SIGN_IN'); setError(null); setMessage(null); }}
         className="w-full flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-xl hover:border-[#3AE4B0] hover:shadow-md transition-all group text-left"
       >
         <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 group-hover:bg-[#3AE4B0] group-hover:text-white transition-colors">
@@ -140,6 +181,23 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
 
   const renderExternal = () => (
     <div className="animate-fade-in">
+      <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 mb-5">
+        <button
+          type="button"
+          onClick={() => { setExternalMode('SIGN_IN'); setError(null); setMessage(null); }}
+          className={`rounded-lg py-2 text-sm font-bold transition-colors ${externalMode === 'SIGN_IN' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Entrar
+        </button>
+        <button
+          type="button"
+          onClick={() => { setExternalMode('SIGN_UP'); setError(null); setMessage(null); }}
+          className={`rounded-lg py-2 text-sm font-bold transition-colors ${externalMode === 'SIGN_UP' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Cadastrar
+        </button>
+      </div>
+
       <form onSubmit={handleAuth} className="space-y-5">
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">E-mail</label>
@@ -195,14 +253,41 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           ) : (
-            'Entrar'
+            externalMode === 'SIGN_UP' ? 'Cadastrar novo usuário' : 'Entrar'
+          )}
+        </button>
+
+        <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
+          <div className="h-px flex-1 bg-gray-200"></div>
+          <span>ou</span>
+          <div className="h-px flex-1 bg-gray-200"></div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGithubLogin}
+          disabled={githubLoading || !isSupabaseConfigured}
+          className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded-lg shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center gap-3"
+        >
+          {githubLoading ? (
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            <>
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.59 2 12.253c0 4.53 2.865 8.371 6.839 9.727.5.094.683-.222.683-.494 0-.244-.009-.89-.014-1.747-2.782.62-3.369-1.374-3.369-1.374-.455-1.185-1.11-1.5-1.11-1.5-.908-.637.069-.624.069-.624 1.004.073 1.532 1.057 1.532 1.057.892 1.566 2.341 1.114 2.91.852.091-.662.35-1.114.636-1.37-2.221-.259-4.555-1.139-4.555-5.067 0-1.12.39-2.034 1.029-2.75-.103-.26-.446-1.302.098-2.714 0 0 .84-.276 2.75 1.05A9.34 9.34 0 0112 6.958a9.34 9.34 0 012.504.345c1.909-1.326 2.747-1.05 2.747-1.05.546 1.412.203 2.455.1 2.714.64.716 1.028 1.63 1.028 2.75 0 3.938-2.337 4.805-4.566 5.059.36.317.679.943.679 1.9 0 1.37-.012 2.475-.012 2.81 0 .274.18.593.688.492C19.138 20.621 22 16.782 22 12.253 22 6.59 17.523 2 12 2z" />
+              </svg>
+              Continuar com GitHub
+            </>
           )}
         </button>
 
         <div className="text-center pt-2">
           <button
             type="button"
-            onClick={() => { setAccessType(null); setError(null); }}
+            onClick={() => { setAccessType(null); setError(null); setMessage(null); }}
             className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
           >
             ← Voltar para seleção
@@ -238,6 +323,12 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
             {error && (
               <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded text-xs text-red-700 font-medium animate-pulse mb-4">
                 {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded text-xs text-emerald-700 font-medium mb-4">
+                {message}
               </div>
             )}
 

@@ -52,6 +52,25 @@ Branch deploys  -> URL e publishable key do Supabase DEV
 
 As variaveis do frontend devem usar apenas a chave `sb_publishable_*` do Supabase. Nunca use chaves `sb_secret_*` ou `service_role` no Netlify frontend.
 
+## Autenticação
+
+O frontend usa Supabase Auth com tres caminhos:
+
+```text
+Colaborador Biond -> Azure/Microsoft OAuth
+Acesso Externo   -> e-mail e senha
+Acesso Externo   -> GitHub OAuth
+```
+
+Para que esses fluxos funcionem, habilite os providers em cada projeto Supabase usado pelo ambiente:
+
+```text
+Supabase DEV  -> habilitar Azure, Email e GitHub
+Supabase PROD -> habilitar Azure, Email e GitHub antes do go-live
+```
+
+Os providers OAuth precisam ter suas redirect URLs configuradas no provedor externo e no Supabase Auth. Para Netlify dev, use a URL `https://dev--portal-faturamento-fiscal.netlify.app`; para producao, use `https://portal-faturamento-fiscal.netlify.app`.
+
 ## Migrações Supabase
 
 As mudancas de banco devem ser versionadas em `supabase/migrations/`.
