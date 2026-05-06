@@ -43,3 +43,10 @@ data/private/
 *.local.xlsx
 *.local.csv
 *.local.json
+
+# Real operational source documents must stay outside Git
+docs/**/*.xlsx
+docs/**/*.xls
+docs/**/*.xlsm
+docs/**/*.docx
+docs/**/*.pdf

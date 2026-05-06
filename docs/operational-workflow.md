@@ -8,6 +8,21 @@
 
 ## Estados Macro
 
+O portal deve tratar a OP como uma maquina de estados sequencial. Os estados oficiais atuais sao 6, de E1 a E6. A ingestao de relatorios e documentos acontece antes e durante os estados, mas nao precisa virar um estado operacional visivel no Farol.
+
+Sequencia recomendada:
+
+```text
+E1 Documentacao Basica
+-> E2 Validacao Fiscal
+-> E3 Contratos e Regras TOTVS
+-> E4 Logistica
+-> E5 Faturamento
+-> E6 Concluido
+```
+
+O job diario do n8n alimenta dados e evidencias para que cada OP avance automaticamente quando as regras forem atendidas. Usuarios do portal podem anexar/atualizar documentos e resolver pendencias, gerando historico de estado.
+
 ### E1 - Documentação Básica
 
 Áreas: Comercial e Faturamento.
