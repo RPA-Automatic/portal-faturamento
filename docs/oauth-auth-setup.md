@@ -10,6 +10,7 @@ Os botoes do frontend chamam corretamente o Supabase Auth:
 - GitHub: provider `github`.
 - Google/Gmail: provider `google`.
 - Redirect dinamico: `window.location.origin`.
+- Callback PKCE: quando o provedor retorna com `?code=...`, o app chama `exchangeCodeForSession` e remove o parametro da URL.
 
 Os erros vistos no navegador indicam configuracao incorreta dos provedores no painel do Supabase ou no provedor OAuth, nao falha no React.
 

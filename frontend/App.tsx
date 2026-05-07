@@ -101,11 +101,36 @@ const App: React.FC = () => {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }: any) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setLoadingAuth(false);
-    });
+    const initializeSession = async () => {
+      try {
+        const url = new URL(window.location.href);
+        const authCode = url.searchParams.get('code');
+
+        if (authCode) {
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(authCode);
+          if (exchangeError) throw exchangeError;
+
+          url.searchParams.delete('code');
+          window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+
+          if (!mounted) return;
+          setSession(data.session);
+          setLoadingAuth(false);
+          return;
+        }
+
+        const { data } = await supabase.auth.getSession();
+        if (!mounted) return;
+        setSession(data.session);
+      } catch (err: any) {
+        if (!mounted) return;
+        setError(err.message || 'Nao foi possivel concluir a autenticacao.');
+      } finally {
+        if (mounted) setLoadingAuth(false);
+      }
+    };
+
+    initializeSession();
 
     const { data } = supabase.auth.onAuthStateChange((_event: string, nextSession: SessionLike | null) => {
       setSession(nextSession);
