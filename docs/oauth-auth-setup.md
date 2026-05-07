@@ -8,9 +8,25 @@ Os botoes do frontend chamam corretamente o Supabase Auth:
 
 - Microsoft: provider `azure`.
 - GitHub: provider `github`.
+- Google/Gmail: provider `google`.
 - Redirect dinamico: `window.location.origin`.
 
 Os erros vistos no navegador indicam configuracao incorreta dos provedores no painel do Supabase ou no provedor OAuth, nao falha no React.
+
+O cadastro por e-mail e senha aceita qualquer e-mail valido, incluindo Gmail e Outlook. Para login social, cada provider precisa estar habilitado no Supabase com Client ID e Secret reais.
+
+## Erro `Unregistered API key`
+
+Esse erro aparece quando o deploy esta usando uma chave publica do Supabase invalida, de outro projeto ou removida.
+
+No Netlify da branch DEV, configure novamente:
+
+```text
+VITE_SUPABASE_URL=https://lvsocwetuhhqxlwyfdrw.supabase.co
+VITE_SUPABASE_ANON_KEY=<Publishable key do projeto DEV>
+```
+
+No Supabase, a chave fica em Project Settings > API > Project API keys. Use a chave publica/publishable do projeto correto. Depois de alterar variaveis na Netlify, execute um novo deploy.
 
 ## Microsoft / Azure
 
@@ -56,6 +72,14 @@ Use `organizations` se apenas contas corporativas Microsoft devem entrar. Use um
 
 Se a tela do GitHub abre mas nao conclui o login, geralmente o problema esta no OAuth App do GitHub ou no provider GitHub do Supabase.
 
+Erro comum observado:
+
+```text
+https://github.com/login/oauth/authorize?client_id=<email-ou-usuario>
+```
+
+Se o `client_id` na URL parece um e-mail, usuario ou nome comum, o provider GitHub do Supabase esta configurado errado. O Client ID deve vir de GitHub Developer Settings > OAuth Apps.
+
 No GitHub Developer Settings > OAuth Apps:
 
 ```text
@@ -78,6 +102,32 @@ Client Secret: Client Secret do OAuth App GitHub
 ```
 
 O `Client ID` do GitHub nao e o usuario GitHub e nao e e-mail. Ele e gerado pelo OAuth App.
+
+## Google / Gmail
+
+No Google Cloud Console, crie ou abra um OAuth Client do tipo Web application.
+
+Authorized JavaScript origins para DEV:
+
+```text
+https://dev--portal-faturamento-fiscal.netlify.app
+```
+
+Authorized redirect URIs para DEV:
+
+```text
+https://lvsocwetuhhqxlwyfdrw.supabase.co/auth/v1/callback
+```
+
+No Supabase DEV, em Authentication > Providers > Google:
+
+```text
+Enabled: on
+Client ID: Client ID do OAuth Client do Google
+Client Secret: Client Secret do OAuth Client do Google
+```
+
+O login social do Google cobre contas Gmail e Google Workspace. Contas Outlook entram pelo provider Microsoft/Azure ou pelo cadastro normal por e-mail e senha.
 
 ## URL Configuration no Supabase
 
@@ -123,7 +173,10 @@ VITE_SUPABASE_ANON_KEY=<publishable key do PROD>
 
 1. Conferir se `Client ID` da Microsoft e GUID.
 2. Conferir callback Microsoft para o projeto Supabase correto.
-3. Conferir callback GitHub para o projeto Supabase correto.
-4. Conferir URLs autorizadas no Supabase Auth.
-5. Fazer novo deploy Netlify depois de alterar variaveis de ambiente.
-6. Testar Microsoft e GitHub em janela anonima para evitar cache de sessao antiga.
+3. Conferir se `Client ID` do GitHub nao e e-mail e veio do OAuth App.
+4. Conferir callback GitHub para o projeto Supabase correto.
+5. Conferir Google OAuth Client ID/Secret e callback.
+6. Conferir URLs autorizadas no Supabase Auth.
+7. Conferir `VITE_SUPABASE_ANON_KEY` da Netlify para resolver `Unregistered API key`.
+8. Fazer novo deploy Netlify depois de alterar variaveis de ambiente.
+9. Testar Microsoft, Google e GitHub em janela anonima para evitar cache de sessao antiga.
