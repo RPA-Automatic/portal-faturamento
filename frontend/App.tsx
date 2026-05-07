@@ -106,6 +106,9 @@ const App: React.FC = () => {
         const url = new URL(window.location.href);
         const authError = url.searchParams.get('error_description') || url.searchParams.get('error');
         const authCode = url.searchParams.get('code');
+        const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
 
         if (authError) {
           url.searchParams.delete('error');
@@ -119,6 +122,20 @@ const App: React.FC = () => {
           url.searchParams.delete('code');
           window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
           throw new Error('O retorno de autenticacao usou um fluxo antigo que expirou. Tente entrar novamente na mesma janela do navegador.');
+        }
+
+        if (accessToken && refreshToken) {
+          const { data, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          if (sessionError) throw sessionError;
+
+          window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
+
+          if (!mounted) return;
+          setSession(data.session);
+          return;
         }
 
         const { data } = await supabase.auth.getSession();

@@ -58,6 +58,7 @@ try {
         getSession: async () => ({ data: { session: null }, error: null }),
         onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
         exchangeCodeForSession: async () => ({ data: { session: null }, error: authConfigurationError() }),
+        setSession: async () => ({ data: { session: null }, error: authConfigurationError() }),
         signInWithOAuth: async () => ({ data: {}, error: authConfigurationError() }),
         signInWithPassword: async () => ({ data: {}, error: authConfigurationError() }),
         signUp: async () => ({ data: {}, error: authConfigurationError() }),
