@@ -116,16 +116,9 @@ const App: React.FC = () => {
         }
 
         if (authCode) {
-          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(authCode);
-          if (exchangeError) throw exchangeError;
-
           url.searchParams.delete('code');
           window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-
-          if (!mounted) return;
-          setSession(data.session);
-          setLoadingAuth(false);
-          return;
+          throw new Error('O retorno de autenticacao usou um fluxo antigo que expirou. Tente entrar novamente na mesma janela do navegador.');
         }
 
         const { data } = await supabase.auth.getSession();
