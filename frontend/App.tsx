@@ -104,7 +104,16 @@ const App: React.FC = () => {
     const initializeSession = async () => {
       try {
         const url = new URL(window.location.href);
+        const authError = url.searchParams.get('error_description') || url.searchParams.get('error');
         const authCode = url.searchParams.get('code');
+
+        if (authError) {
+          url.searchParams.delete('error');
+          url.searchParams.delete('error_code');
+          url.searchParams.delete('error_description');
+          window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+          throw new Error(authError);
+        }
 
         if (authCode) {
           const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(authCode);
@@ -224,7 +233,7 @@ const App: React.FC = () => {
   }
 
   if (!session) {
-    return <Auth onAuthSuccess={(user) => setSession({ user })} />;
+    return <Auth onAuthSuccess={(user) => setSession({ user })} initialError={error} />;
   }
 
   return (

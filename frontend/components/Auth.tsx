@@ -4,12 +4,13 @@ import { authConfigurationMessage, isSupabaseConfigured, supabase } from '../lib
 
 interface AuthProps {
   onAuthSuccess: (user: any) => void;
+  initialError?: string | null;
 }
 
 type AccessType = 'INTERNAL' | 'EXTERNAL' | null;
 type ExternalAuthMode = 'SIGN_IN' | 'SIGN_UP';
 
-export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
+export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }) => {
   const [accessType, setAccessType] = useState<AccessType>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -21,7 +22,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess }) => {
   const [azureLoading, setAzureLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [githubLoading, setGithubLoading] = useState(false);
-  const [error, setError] = useState<string | null>(isSupabaseConfigured ? null : authConfigurationMessage);
+  const [error, setError] = useState<string | null>(initialError || (isSupabaseConfigured ? null : authConfigurationMessage));
   const [message, setMessage] = useState<string | null>(null);
 
   const handleAuth = async (e: React.FormEvent) => {
