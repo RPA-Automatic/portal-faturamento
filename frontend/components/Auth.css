@@ -52,15 +52,18 @@
 .auth-hero::before { top: -300px; right: -190px; box-shadow: 0 0 0 50px #69d9ff07, 0 0 0 100px #69d9ff05; }
 .auth-hero::after { bottom: -370px; left: -160px; box-shadow: 0 0 0 40px #69d9ff06; }
 .auth-brand { display: flex; align-items: center; gap: 24px; }
-.auth-brand img { display: block; width: 144px; height: auto; flex-shrink: 0; border-radius: 16px; background: #fff; }
-.auth-product { margin: 0; color: #e0efff; font-size: 12px; font-weight: 600; line-height: 1.8; text-transform: uppercase; letter-spacing: .15em; }
-.auth-accent { display: block; height: 4px; width: 40px; border-radius: 2px; background: #08bff0; margin-bottom: 18px; }
-.auth-intro h1 { margin: 0; font-size: clamp(30px, 3.2vw, 38px); font-weight: 600; line-height: 1.16; letter-spacing: -.035em; }
-.auth-intro > p { max-width: 335px; margin: 18px 0 0; font-size: 15px; line-height: 1.7; color: #d1e3fc; }
+.auth-logo-frame { width: 176px; aspect-ratio: 1; padding: 8px; flex-shrink: 0; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px #041a4033, 0 0 0 1px #ffffff33; }
+.auth-brand img { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+.auth-product { min-width: 0; }
+.auth-product > span { display: block; margin-bottom: 10px; color: #9de7ff; font-size: 12px; font-weight: 600; line-height: 1.5; }
+.auth-product p { margin: 0; color: #fff; font-size: 23px; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; }
+.auth-intro h1 { margin: 0; font-size: clamp(40px, 4vw, 48px); font-weight: 600; line-height: 1.08; letter-spacing: -.04em; }
+.auth-intro h1 span { color: #8be8ff; }
+.auth-intro > p { max-width: 390px; margin: 18px 0 0; font-size: 17px; line-height: 1.6; color: #e0edff; }
 .auth-process { border-top: 1px solid #b7d4ff40; padding-top: 20px; }
-.auth-process p { margin: 0 0 14px; font-size: 12px; color: #d1e3fc; }
+.auth-process p { margin: 0 0 14px; font-size: 14px; color: #e0edff; }
 .auth-process ul { display: flex; align-items: center; gap: 12px; padding: 0; margin: 0; list-style: none; }
-.auth-process li { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 500; }
+.auth-process li { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; }
 .auth-process li + li::before { content: ''; width: 16px; height: 1px; background: #64cff2; }
 
 .auth-access { min-width: 0; padding: 34px 40px 30px; }
@@ -97,42 +100,48 @@
 .auth-notice { margin: 0 0 18px; padding: 12px 14px; border-radius: 9px; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
 .auth-notice-error { color: #991b1b; border: 1px solid #fecaca; background: #fff1f2; }
 .auth-notice-success { color: #115e59; border: 1px solid #99f6e4; background: #f0fdfa; }
-.auth-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 8px 36px; border-top: 1px solid #dce4ef; background: #fff; }
-.auth-footer img { width: 150px; height: auto; max-width: 100%; }
-.auth-footer small { color: #52637b; font-size: 10px; line-height: 1.6; text-align: right; }
+.auth-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 32px; padding: 8px 36px; border-top: 1px solid #dce4ef; background: #fff; }
+.auth-footer img { width: 190px; height: auto; max-width: 100%; object-fit: contain; }
+.auth-footer small { color: #52637b; font-size: 12px; line-height: 1.6; text-align: left; }
+.auth-footer small span { display: block; }
 
 @media (max-width: 1000px) and (min-width: 761px) {
   .auth-hero { padding: 28px; }
   .auth-brand { gap: 18px; }
-  .auth-brand img { width: 124px; }
-  .auth-product { font-size: 10px; }
+  .auth-logo-frame { width: 152px; }
+  .auth-product p { font-size: 20px; }
+  .auth-product > span { font-size: 11px; }
   .auth-access { padding: 30px; }
-  .auth-intro h1 { font-size: 32px; }
+  .auth-intro h1 { font-size: 40px; }
   .auth-process ul, .auth-process li { gap: 8px; }
-  .auth-process li + li::before { width: 10px; }
+  .auth-process li + li::before { width: 8px; }
+  .auth-process li { font-size: 13px; }
 }
 
 @media (max-width: 760px) {
   .auth-page { padding: 16px; align-items: flex-start; }
   .auth-shell { max-width: 480px; grid-template-columns: minmax(0, 1fr); border-radius: 18px; }
   .auth-hero { padding: 24px; gap: 22px; }
-  .auth-brand { gap: 20px; }
-  .auth-brand img { width: 88px; border-radius: 10px; }
-  .auth-product { font-size: 11px; }
-  .auth-accent, .auth-process { display: none; }
-  .auth-intro h1 { font-size: 28px; }
-  .auth-intro > p { margin-top: 12px; font-size: 13px; line-height: 1.6; }
+  .auth-brand { gap: 18px; }
+  .auth-logo-frame { width: 120px; padding: 5px; border-radius: 16px; }
+  .auth-product p { font-size: 20px; }
+  .auth-product > span { font-size: 11px; margin-bottom: 8px; }
+  .auth-process { display: none; }
+  .auth-intro h1 { font-size: 34px; }
+  .auth-intro > p { margin-top: 14px; font-size: 15px; line-height: 1.6; }
   .auth-access { padding: 28px 24px; }
   .auth-heading h2 { font-size: 26px; }
-  .auth-footer { padding: 10px 24px; gap: 12px; }
-  .auth-footer img { width: 112px; }
-  .auth-footer small { max-width: 155px; font-size: 9px; }
+  .auth-footer { padding: 12px 24px; gap: 4px; flex-direction: column; }
+  .auth-footer img { width: 160px; }
+  .auth-footer small { font-size: 11px; text-align: center; }
 }
 
 @media (min-width: 761px) and (max-height: 760px) {
-  .auth-page { padding: 16px; }
-  .auth-hero { padding-block: 28px; gap: 24px; }
-  .auth-brand img { width: 124px; }
+  .auth-page { padding: 14px 16px; }
+  .auth-hero { padding-block: 24px; gap: 20px; }
+  .auth-intro > p { margin-top: 14px; }
+  .auth-process { padding-top: 16px; }
+  .auth-process p { margin-bottom: 10px; }
   .auth-access { padding-block: 26px 24px; }
   .auth-heading { margin-bottom: 18px; }
   .auth-heading .auth-eyebrow { margin-bottom: 6px; }
@@ -147,6 +156,9 @@
 @media (max-width: 360px) {
   .auth-page { padding: 8px; }
   .auth-hero, .auth-access { padding: 22px 18px; }
+  .auth-logo-frame { width: 112px; }
+  .auth-brand { gap: 14px; }
+  .auth-product p { font-size: 18px; }
   .auth-provider-name { gap: 4px; font-size: 11px; }
   .auth-footer { padding-inline: 18px; }
 }

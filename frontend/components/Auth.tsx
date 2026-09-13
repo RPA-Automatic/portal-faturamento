@@ -56,16 +56,17 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
       <div className="auth-shell">
         <section className="auth-hero" aria-label="Portal de Faturamento">
           <div className="auth-brand">
-            <img src="/brand/rpa-automatic-primary.png" alt="RPA Automatic" width="1254" height="1254" fetchPriority="high" />
-            <p className="auth-product">Portal de<br /> Faturamento</p>
+            <div className="auth-logo-frame">
+              <img src="/brand/rpa-automatic-primary.png" alt="RPA Automatic" width="1254" height="1254" fetchPriority="high" />
+            </div>
+            <div className="auth-product"><span>Gestão de embarques</span><p>Portal de<br /> Faturamento</p></div>
           </div>
           <div className="auth-intro">
-            <span className="auth-accent" aria-hidden="true" />
-            <h1>Clareza em cada<br /> etapa do embarque.</h1>
-            <p>Acompanhe operações, documentos e pendências em um só lugar.</p>
+            <h1>Seu embarque.<br /><span>Sob controle.</span></h1>
+            <p>Acompanhe operações, documentos e pendências, da análise à liberação.</p>
           </div>
           <div className="auth-process" aria-label="Acompanhamento do embarque">
-            <p>Do acompanhamento à liberação.</p>
+            <p>Uma visão de ponta a ponta.</p>
             <ul><li>Operações</li><li>Documentos</li><li>Liberação</li></ul>
           </div>
         </section>

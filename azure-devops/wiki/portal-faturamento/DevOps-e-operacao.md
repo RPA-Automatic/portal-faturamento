@@ -124,6 +124,8 @@ npm --prefix frontend run dev
 
 O Vite deste repositório usa a porta 3000 por padrão. Para OAuth local, registre exatamente o endereço efetivamente usado e o callback da instância Supabase local. Não reutilize credenciais de aplicativos de clientes.
 
+Os estilos Tailwind são compilados pelo PostCSS a partir de `frontend/styles.css`; não há dependência do Play CDN em execução. `frontend/tailwind.config.cjs` inclui os componentes e arquivos TypeScript usados pela interface, com caminhos relativos à configuração. Ao criar outra pasta com componentes, inclua-a na lista de conteúdo. Use nomes de classes completos para que o build detecte também os estados condicionais. O CSS específico da entrada está em `frontend/components/Auth.css`.
+
 ## Autenticação
 
 O acesso por e-mail permite cadastro, confirmação, login e logout. A conta criada não recebe acesso automático às operações: depende do perfil autorizado e das políticas RLS. Os provedores sociais planejados são Microsoft (`azure`), GitHub (`github`) e Google (`google`).

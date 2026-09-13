@@ -40,7 +40,21 @@ Usar os arquivos sem distorção, preservar proporções e margens e não aplica
 
 A apresentação e o acesso formam um único conjunto: painel azul com a marca completa sobre branco, formulário branco e rodapé alinhado às duas colunas. O contraste separa a mensagem do produto dos campos de acesso. A marca tem tamanho contido para não empurrar o formulário para fora da área de leitura. No celular, as áreas se empilham e a apresentação fica compacta, com rolagem natural para cadastro e mensagens.
 
+O enquadramento usa uma área quadrada branca, imagem centralizada com `object-fit: contain` e margem de proteção. Nenhum logo é recortado, esticado ou recolorido. No desktop, a área da marca principal tem 176 px, o título do produto 23 px, a chamada principal até 48 px e o texto de apoio 17 px. As larguras intermediárias e o celular têm escalas próprias, sem reduzir a leitura aos tamanhos de legenda. O logo horizontal do rodapé usa 190 px no desktop e 160 px no celular, com os direitos reservados em duas linhas legíveis.
+
+A mensagem de entrada é “Seu embarque. Sob controle.”, com destaque em ciano na segunda linha. Os textos de apoio descrevem o acompanhamento de operações, documentos e pendências, sem promessas de automações ainda não implementadas.
+
 Os provedores sociais aparecem lado a lado com o estado “Em configuração” enquanto indisponíveis. O acesso principal por e-mail recebe destaque. O layout não altera autenticação, autorização nem o estado dos provedores. Os estilos de entrada são locais ao componente, incluindo foco de teclado, contraste e adaptação à largura da tela.
+
+## Base visual e evolução dos componentes
+
+O frontend atual usa React 18, TypeScript e Vite. O Tailwind CSS 3.4 é compilado localmente com PostCSS no build e entregue como CSS do próprio portal; o script CDN foi removido. Mantém-se a versão principal compatível com as classes existentes. As versões exatas estão em `frontend/package.json` e `package-lock.json`.
+
+A evolução recomendada é centralizar componentes e tokens da marca com Tailwind e shadcn/ui, escolhendo os componentes acessíveis necessários e padronizando os ícones com Lucide. shadcn/ui, Radix UI e Lucide ainda não estão instalados. A adoção deve incluir revisão de foco, teclado, contraste, responsividade e paridade do comportamento, além de avaliação da versão do Tailwind exigida pelos componentes escolhidos.
+
+Next.js não é requisito para essa evolução visual: shadcn/ui também suporta Vite. Uma migração de framework deve responder a uma necessidade de aplicação, como renderização no servidor, e ser planejada separadamente. Motion pode ser avaliado quando houver interações que justifiquem animação, respeitando movimento reduzido. React Flow destina-se a interfaces de nós e conexões e não faz parte do escopo fiscal atual. Essas bibliotecas não são dependências desta entrega.
+
+Referências oficiais: [Tailwind com Vite](https://v3.tailwindcss.com/docs/guides/vite), [shadcn/ui com Vite](https://ui.shadcn.com/docs/installation/vite), [Next.js e renderização](https://nextjs.org/docs/app/getting-started/server-and-client-components) e [React Flow](https://reactflow.dev/).
 
 ## Proteção da identidade
 
