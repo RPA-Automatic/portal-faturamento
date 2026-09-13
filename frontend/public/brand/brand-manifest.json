@@ -1,0 +1,20 @@
+{
+  "brand": "RPA Automatic",
+  "version": "2026-09-13",
+  "background": "#FFFFFF",
+  "roles": {
+    "top": {
+      "file": "rpa-automatic-primary.png",
+      "sha256": "cc0b2b17384f37b85cef3830ab1225c43a7dc232628fed832ffab1dcb532918f"
+    },
+    "assistant": {
+      "file": "rpa-automatic-icon.png",
+      "sha256": "02936916ac007153003d9c6a9ebc8616e8f595d00a6551c4ef338a3d023ff0b6"
+    },
+    "footer": {
+      "file": "rpa-automatic-horizontal.png",
+      "sha256": "694aacadd7eae89a7bfcaef1f4d9a82ab42fc0e71cb62d29d69393489165a891"
+    }
+  },
+  "copyright": "RPA Automatic. Todos os direitos reservados."
+}

@@ -19,3 +19,7 @@ Trabalhe em português do Brasil. Leia `docs/README.md` antes de alterar produto
 ## Conclusão
 
 Informe arquivos alterados, validações executadas, impacto em dados/permissões e riscos remanescentes. Não afirme alteração em Supabase, Netlify ou GitHub remoto sem evidência.
+
+## Identidade RPA Automatic
+
+Use os três assets aprovados sem redesenhar: `rpa-automatic-primary.png` no topo, `rpa-automatic-icon.png` no chat/assistência/monitoramento existente e `rpa-automatic-horizontal.png` no rodapé, com “© ANO RPA Automatic. Todos os direitos reservados.”. Preserve fundo branco e proporções. O manifesto da marca acompanha os assets; nunca substitua por imagens de clientes.

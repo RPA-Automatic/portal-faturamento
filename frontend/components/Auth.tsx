@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { BrandFooter } from './Brand';
 import { authConfigurationMessage, authErrorMessage, enabledOAuthProviders, isSupabaseConfigured, SocialProvider, supabase } from '../lib/supabase';
 
 interface AuthProps { onAuthSuccess: (user: any) => void; initialError?: string | null; }
@@ -91,7 +92,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
           </div>
         </section>
       </div>
-      <footer className="mt-7 text-xs text-slate-500 text-center">© {new Date().getFullYear()} RPA Automatic · Portal de Faturamento</footer>
+      <div className="w-full max-w-5xl mt-7"><BrandFooter/></div>
     </main>
   );
 };

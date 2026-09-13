@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { OperationDetail } from './components/OperationDetail';
+import { BrandFooter, MonitoringIcon } from './components/Brand';
 import { Auth } from './components/Auth';
 import { authErrorMessage, initializeAuth, supabase } from './lib/supabase';
 
@@ -217,10 +218,13 @@ const App: React.FC = () => {
     <main className="min-h-screen bg-slate-100 text-slate-900">
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <img src="/brand/rpa-automatic-horizontal.png" alt="RPA Automatic" width="1536" height="512" className="w-48 sm:w-56 h-auto mb-2" />
-            <p className="text-xs font-bold uppercase tracking-wide text-[#1254BC]">Portal de Faturamento</p>
-            <h1 className="text-2xl font-bold text-slate-950">Farol de Liberacao de Embarque</h1>
+          <div className="flex items-center gap-4">
+            <img src="/brand/rpa-automatic-primary.png" alt="RPA Automatic" width="1254" height="1254" className="w-24 sm:w-32 h-auto shrink-0" />
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-[#1254BC]">Portal de Faturamento</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-950">Farol de Liberação de Embarque</h1>
+              <span className="mt-2 flex items-center gap-2 text-xs text-slate-600"><MonitoringIcon/>Monitoramento de operações</span>
+            </div>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -441,6 +445,7 @@ const App: React.FC = () => {
         </div>
       </section>
     {selectedOperation && <OperationDetail id={selectedOperation.id} number={selectedOperation.oper_b2b} onClose={() => setSelectedOperation(null)} />}
+      <BrandFooter/>
     </main>
   );
 };

@@ -16,9 +16,9 @@ Os arquivos estão em `frontend/public/brand/`, servidos pelo próprio portal. [
 
 | Recurso | Arquivo | Aplicação |
 |---|---|---|
-| Marca principal | `rpa-automatic-primary.png` | Login, apresentações e materiais institucionais |
-| Marca horizontal | `rpa-automatic-horizontal.png` | Cabeçalho do portal e espaços horizontais |
-| Ícone compacto | `rpa-automatic-icon.png` | Favicon e atalho de dispositivos |
+| Marca principal | `rpa-automatic-primary.png` | Topo do portal e do login |
+| Marca horizontal | `rpa-automatic-horizontal.png` | Rodapé com direitos reservados |
+| Ícone compacto | `rpa-automatic-icon.png` | Chat/assistência/monitoramento, favicon e atalhos |
 
 O ícone compacto usa o robô sem o texto e as órbitas, para preservar a leitura em tamanhos pequenos. As versões PNG são imagens raster; não devem ser apresentadas como arquivos vetoriais. Os originais de geração são preservados fora do build; os arquivos aplicados ficam versionados no repositório.
 
@@ -36,3 +36,7 @@ Usar os arquivos sem distorção, preservar proporções e margens e não aplica
 Não publicar nomes, logos, fotografias, domínios, contatos ou dados de empresas clientes e de projetos usados somente como contexto. A regra inclui telas, metadados, favicon, exemplos, mensagens e material promocional. O acervo privado permanece fora do build e das projeções de wiki.
 
 Esta versão substitui a apresentação tipográfica provisória. Propostas anteriores rejeitadas não compõem os recursos publicados.
+
+## Padrão para todos os produtos
+
+A ordem de uso é fixa: marca completa no topo, robô nos recursos de assistência e monitoramento e marca horizontal no rodapé. O rodapé exibe “© ANO RPA Automatic. Todos os direitos reservados.”, com ano corrente. Cada aplicação serve cópias locais dos mesmos arquivos; `brand-manifest.json` registra papéis e hashes. Não criar variações por produto. O ícone não significa que um chat ou uma integração de IA esteja implementado. No portal fiscal, identifica o monitoramento existente do Farol.

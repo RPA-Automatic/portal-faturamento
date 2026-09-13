@@ -1,9 +1,9 @@
-# RPA Automatic — recursos de marca
+# RPA Automatic — padrão de marca
 
-Versão azul/ciano, com fundo branco, baseada no desenho escolhido pelo responsável.
+- **Topo:** `rpa-automatic-primary.png` — marca completa.
+- **Chat inteligente, assistência e monitoramento:** `rpa-automatic-icon.png` — robô.
+- **Rodapé:** `rpa-automatic-horizontal.png` — marca horizontal, acompanhada de “© ANO RPA Automatic. Todos os direitos reservados.”
 
-- [Logo principal](rpa-automatic-primary.png): símbolo completo e nome abaixo.
-- [Logo horizontal](rpa-automatic-horizontal.png): símbolo à esquerda e nome à direita.
-- [Ícone](rpa-automatic-icon.png): robô compacto para favicon e atalhos.
+Preserve proporções, cores e fundo branco. Use o ano corrente no rodapé. O ícone identifica assistência e monitoramento onde esses recursos existem; não implica uma integração de IA ativa.
 
-Use sempre a proporção original. Os arquivos são PNG, não vetores. Para fundos escuros, mantenha uma área branca de suporte. As regras de identidade estão em `docs/product/brand.md` no repositório.
+O `brand-manifest.json` registra os papéis e hashes dos três arquivos aprovados. Reutilize estes mesmos arquivos em novos projetos, sem gerar variações por produto. Arquivos PNG, não vetores.
