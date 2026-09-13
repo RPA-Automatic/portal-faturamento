@@ -1,0 +1,220 @@
+{
+  "boards": [
+    {
+      "name": "Stories",
+      "columns": [
+        {
+          "name": "A fazer",
+          "states": {
+            "User Story": "New",
+            "Bug": "New"
+          }
+        },
+        {
+          "name": "Em andamento",
+          "states": {
+            "User Story": "Active",
+            "Bug": "Active"
+          }
+        },
+        {
+          "name": "Em validação",
+          "states": {
+            "User Story": "Resolved",
+            "Bug": "Resolved"
+          }
+        },
+        {
+          "name": "Concluído",
+          "states": {
+            "User Story": "Closed",
+            "Bug": "Closed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Features",
+      "columns": [
+        {
+          "name": "A fazer",
+          "states": {
+            "Feature": "New"
+          }
+        },
+        {
+          "name": "Em andamento",
+          "states": {
+            "Feature": "Active"
+          }
+        },
+        {
+          "name": "Em validação",
+          "states": {
+            "Feature": "Resolved"
+          }
+        },
+        {
+          "name": "Concluído",
+          "states": {
+            "Feature": "Closed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Epics",
+      "columns": [
+        {
+          "name": "A fazer",
+          "states": {
+            "Epic": "New"
+          }
+        },
+        {
+          "name": "Em andamento",
+          "states": {
+            "Epic": "Active"
+          }
+        },
+        {
+          "name": "Em validação",
+          "states": {
+            "Epic": "Resolved"
+          }
+        },
+        {
+          "name": "Concluído",
+          "states": {
+            "Epic": "Closed"
+          }
+        }
+      ]
+    }
+  ],
+  "backlogVisibilities": {
+    "Microsoft.FeatureCategory": true,
+    "Microsoft.EpicCategory": true,
+    "Microsoft.RequirementCategory": true
+  },
+  "bugsBehavior": "asRequirements",
+  "queries": [
+    {
+      "product": "portal-faturamento",
+      "name": "00 - Backlog completo",
+      "id": "d8b71d2e-7433-49f0-b360-80aae00e25ef",
+      "count": 66,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/d8b71d2e-7433-49f0-b360-80aae00e25ef"
+    },
+    {
+      "product": "portal-faturamento",
+      "name": "Features",
+      "id": "c8ef8f03-ca94-482e-8c1c-5c63255d179e",
+      "count": 5,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/c8ef8f03-ca94-482e-8c1c-5c63255d179e"
+    },
+    {
+      "product": "portal-faturamento",
+      "name": "User Stories",
+      "id": "f6a48a8f-9245-4eb7-a052-5c563e8cda8d",
+      "count": 12,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/f6a48a8f-9245-4eb7-a052-5c563e8cda8d"
+    },
+    {
+      "product": "portal-faturamento",
+      "name": "Tasks",
+      "id": "9a0af423-73fb-496f-b220-6206c0dc9f93",
+      "count": 48,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/9a0af423-73fb-496f-b220-6206c0dc9f93"
+    },
+    {
+      "product": "portal-faturamento",
+      "name": "Issues - impedimentos",
+      "id": "cf2778ab-265e-4513-80a3-1eababbd03d8",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/cf2778ab-265e-4513-80a3-1eababbd03d8"
+    },
+    {
+      "product": "portal-faturamento",
+      "name": "Bugs - defeitos",
+      "id": "c96b1547-b36b-495b-8903-6d45d645a97a",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/c96b1547-b36b-495b-8903-6d45d645a97a"
+    },
+    {
+      "product": "solution-design-architecture-agent",
+      "name": "Features",
+      "id": "51bfebcd-eca9-46a0-8b40-93bb8ce7f4cc",
+      "count": 3,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/51bfebcd-eca9-46a0-8b40-93bb8ce7f4cc"
+    },
+    {
+      "product": "solution-design-architecture-agent",
+      "name": "User Stories",
+      "id": "335f611b-3f35-40d3-9196-2a77fcc87cf9",
+      "count": 6,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/335f611b-3f35-40d3-9196-2a77fcc87cf9"
+    },
+    {
+      "product": "solution-design-architecture-agent",
+      "name": "Tasks",
+      "id": "7a1259e7-7f2c-4887-a79e-1477d0bef914",
+      "count": 18,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/7a1259e7-7f2c-4887-a79e-1477d0bef914"
+    },
+    {
+      "product": "solution-design-architecture-agent",
+      "name": "Issues - impedimentos",
+      "id": "20655c1f-84ca-42ca-acd0-100af4c2049c",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/20655c1f-84ca-42ca-acd0-100af4c2049c"
+    },
+    {
+      "product": "solution-design-architecture-agent",
+      "name": "Bugs - defeitos",
+      "id": "2e8de321-946b-4230-b566-954b2d8d1091",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/2e8de321-946b-4230-b566-954b2d8d1091"
+    },
+    {
+      "product": "portal-orchestrator-ai",
+      "name": "Features",
+      "id": "8e1442d4-3972-408f-a326-74137bcd0ff5",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/8e1442d4-3972-408f-a326-74137bcd0ff5"
+    },
+    {
+      "product": "portal-orchestrator-ai",
+      "name": "User Stories",
+      "id": "2ae77ae4-b7c5-4025-9f02-fc9f763a276c",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/2ae77ae4-b7c5-4025-9f02-fc9f763a276c"
+    },
+    {
+      "product": "portal-orchestrator-ai",
+      "name": "Tasks",
+      "id": "0f6745b7-5f51-4366-a832-8da1616eae0f",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/0f6745b7-5f51-4366-a832-8da1616eae0f"
+    },
+    {
+      "product": "portal-orchestrator-ai",
+      "name": "Issues - impedimentos",
+      "id": "83ab0439-27ac-452c-b95f-164f15d43ecf",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/83ab0439-27ac-452c-b95f-164f15d43ecf"
+    },
+    {
+      "product": "portal-orchestrator-ai",
+      "name": "Bugs - defeitos",
+      "id": "7bb0d03b-d269-42db-a085-972edadba21e",
+      "count": 0,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/7bb0d03b-d269-42db-a085-972edadba21e"
+    }
+  ],
+  "taskboard": {
+    "columns": [],
+    "isCustomized": false,
+    "isValid": true
+  }
+}

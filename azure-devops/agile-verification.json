@@ -1,0 +1,137 @@
+{
+  "existing_cards_preserved": 87,
+  "counts": {
+    "Epic": 3,
+    "User Story": 18,
+    "Task": 66,
+    "Feature": 8
+  },
+  "states": {
+    "Active": 2,
+    "New": 93
+  },
+  "preserved": [
+    "IDs",
+    "titles",
+    "owners",
+    "descriptions before checklist append",
+    "iterations",
+    "areas",
+    "non-hierarchy links",
+    "task parents"
+  ],
+  "features": [
+    {
+      "key": "PF-C01",
+      "id": 88,
+      "stories": [
+        27,
+        32,
+        37
+      ]
+    },
+    {
+      "key": "PF-C02",
+      "id": 89,
+      "stories": [
+        42,
+        47,
+        52
+      ]
+    },
+    {
+      "key": "PF-C03",
+      "id": 90,
+      "stories": [
+        57,
+        62
+      ]
+    },
+    {
+      "key": "PF-C04",
+      "id": 91,
+      "stories": [
+        67,
+        72
+      ]
+    },
+    {
+      "key": "PF-C05",
+      "id": 92,
+      "stories": [
+        77,
+        82
+      ]
+    },
+    {
+      "key": "SDA-C01",
+      "id": 93,
+      "stories": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "SDA-C02",
+      "id": 94,
+      "stories": [
+        10,
+        14
+      ]
+    },
+    {
+      "key": "SDA-C03",
+      "id": 95,
+      "stories": [
+        18,
+        22
+      ]
+    }
+  ],
+  "task_checklists": 48,
+  "sprints": [
+    {
+      "name": "01 - Sprint 1",
+      "counts": {
+        "User Story": 3,
+        "Task": 12
+      }
+    },
+    {
+      "name": "02 - Sprint 2",
+      "counts": {
+        "User Story": 3,
+        "Task": 12
+      }
+    },
+    {
+      "name": "03 - Sprint 3",
+      "counts": {
+        "User Story": 3,
+        "Task": 12
+      }
+    },
+    {
+      "name": "04 - Sprint 4",
+      "counts": {
+        "User Story": 3,
+        "Task": 12
+      }
+    }
+  ],
+  "original_description_prefixes_preserved": true,
+  "wiki_pages": 40,
+  "wiki_product_roots": [
+    "/portal-faturamento",
+    "/portal-orchestrator-ai",
+    "/solution-design-architecture-agent"
+  ],
+  "fiscal_wiki_pages": 14,
+  "validation": {
+    "portal_devops_tests": 12,
+    "sda_tests_passed": 13,
+    "sda_tests_skipped": 7,
+    "local_links": "passed",
+    "git_diff_check": "passed"
+  }
+}

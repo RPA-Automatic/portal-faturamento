@@ -1,0 +1,11 @@
+flowchart LR
+    E[ES4004] --> Stage[Staging idempotente]
+    C[GG4164 e GG2037] --> Stage
+    L[GPLP40180] --> Stage
+    F[Documentos fiscais] --> Stage
+    Stage --> Normalize[Normalizar chaves canônicas]
+    Normalize --> Validate[Motor de validações]
+    Validate --> Ops[(Operações e contratos)]
+    Validate --> Pending[(Pendências e evidências)]
+    Ops --> Farol[Farol E1–E6]
+    Pending --> Farol

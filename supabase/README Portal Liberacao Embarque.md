@@ -36,16 +36,17 @@ O portal deve responder rapidamente:
 
 ## Documentação
 
-- [Visão do Produto](docs/product-brief.md)
-- [Arquitetura](docs/architecture.md)
-- [Fluxo Operacional](docs/operational-workflow.md)
-- [Modelo de Domínio](docs/domain-model.md)
-- [Fontes de Dados TOTVS](docs/data-sources.md)
-- [Supabase](docs/supabase.md)
-- [Desenvolvimento Local](docs/development.md)
-- [Roadmap](docs/roadmap.md)
-- [Prompt Base do Produto](docs/product-prompt.md)
-- [Banco de Dados Supabase](docs/database.md)
+- [Índice documental](../docs/README.md)
+- [Visão do Produto](../docs/product/vision.md)
+- [Arquitetura](../docs/architecture/overview.md)
+- [Fluxo Operacional](../docs/product/operational-workflow.md)
+- [Modelo de Domínio](../docs/architecture/domain-model.md)
+- [Fontes de Dados TOTVS](../docs/integrations/totvs-data-sources.md)
+- [Supabase](../docs/data/supabase.md)
+- [Desenvolvimento Local](../docs/operations/development.md)
+- [Roadmap](../docs/product/roadmap.md)
+- [Prompt Base do Produto](../docs/reference/product-prompt.md)
+- [Banco de Dados Supabase](../docs/data/database.md)
 
 ## Branch de Desenvolvimento
 

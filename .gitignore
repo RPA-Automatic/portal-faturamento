@@ -48,8 +48,10 @@ data/private/
 *.local.json
 
 # Real operational source documents must stay outside Git
+docs/docs_antigos/
 docs/**/*.xlsx
 docs/**/*.xls
 docs/**/*.xlsm
 docs/**/*.docx
 docs/**/*.pdf
+docs/**/*.zip

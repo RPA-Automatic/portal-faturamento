@@ -1,0 +1,7 @@
+flowchart LR
+    User[Áreas operacionais] --> Portal[Portal Faturamento]
+    Portal --> Supabase[Supabase Auth e PostgreSQL]
+    Reports[Relatórios TOTVS/Datasul] --> Ingestion[Ingestão controlada]
+    Ingestion --> Supabase
+    Supabase --> Farol[Farol, pendências e auditoria]
+    User --> Farol

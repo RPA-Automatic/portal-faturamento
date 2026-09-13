@@ -1,0 +1,9 @@
+flowchart TB
+    Browser[Navegador] --> SPA[React + Vite]
+    SPA --> Auth[Supabase Auth]
+    SPA --> API[Supabase Data API]
+    API --> DB[(PostgreSQL + RLS)]
+    Import[Scripts de ingestão] --> Staging[(Tabelas staging)]
+    Staging --> Rules[Normalização e regras]
+    Rules --> DB
+    Netlify[Netlify] --> SPA

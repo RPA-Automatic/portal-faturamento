@@ -15,9 +15,11 @@ $supabaseDir = Join-Path $repoRoot 'supabase'
 $sourceConfig = Join-Path $supabaseDir "config.$Environment.toml"
 $targetConfig = Join-Path $supabaseDir 'config.toml'
 
-$projectRefs = @{
-  dev = 'lvsocwetuhhqxlwyfdrw'
-  prod = 'eukazzizamxratkavcap'
+$projectRefs = Get-Content (Join-Path $supabaseDir 'targets.json') -Raw | ConvertFrom-Json
+$projectRef = $projectRefs.$Environment
+
+if ($Link -and [string]::IsNullOrWhiteSpace($projectRef)) {
+  throw 'DEV fiscal ainda não provisionado. Registre a referência em supabase/targets.json antes de vincular.'
 }
 
 if ($Environment -eq 'prod' -and -not $ConfirmProduction) {
@@ -29,12 +31,13 @@ if (-not (Test-Path $sourceConfig)) {
 }
 
 Copy-Item $sourceConfig $targetConfig -Force
-Write-Host "Supabase config.toml atualizado para $Environment ($($projectRefs[$Environment]))."
+Write-Host "Supabase config.toml atualizado para $Environment. Referência remota: $projectRef"
 
 if ($Link) {
   Push-Location $repoRoot
   try {
-    supabase link --project-ref $projectRefs[$Environment]
+    supabase link --project-ref $projectRef
+    if ($LASTEXITCODE -ne 0) { throw 'Falha ao vincular o projeto Supabase.' }
   }
   finally {
     Pop-Location

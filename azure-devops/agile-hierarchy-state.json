@@ -1,0 +1,508 @@
+{
+  "mode": "apply",
+  "cards": [
+    {
+      "id": 1,
+      "type": "Epic",
+      "action": "convert"
+    },
+    {
+      "id": 2,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 3,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 4,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 5,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 6,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 7,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 8,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 9,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 10,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 11,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 12,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 13,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 14,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 15,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 16,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 17,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 18,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 19,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 20,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 21,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 22,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 23,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 24,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 25,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 26,
+      "type": "Epic",
+      "action": "convert"
+    },
+    {
+      "id": 27,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 28,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 29,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 30,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 31,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 32,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 33,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 34,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 35,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 36,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 37,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 38,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 39,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 40,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 41,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 42,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 43,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 44,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 45,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 46,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 47,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 48,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 49,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 50,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 51,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 52,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 53,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 54,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 55,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 56,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 57,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 58,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 59,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 60,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 61,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 62,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 63,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 64,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 65,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 66,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 67,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 68,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 69,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 70,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 71,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 72,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 73,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 74,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 75,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 76,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 77,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 78,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 79,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 80,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 81,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 82,
+      "type": "User Story",
+      "action": "convert"
+    },
+    {
+      "id": 83,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 84,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 85,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 86,
+      "type": "Task",
+      "action": "convert"
+    },
+    {
+      "id": 87,
+      "type": "Epic",
+      "action": "convert"
+    }
+  ],
+  "features": [
+    {
+      "key": "PF-C01",
+      "id": 88,
+      "stories": [
+        27,
+        32,
+        37
+      ]
+    },
+    {
+      "key": "PF-C02",
+      "id": 89,
+      "stories": [
+        42,
+        47,
+        52
+      ]
+    },
+    {
+      "key": "PF-C03",
+      "id": 90,
+      "stories": [
+        57,
+        62
+      ]
+    },
+    {
+      "key": "PF-C04",
+      "id": 91,
+      "stories": [
+        67,
+        72
+      ]
+    },
+    {
+      "key": "PF-C05",
+      "id": 92,
+      "stories": [
+        77,
+        82
+      ]
+    },
+    {
+      "key": "SDA-C01",
+      "id": 93,
+      "stories": [
+        2,
+        6
+      ]
+    },
+    {
+      "key": "SDA-C02",
+      "id": 94,
+      "stories": [
+        10,
+        14
+      ]
+    },
+    {
+      "key": "SDA-C03",
+      "id": 95,
+      "stories": [
+        18,
+        22
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-project_id = "lvsocwetuhhqxlwyfdrw"
+# Identificador local do CLI; a referência remota DEV será registrada em targets.json.
+project_id = "portal-faturamento-dev"
 
 [api]
 enabled = true

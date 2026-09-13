@@ -13,6 +13,7 @@ import zipfile
 from pathlib import Path
 from typing import Any
 from xml.etree import ElementTree as ET
+from supabase_target import validate_target
 
 
 NS = {
@@ -39,16 +40,22 @@ REPORTS: dict[str, dict[str, Any]] = {
         "sheet": "GG4164",
         "header_row": 2,
         "table": "stg_gg4164_purchase_contracts",
-        "targets": [
-            "codigo", "fornecedor", "cpf_cnpj", "inscr_estad", "endereco", "cidade", "est", "comprador",
-            "contrato", "descricao", "porto", None, "item", "desc_item", "dt_inclusao", "pz_ini_entr",
-            "pz_fim_ent", "dt_ult_ent", "pendencia_juridica", "tipo", None, "moeda", "preco_fixado",
-            None, None, None, "qtd_orig_contrato", None, "qtd_cancelada", "qtd_contrato", "un", None,
-            "qtd_recebida", None, None, None, "qtd_a_entregar", None, None, None, None, None, None, None,
-            None, None, None, "modalidade", "safra", "regiao", None, None, "frete", "uf", None,
-            "referencia", "operacao", "tipo_de_compra", None, "situacao", None, None, None, "status",
-            "tipo_status", None, None, "contrato_assinado", "fim_exportacao",
-        ],
+        "header_targets": {
+            "Codigo": "codigo", "Fornecedor": "fornecedor", "CPF/CNPJ": "cpf_cnpj",
+            "Inscr.Estad": "inscr_estad", "Endereço": "endereco", "Cidade": "cidade",
+            "Est": "est", "Comprador": "comprador", "Contrato": "contrato",
+            "Descrição": "descricao", "Porto": "porto", "Item": "item", "Desc Item": "desc_item",
+            "Dt Inclusão": "dt_inclusao", "Pz Ini Entr": "pz_ini_entr", "Pz Fim Ent": "pz_fim_ent",
+            "Dt Ult Ent": "dt_ult_ent", "Pendência Jurídica": "pendencia_juridica", "Tipo": "tipo",
+            "Moeda": "moeda", "Preço Fixado": "preco_fixado", "Qtd Orig Contrato": "qtd_orig_contrato",
+            "Qtd Cancelada": "qtd_cancelada", "Qtd Contrato": "qtd_contrato", "UN": "un",
+            "Qtd Recebida": "qtd_recebida", "Qtd A Entregar": "qtd_a_entregar",
+            "Modalidade": "modalidade", "Safra": "safra", "Região": "regiao", "Frete": "frete",
+            "UF": "uf", "Referência": "referencia", "Operação": "operacao",
+            "Tipo de Compra": "tipo_de_compra", "Situação": "situacao", "Status": "status",
+            "Tipo Status": "tipo_status", "Contrato Assinado?": "contrato_assinado",
+            "Fim Exportação?": "fim_exportacao",
+        },
     },
     "gg2037-03660.xlsx": {
         "source_name": "GG2037",
@@ -215,7 +222,7 @@ def unique_headers(values: list[str]) -> list[str]:
     return headers
 
 
-def read_rows(path: Path, sheet_name: str, header_row: int) -> list[tuple[int, dict[str, str], list[str]]]:
+def read_rows(path: Path, sheet_name: str, header_row: int, expected_headers: dict[str, str] | None = None) -> list[tuple[int, dict[str, str], list[str]]]:
     with zipfile.ZipFile(path) as workbook:
         shared_strings = load_shared_strings(workbook)
         paths = sheet_paths(workbook)
@@ -232,6 +239,10 @@ def read_rows(path: Path, sheet_name: str, header_row: int) -> list[tuple[int, d
         header_values = raw_rows.get(header_row, {})
         max_column = max(header_values.keys(), default=0)
         headers = unique_headers([header_values.get(index, "") for index in range(1, max_column + 1)])
+        if expected_headers:
+            missing = set(expected_headers) - set(headers)
+            if missing:
+                raise ValueError("Layout de compra incompatível. Cabeçalhos ausentes: " + ", ".join(sorted(missing)))
 
         rows: list[tuple[int, dict[str, str], list[str]]] = []
         for row_number in sorted(raw_rows):
@@ -290,19 +301,24 @@ class SupabaseRest:
 
 
 def build_staging_rows(file_path: Path, config: dict[str, Any], import_run_id: str) -> list[dict[str, Any]]:
-    target_columns = [target for target in config["targets"] if target]
+    header_targets = config.get("header_targets")
+    target_columns = list(header_targets.values()) if header_targets else [target for target in config["targets"] if target]
     rows = []
-    for row_number, raw_data, row_values in read_rows(file_path, config["sheet"], config["header_row"]):
+    for row_number, raw_data, row_values in read_rows(file_path, config["sheet"], config["header_row"], header_targets):
         record: dict[str, Any] = {
             "import_run_id": import_run_id,
             "row_number": row_number,
             "raw_data": raw_data,
             **{target: None for target in target_columns},
         }
-        for index, target in enumerate(config["targets"]):
-            if not target or index >= len(row_values):
-                continue
-            record[target] = coerce(target, row_values[index])
+        if header_targets:
+            for header, target in header_targets.items():
+                record[target] = coerce(target, raw_data[header])
+        else:
+            for index, target in enumerate(config["targets"]):
+                if not target or index >= len(row_values):
+                    continue
+                record[target] = coerce(target, row_values[index])
         rows.append(record)
     return rows
 
@@ -313,7 +329,8 @@ def chunks(rows: list[dict[str, Any]], size: int) -> list[list[dict[str, Any]]]:
 
 def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, Any], dry_run: bool, force: bool) -> dict[str, Any]:
     file_hash = sha256_file(file_path)
-    preview_rows = read_rows(file_path, config["sheet"], config["header_row"])
+    # Validate the complete mapping before any remote insert, including in dry-run.
+    preview_rows = build_staging_rows(file_path, config, "dry-run")
     rows_total = len(preview_rows)
 
     if dry_run:
@@ -373,6 +390,8 @@ def main() -> None:
     parser.add_argument("--only", nargs="*", choices=sorted(REPORTS), help="Specific report files to import")
     parser.add_argument("--dry-run", action="store_true", help="Parse files without sending data to Supabase")
     parser.add_argument("--force", action="store_true", help="Import even if a previous succeeded import_run exists")
+    parser.add_argument("--environment", choices=("dev", "prod"), default="dev")
+    parser.add_argument("--confirm-production", action="store_true")
     args = parser.parse_args()
 
     selected_files = args.only or list(REPORTS)
@@ -382,6 +401,7 @@ def main() -> None:
         service_role_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
         if not supabase_url or not service_role_key:
             raise SystemExit("Defina SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no ambiente local para importar.")
+        supabase_url = validate_target(supabase_url, args.environment, args.confirm_production)
         client = SupabaseRest(supabase_url, service_role_key)
 
     results = []

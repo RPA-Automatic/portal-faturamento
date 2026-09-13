@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { OperationDetail } from './components/OperationDetail';
 import { Auth } from './components/Auth';
 import { supabase } from './lib/supabase';
 
@@ -88,6 +89,7 @@ const displayUserName = (session: SessionLike | null) => {
 };
 
 const App: React.FC = () => {
+  const [selectedOperation, setSelectedOperation] = useState<OperationFarol | null>(null);
   const [session, setSession] = useState<SessionLike | null>(null);
   const [loadingAuth, setLoadingAuth] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
@@ -232,6 +234,7 @@ const App: React.FC = () => {
     setSession(null);
     setOperations([]);
     setBacklog([]);
+    setSelectedOperation(null);
   };
 
   if (loadingAuth) {
@@ -350,7 +353,7 @@ const App: React.FC = () => {
                         <article key={operation.id} className="rounded-md border border-slate-200 bg-white p-3 shadow-sm">
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <div className="font-bold text-slate-950">OP {operation.oper_b2b}</div>
+                              <button className="font-bold text-emerald-800 underline underline-offset-2" onClick={() => setSelectedOperation(operation)}>OP {operation.oper_b2b}</button>
                               <div className="mt-1 text-xs text-slate-500 line-clamp-2">{operation.description || operation.finalidade || '-'}</div>
                             </div>
                             <span className={`shrink-0 border rounded-full px-2 py-0.5 text-[11px] font-bold ${semaphoreStyle[operation.semaphore]}`}>
@@ -407,7 +410,7 @@ const App: React.FC = () => {
                   {filteredOperations.map((operation) => (
                     <tr key={operation.id} className="hover:bg-slate-50">
                       <Td>
-                        <div className="font-bold text-slate-950">{operation.oper_b2b}</div>
+                        <button className="font-bold text-emerald-800 underline underline-offset-2" onClick={() => setSelectedOperation(operation)}>{operation.oper_b2b}</button>
                         <div className="text-xs text-slate-500 max-w-[260px] truncate">{operation.description || '-'}</div>
                       </Td>
                       <Td>
@@ -472,6 +475,7 @@ const App: React.FC = () => {
           </aside>
         </div>
       </section>
+    {selectedOperation && <OperationDetail id={selectedOperation.id} number={selectedOperation.oper_b2b} onClose={() => setSelectedOperation(null)} />}
     </main>
   );
 };

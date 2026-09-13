@@ -1,0 +1,19 @@
+erDiagram
+  operations ||--o{ operation_contract_links : vincula
+  contracts ||--o{ operation_contract_links : participa
+  partners ||--o{ contracts : contrata
+  operations ||--o{ operation_locations : localiza
+  operations ||--o{ logistics_orders : movimenta
+  operations ||--o{ fiscal_documents : fatura
+  operations ||--o{ documents : documenta
+  documents ||--o{ document_versions : versiona
+  document_versions ||--o{ document_reviews : revisa
+  operations ||--o{ pending_items : acompanha
+  operations ||--o{ evidence : comprova
+  rules ||--o{ rule_versions : versiona
+  rule_versions ||--o{ rule_evaluations : avalia
+  operations ||--o{ rule_evaluations : verifica
+  operations ||--o{ operation_stage_assessments : consolida
+  operations ||--o{ operation_milestones : decide
+  operations ||--o{ exception_approvals : excepcionaliza
+  import_runs ||--o{ reconciliation_items : reconcilia

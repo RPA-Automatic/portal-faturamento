@@ -9,6 +9,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Any
+from supabase_target import validate_target
 
 
 class SupabaseRest:
@@ -68,6 +69,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Register OP document hashes into Supabase documents table.")
     parser.add_argument("inventory", type=Path, help="documents-inventory.json path")
     parser.add_argument("--dry-run", action="store_true", help="Show rows without sending data")
+    parser.add_argument("--environment", choices=("dev", "prod"), default="dev")
+    parser.add_argument("--confirm-production", action="store_true")
     args = parser.parse_args()
 
     inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
@@ -82,6 +85,7 @@ def main() -> None:
     if not supabase_url or not service_role_key:
         raise SystemExit("Defina SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY no ambiente local para registrar documentos.")
 
+    supabase_url = validate_target(supabase_url, args.environment, args.confirm_production)
     client = SupabaseRest(supabase_url, service_role_key)
     new_rows = [row for row in rows if not client.get_by_signature(row["file_signature"])]
     if new_rows:

@@ -1,6 +1,6 @@
 # Portal de Faturamento e Liberacao de Embarque
 
-Portal operacional da Biond Agro para acompanhar OPs/Operacoes B2B, contratos de compra e venda, documentos fiscais, ordens logisticas, checklists por area e pendencias de faturamento em um fluxo sequencial E1..E6.
+Portal Faturamento Fiscal da RPA Automatic para acompanhar OPs/Operacoes B2B, contratos de compra e venda, documentos fiscais, ordens logisticas, checklists por area e pendencias de faturamento em um fluxo sequencial E1..E6.
 
 O projeto transforma relatorios TOTVS/Datasul e checklists operacionais em um Farol auditavel, com Kanban por etapa, pendencias por area, evidencias, historico e base para automacao de regras.
 
@@ -128,14 +128,15 @@ Principios adotados:
 
 Arquivos importantes:
 
-- [docs/product-brief.md](docs/product-brief.md): visao de produto.
-- [docs/architecture.md](docs/architecture.md): arquitetura geral.
-- [docs/domain-model.md](docs/domain-model.md): entidades e conceitos.
-- [docs/data-sources.md](docs/data-sources.md): fontes TOTVS/Datasul.
-- [docs/operational-workflow.md](docs/operational-workflow.md): fluxo E1..E6.
-- [docs/xlsx-ingestion-plan.md](docs/xlsx-ingestion-plan.md): plano de ingestao XLSX.
-- [docs/checklist-portal-template.md](docs/checklist-portal-template.md): template recomendado para checklist no portal.
-- [docs/security-lgpd-audit.md](docs/security-lgpd-audit.md): auditoria LGPD/RLS.
+- [docs/README.md](docs/README.md): índice e governança documental.
+- [docs/product/vision.md](docs/product/vision.md): visão de produto.
+- [docs/architecture/overview.md](docs/architecture/overview.md): arquitetura geral.
+- [docs/architecture/domain-model.md](docs/architecture/domain-model.md): entidades e conceitos.
+- [docs/integrations/totvs-data-sources.md](docs/integrations/totvs-data-sources.md): fontes TOTVS/Datasul.
+- [docs/product/operational-workflow.md](docs/product/operational-workflow.md): fluxo E1..E6.
+- [docs/data/xlsx-ingestion-plan.md](docs/data/xlsx-ingestion-plan.md): plano de ingestão XLSX.
+- [docs/product/checklist-portal-template.md](docs/product/checklist-portal-template.md): template recomendado para checklist.
+- [docs/security/security-lgpd-audit.md](docs/security/security-lgpd-audit.md): auditoria LGPD/RLS.
 - [supabase/migrations](supabase/migrations): migrations oficiais do backend.
 
 ## Frontend
@@ -248,7 +249,7 @@ Importar para Supabase DEV:
 
 ```powershell
 $env:SUPABASE_URL = "https://seu-projeto-dev.supabase.co"
-$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_sua_chave_server_side"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_EXEMPLO"
 c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/import_xlsx_to_supabase.py data/private/relatorios-xlsx
 ```
 
@@ -266,7 +267,7 @@ Registrar hashes/metadados no Supabase:
 
 ```powershell
 $env:SUPABASE_URL = "https://seu-projeto-dev.supabase.co"
-$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_sua_chave_server_side"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_EXEMPLO"
 c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/register_documents_to_supabase.py data/private/documents-inventory.json
 ```
 
@@ -324,4 +325,21 @@ Para atualizar o branch deploy, envie commits para `dev`.
 
 ## Licenca e Uso
 
-Repositorio publico para desenvolvimento do Portal de Faturamento Biond Agro. Dados reais de operacao, documentos fiscais, chaves e arquivos privados nao fazem parte do repositorio e devem permanecer em ambientes controlados.
+Repositorio publico para desenvolvimento do Portal Faturamento Fiscal da RPA Automatic. Dados reais de operacao, documentos fiscais, chaves e arquivos privados nao fazem parte do repositorio e devem permanecer em ambientes controlados.
+
+## Planejamento e documentação no Azure DevOps
+
+- [Épico #26 — Portal de Faturamento](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_workitems/edit/26)
+- [Wiki do produto](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento)
+- [Plano de quatro sprints](docs/product/delivery-plan.md)
+- [Publicação e governança DevOps](docs/operations/azure-devops.md)
+
+## Incremento do modelo fiscal — setembro de 2026
+
+Banco fiscal com nove migrations e 32 tabelas protegidas por RLS. A OP abre uma ficha de consulta com contratos, documentos/versões, verificações E1–E5, pendências, logística e histórico. Liberação e encerramento são decisões independentes.
+
+- [Modelo de dados e diagnóstico das migrations](docs/data/fiscal-schema.md)
+- [Comparação com soluções de mercado](docs/product/market-benchmark.md)
+- [Estratégia de banco remoto único e testes locais](docs/decisions/ADR-0002-banco-fiscal-unico.md)
+
+O banco está preparado, mas as cargas históricas ainda permanecem na origem. Homologação, automação das aprovações e implantação operacional completa continuam no backlog.

@@ -1,0 +1,386 @@
+{
+  "epic_id": 26,
+  "duration": "Duas semanas por sprint; oito semanas no total; data de início a definir",
+  "issues": [
+    {
+      "key": "PF-F01",
+      "sprint": 1,
+      "title": "Requisitos e critérios de liberação",
+      "depends_on": [],
+      "tasks": [
+        {
+          "key": "PF-F01-T01",
+          "title": "Consolidar escopo do MVP e atores por área",
+          "acceptance": "Relacionar Comercial, Fiscal, Contratos, Logística, Faturamento e Gestão; registrar escopo incluído/excluído e validar com o dono do produto."
+        },
+        {
+          "key": "PF-F01-T02",
+          "title": "Mapear cenários e regras a partir do acervo privado",
+          "acceptance": "Matriz RF-01 a RF-12 rastreada a referências neutras; contemplar múltiplos contratos, entregas parciais, cancelamento, exportação e exceções sem publicar dados reais."
+        },
+        {
+          "key": "PF-F01-T03",
+          "title": "Definir liberação, encerramento, responsabilidades e SLA",
+          "acceptance": "Registrar aprovação humana dos critérios de início/fim da OP, precedência OL/liberação, calendário D-2, matriz de responsabilidade e revalidação após correção documental."
+        },
+        {
+          "key": "PF-F01-T04",
+          "title": "Revisar jornada e aprovar critérios do MVP",
+          "acceptance": "Jornada Farol → detalhe OP → pendência → evidência validada com usuários; critérios de aceite por cenário registrados e decisões pendentes identificadas."
+        }
+      ],
+      "feature_key": "PF-C01"
+    },
+    {
+      "key": "PF-F02",
+      "sprint": 1,
+      "title": "Ambientes exclusivos e recuperação de dados",
+      "depends_on": [],
+      "tasks": [
+        {
+          "key": "PF-F02-T01",
+          "title": "Provisionar e registrar o DEV fiscal exclusivo",
+          "acceptance": "Destino DEV próprio registrado em supabase/targets.json; PROD permanece identificado separadamente; custos e permissões necessários tratados antes do provisionamento."
+        },
+        {
+          "key": "PF-F02-T02",
+          "title": "Revisar migrations, grants e RLS em DEV",
+          "acceptance": "As sete migrations existentes revisadas e aplicadas em DEV; acessos permitidos e negados testados por perfil, inclusive usuário externo; nenhuma alteração indevida em PROD."
+        },
+        {
+          "key": "PF-F02-T03",
+          "title": "Reprocessar cargas no destino fiscal e conferir vínculos",
+          "acceptance": "Backup e restauração verificados antes da transferência; mapeamento corrigido de compra usado; contagens, hashes, chaves e vínculos reconciliados; origem preservada até aceite."
+        },
+        {
+          "key": "PF-F02-T04",
+          "title": "Configurar autenticação e variáveis por ambiente",
+          "acceptance": "Login e logout dos fluxos aprovados funcionam em DEV; redirects e configuração pública apontam ao destino correto; segredos ausentes do bundle e Git."
+        }
+      ],
+      "feature_key": "PF-C01"
+    },
+    {
+      "key": "PF-F03",
+      "sprint": 1,
+      "title": "Base de desenvolvimento e qualidade",
+      "depends_on": [],
+      "tasks": [
+        {
+          "key": "PF-F03-T01",
+          "title": "Reconciliar branches e preparar dependências reproduzíveis",
+          "acceptance": "Divergência dev/main analisada; PR de reconciliação preserva alterações legítimas; lockfile e runtime definidos; atualizações de dependências validadas sem promoção prematura."
+        },
+        {
+          "key": "PF-F03-T02",
+          "title": "Implantar CI de frontend, importadores e documentação",
+          "acceptance": "PR executa typecheck, build, testes Python relevantes e verificação de links; pipeline bloqueia falha; execução remota comprovada, não apenas arquivo YAML criado."
+        },
+        {
+          "key": "PF-F03-T03",
+          "title": "Preparar fixtures sintéticas e ambiente de testes",
+          "acceptance": "Cenários verde, amarelo, vermelho, OP multicontrato, vínculo ambíguo e perfis distintos reproduzíveis; nenhum dado privado versionado."
+        },
+        {
+          "key": "PF-F03-T04",
+          "title": "Definir plano de testes e roteiro de homologação",
+          "acceptance": "Casos funcionais, permissões, importação repetida, falhas, acessibilidade e regressão mapeados aos requisitos; usuários homologadores e metas de volume/desempenho a confirmar."
+        }
+      ],
+      "feature_key": "PF-C01"
+    },
+    {
+      "key": "PF-F04",
+      "sprint": 2,
+      "title": "Farol operacional utilizável",
+      "depends_on": [
+        "PF-F01",
+        "PF-F02",
+        "PF-F03"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F04-T01",
+          "title": "Organizar frontend e navegação do domínio fiscal",
+          "acceptance": "Farol, detalhe e pendências navegáveis; componentes de outros domínios não aparecem nas jornadas; comportamento atual preservado."
+        },
+        {
+          "key": "PF-F04-T02",
+          "title": "Implementar filtros e prioridade operacional",
+          "acceptance": "Buscar OP, etapa, semáforo, unidade, área e prazo conforme dados homologados; filtros combinados e limpeza funcionam; não inferir datas ausentes."
+        },
+        {
+          "key": "PF-F04-T03",
+          "title": "Exibir atualização das fontes e motivos de bloqueio",
+          "acceptance": "OP informa fonte/data de atualização e bloqueios relevantes; ausência ou desatualização não aparece como verde automático."
+        },
+        {
+          "key": "PF-F04-T04",
+          "title": "Validar responsividade, acessibilidade e falhas do Farol",
+          "acceptance": "Uso por teclado, foco, contraste, carregamento, vazio, erro e tentativa novamente verificados; lista suporta paginação ou limite explícito sem ocultar OPs silenciosamente."
+        }
+      ],
+      "feature_key": "PF-C02"
+    },
+    {
+      "key": "PF-F05",
+      "sprint": 2,
+      "title": "Detalhe completo da operação",
+      "depends_on": [
+        "PF-F01",
+        "PF-F02",
+        "PF-F03"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F05-T01",
+          "title": "Implementar resumo da OP e contratos vinculados",
+          "acceptance": "Compra e venda separadas, múltiplos vínculos suportados; totais e chaves conferidos; OP inexistente ou sem acesso tratada."
+        },
+        {
+          "key": "PF-F05-T02",
+          "title": "Exibir logística, notas e instruções da OP",
+          "acceptance": "OL, origem, entrega e destino final distintos; documentos fiscais e instruções associados com estado conhecido; lacunas explícitas."
+        },
+        {
+          "key": "PF-F05-T03",
+          "title": "Exibir pendências, evidências e histórico",
+          "acceptance": "Cada impedimento informa área, severidade, regra, fonte e evidência; histórico ordenado mostra autor e momento sem expor segredos."
+        },
+        {
+          "key": "PF-F05-T04",
+          "title": "Testar drill-down e isolamento de acesso",
+          "acceptance": "Cenários multicontrato, sem documentos, vínculo ambíguo e acesso negado passam em DEV; navegação mantém contexto do Farol."
+        }
+      ],
+      "feature_key": "PF-C02"
+    },
+    {
+      "key": "PF-F06",
+      "sprint": 2,
+      "title": "Tratamento de documentos e pendências",
+      "depends_on": [
+        "PF-F01",
+        "PF-F02",
+        "PF-F03"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F06-T01",
+          "title": "Implementar recebimento e associação de documentos",
+          "acceptance": "Upload validado por tipo/tamanho; vínculo à OP/contrato confirmado; recebido, associado e validado são estados distintos; acesso ao arquivo é autorizado."
+        },
+        {
+          "key": "PF-F06-T02",
+          "title": "Implementar ações de pendência por área",
+          "acceptance": "Usuário autorizado assume/resolve/reabre com justificativa; concorrência tratada; usuário sem permissão é negado no backend."
+        },
+        {
+          "key": "PF-F06-T03",
+          "title": "Registrar auditoria e revalidação documental",
+          "acceptance": "Correção de documento preserva versão/evidência anterior e reabre verificações afetadas conforme regra aprovada; histórico não é sobrescrito."
+        },
+        {
+          "key": "PF-F06-T04",
+          "title": "Validar fluxo operacional ponta a ponta em DEV",
+          "acceptance": "Usuário encontra bloqueio, anexa evidência, resolve com permissão e vê o resultado; ações inválidas e falhas de rede não produzem falso sucesso."
+        }
+      ],
+      "feature_key": "PF-C02"
+    },
+    {
+      "key": "PF-F07",
+      "sprint": 3,
+      "title": "Ingestão TOTVS e reconciliação",
+      "depends_on": [
+        "PF-F02",
+        "PF-F03",
+        "PF-F05"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F07-T01",
+          "title": "Consolidar importação dos cinco relatórios principais",
+          "acceptance": "ES4004, GG4164, GG2037, GPLP e Documentos Fiscais normalizados com contrato de layout; identificadores textuais e zeros preservados; fórmulas arbitrárias não executadas."
+        },
+        {
+          "key": "PF-F07-T02",
+          "title": "Garantir idempotência e rastreabilidade da carga",
+          "acceptance": "Repetir arquivo não duplica entidades; arquivo/aba/coluna, assinatura, extração, execução e erros registrados; reprocessamento recupera falha parcial."
+        },
+        {
+          "key": "PF-F07-T03",
+          "title": "Implementar reconciliação de vínculos ambíguos",
+          "acceptance": "OP/contrato/item/filial com cardinalidade homologada; casos sem vínculo único entram em fila visível e exigem decisão rastreável."
+        },
+        {
+          "key": "PF-F07-T04",
+          "title": "Validar resultados e atualização no Farol",
+          "acceptance": "Contagens e campos comparados à fonte em ambiente controlado; importação repetida, layout inválido e arquivo defasado testados; atualização refletida na UI."
+        }
+      ],
+      "feature_key": "PF-C03"
+    },
+    {
+      "key": "PF-F08",
+      "sprint": 3,
+      "title": "Motor de verificações E1 a E6",
+      "depends_on": [
+        "PF-F01",
+        "PF-F06",
+        "PF-F07"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F08-T01",
+          "title": "Implementar verificações aprovadas e semáforo",
+          "acceptance": "Consolidação considera pior estado entre contratos e bloqueios; ausência de evidência gera pendência adequada; matriz fiscal aprovada é a única base de regra fiscal."
+        },
+        {
+          "key": "PF-F08-T02",
+          "title": "Parametrizar exceções, responsáveis e prazo",
+          "acceptance": "Exceção guarda escopo, vigência, motivo, responsável e evidência; SLA segue calendário aprovado; exportação não recebe dispensa universal."
+        },
+        {
+          "key": "PF-F08-T03",
+          "title": "Controlar transições, reprocessamento e conclusão",
+          "acceptance": "Cada transição registra antes/depois, regra, autor/job e evidência; liberação e encerramento separados; saldo ou movimentação pendente impede encerramento indevido."
+        },
+        {
+          "key": "PF-F08-T04",
+          "title": "Testar regras críticas e regressão de estados",
+          "acceptance": "Cenários completos/incompletos, múltiplos contratos, exceção vencida, documento corrigido e entrega parcial passam; execução repetida mantém resultado e auditoria coerentes."
+        }
+      ],
+      "feature_key": "PF-C03"
+    },
+    {
+      "key": "PF-F09",
+      "sprint": 3,
+      "title": "Qualidade integrada e candidato à homologação",
+      "depends_on": [
+        "PF-F04",
+        "PF-F05",
+        "PF-F06",
+        "PF-F07",
+        "PF-F08"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F09-T01",
+          "title": "Executar testes integrados e de permissões",
+          "acceptance": "Fluxo importação → regra → Farol → ação humana testado; isolamento por perfil e área validado; todos os defeitos classificados e rastreados."
+        },
+        {
+          "key": "PF-F09-T02",
+          "title": "Avaliar desempenho, acessibilidade e recuperação",
+          "acceptance": "Volume representativo acordado, tempos medidos e gargalos tratados; timeout, rede indisponível e restauração ensaiados sem acesso indevido a PROD."
+        },
+        {
+          "key": "PF-F09-T03",
+          "title": "Executar pré-homologação com usuários-chave",
+          "acceptance": "Roteiro dos cenários críticos executado em DEV/preview com evidências; dados preparados de forma autorizada; dúvidas de regra resolvidas com responsáveis."
+        },
+        {
+          "key": "PF-F09-T04",
+          "title": "Corrigir bloqueadores e congelar candidato de release",
+          "acceptance": "Defeitos críticos corrigidos e retestados; versão identificada, migrations listadas, limitações conhecidas e checklist de entrada em homologação completos."
+        }
+      ],
+      "feature_key": "PF-C04"
+    },
+    {
+      "key": "PF-F10",
+      "sprint": 4,
+      "title": "Homologação formal e preparação operacional",
+      "depends_on": [
+        "PF-F09"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F10-T01",
+          "title": "Executar homologação com todas as áreas",
+          "acceptance": "Casos aprovados executados por Comercial, Fiscal, Logística e Faturamento; resultado, evidência e responsável registrados por cenário."
+        },
+        {
+          "key": "PF-F10-T02",
+          "title": "Tratar defeitos e obter aceite de negócio",
+          "acceptance": "Bloqueadores resolvidos e retestados; exceções aceitas formalmente; aceite do dono do produto e responsável fiscal registrado, sem aprovação inferida."
+        },
+        {
+          "key": "PF-F10-T03",
+          "title": "Treinar usuários e preparar suporte",
+          "acceptance": "Guia de operação, tratamento de pendências e treinamento disponibilizados; responsáveis de suporte e escalonamento confirmados."
+        },
+        {
+          "key": "PF-F10-T04",
+          "title": "Revisar plano de implantação e rollback",
+          "acceptance": "Janela, responsável, backup, restauração, sequência de migrations/deploy, smoke test e gatilhos de rollback registrados e ensaiados antes da decisão de go-live."
+        }
+      ],
+      "feature_key": "PF-C04"
+    },
+    {
+      "key": "PF-F11",
+      "sprint": 4,
+      "title": "Implantação em produção",
+      "depends_on": [
+        "PF-F10"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F11-T01",
+          "title": "Executar checklist e decisão de go-live",
+          "acceptance": "Aceites, backup/restauração, acessos, variáveis, limites e evidências de testes conferidos; decisão humana e janela registradas; sem bloqueador aberto."
+        },
+        {
+          "key": "PF-F11-T02",
+          "title": "Aplicar migrations e publicar versão aprovada",
+          "acceptance": "Mesmas migrations validadas em DEV aplicadas em PROD; release/commit identificados; frontend publicado com destino correto e plano de reversão disponível."
+        },
+        {
+          "key": "PF-F11-T03",
+          "title": "Validar smoke test e carga inicial de produção",
+          "acceptance": "Login, permissões, Farol, detalhe, documento e pendência verificados em PROD; carga autorizada conciliada; falha crítica aciona plano de rollback."
+        },
+        {
+          "key": "PF-F11-T04",
+          "title": "Ativar monitoramento e rotina de cargas",
+          "acceptance": "Frequência acordada, alertas e responsáveis operacionais configurados; falha simulada gera alerta verificável; logs e métricas não expõem dados privados."
+        }
+      ],
+      "feature_key": "PF-C05"
+    },
+    {
+      "key": "PF-F12",
+      "sprint": 4,
+      "title": "Operação assistida e encerramento da implantação",
+      "depends_on": [
+        "PF-F11"
+      ],
+      "tasks": [
+        {
+          "key": "PF-F12-T01",
+          "title": "Acompanhar ciclos reais durante operação assistida",
+          "acceptance": "Janela de assistência acordada, atendimentos registrados e ciclos reais de importação/liberação acompanhados; abrangência e duração documentadas."
+        },
+        {
+          "key": "PF-F12-T02",
+          "title": "Corrigir incidentes e estabilizar operação",
+          "acceptance": "Incidentes classificados, corrigidos e retestados; nenhuma ocorrência crítica aberta no encerramento; melhorias não bloqueantes seguem backlog."
+        },
+        {
+          "key": "PF-F12-T03",
+          "title": "Transferir operação e concluir documentação as-built",
+          "acceptance": "Runbooks, acessos responsáveis, inventário, arquitetura efetiva, release, backup, treinamento e evidências entregues ao suporte com aceite."
+        },
+        {
+          "key": "PF-F12-T04",
+          "title": "Formalizar encerramento e próximos incrementos",
+          "acceptance": "Aceite final da implantação registrado; critérios de estabilidade atendidos; pendências residuais têm owner/prioridade; retrospectiva e evolução futura registradas."
+        }
+      ],
+      "feature_key": "PF-C05"
+    }
+  ]
+}

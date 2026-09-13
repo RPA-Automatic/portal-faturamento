@@ -1,0 +1,338 @@
+{
+  "mode": "apply",
+  "epic_id": 26,
+  "nodes": [
+    {
+      "kind": "areas",
+      "name": "portal-faturamento",
+      "action": "create"
+    },
+    {
+      "kind": "iterations",
+      "name": "portal-faturamento",
+      "action": "create"
+    },
+    {
+      "kind": "iterations",
+      "name": "Sprint 1",
+      "action": "create"
+    },
+    {
+      "kind": "iterations",
+      "name": "Sprint 2",
+      "action": "create"
+    },
+    {
+      "kind": "iterations",
+      "name": "Sprint 3",
+      "action": "create"
+    },
+    {
+      "kind": "iterations",
+      "name": "Sprint 4",
+      "action": "create"
+    }
+  ],
+  "items": [
+    {
+      "key": "PF-F01",
+      "action": "create",
+      "id": 27
+    },
+    {
+      "key": "PF-F01-T01",
+      "action": "create",
+      "id": 28
+    },
+    {
+      "key": "PF-F01-T02",
+      "action": "create",
+      "id": 29
+    },
+    {
+      "key": "PF-F01-T03",
+      "action": "create",
+      "id": 30
+    },
+    {
+      "key": "PF-F01-T04",
+      "action": "create",
+      "id": 31
+    },
+    {
+      "key": "PF-F02",
+      "action": "create",
+      "id": 32
+    },
+    {
+      "key": "PF-F02-T01",
+      "action": "create",
+      "id": 33
+    },
+    {
+      "key": "PF-F02-T02",
+      "action": "create",
+      "id": 34
+    },
+    {
+      "key": "PF-F02-T03",
+      "action": "create",
+      "id": 35
+    },
+    {
+      "key": "PF-F02-T04",
+      "action": "create",
+      "id": 36
+    },
+    {
+      "key": "PF-F03",
+      "action": "create",
+      "id": 37
+    },
+    {
+      "key": "PF-F03-T01",
+      "action": "create",
+      "id": 38
+    },
+    {
+      "key": "PF-F03-T02",
+      "action": "create",
+      "id": 39
+    },
+    {
+      "key": "PF-F03-T03",
+      "action": "create",
+      "id": 40
+    },
+    {
+      "key": "PF-F03-T04",
+      "action": "create",
+      "id": 41
+    },
+    {
+      "key": "PF-F04",
+      "action": "create",
+      "id": 42
+    },
+    {
+      "key": "PF-F04-T01",
+      "action": "create",
+      "id": 43
+    },
+    {
+      "key": "PF-F04-T02",
+      "action": "create",
+      "id": 44
+    },
+    {
+      "key": "PF-F04-T03",
+      "action": "create",
+      "id": 45
+    },
+    {
+      "key": "PF-F04-T04",
+      "action": "create",
+      "id": 46
+    },
+    {
+      "key": "PF-F05",
+      "action": "create",
+      "id": 47
+    },
+    {
+      "key": "PF-F05-T01",
+      "action": "create",
+      "id": 48
+    },
+    {
+      "key": "PF-F05-T02",
+      "action": "create",
+      "id": 49
+    },
+    {
+      "key": "PF-F05-T03",
+      "action": "create",
+      "id": 50
+    },
+    {
+      "key": "PF-F05-T04",
+      "action": "create",
+      "id": 51
+    },
+    {
+      "key": "PF-F06",
+      "action": "create",
+      "id": 52
+    },
+    {
+      "key": "PF-F06-T01",
+      "action": "create",
+      "id": 53
+    },
+    {
+      "key": "PF-F06-T02",
+      "action": "create",
+      "id": 54
+    },
+    {
+      "key": "PF-F06-T03",
+      "action": "create",
+      "id": 55
+    },
+    {
+      "key": "PF-F06-T04",
+      "action": "create",
+      "id": 56
+    },
+    {
+      "key": "PF-F07",
+      "action": "create",
+      "id": 57
+    },
+    {
+      "key": "PF-F07-T01",
+      "action": "create",
+      "id": 58
+    },
+    {
+      "key": "PF-F07-T02",
+      "action": "create",
+      "id": 59
+    },
+    {
+      "key": "PF-F07-T03",
+      "action": "create",
+      "id": 60
+    },
+    {
+      "key": "PF-F07-T04",
+      "action": "create",
+      "id": 61
+    },
+    {
+      "key": "PF-F08",
+      "action": "create",
+      "id": 62
+    },
+    {
+      "key": "PF-F08-T01",
+      "action": "create",
+      "id": 63
+    },
+    {
+      "key": "PF-F08-T02",
+      "action": "create",
+      "id": 64
+    },
+    {
+      "key": "PF-F08-T03",
+      "action": "create",
+      "id": 65
+    },
+    {
+      "key": "PF-F08-T04",
+      "action": "create",
+      "id": 66
+    },
+    {
+      "key": "PF-F09",
+      "action": "create",
+      "id": 67
+    },
+    {
+      "key": "PF-F09-T01",
+      "action": "create",
+      "id": 68
+    },
+    {
+      "key": "PF-F09-T02",
+      "action": "create",
+      "id": 69
+    },
+    {
+      "key": "PF-F09-T03",
+      "action": "create",
+      "id": 70
+    },
+    {
+      "key": "PF-F09-T04",
+      "action": "create",
+      "id": 71
+    },
+    {
+      "key": "PF-F10",
+      "action": "create",
+      "id": 72
+    },
+    {
+      "key": "PF-F10-T01",
+      "action": "create",
+      "id": 73
+    },
+    {
+      "key": "PF-F10-T02",
+      "action": "create",
+      "id": 74
+    },
+    {
+      "key": "PF-F10-T03",
+      "action": "create",
+      "id": 75
+    },
+    {
+      "key": "PF-F10-T04",
+      "action": "create",
+      "id": 76
+    },
+    {
+      "key": "PF-F11",
+      "action": "create",
+      "id": 77
+    },
+    {
+      "key": "PF-F11-T01",
+      "action": "create",
+      "id": 78
+    },
+    {
+      "key": "PF-F11-T02",
+      "action": "create",
+      "id": 79
+    },
+    {
+      "key": "PF-F11-T03",
+      "action": "create",
+      "id": 80
+    },
+    {
+      "key": "PF-F11-T04",
+      "action": "create",
+      "id": 81
+    },
+    {
+      "key": "PF-F12",
+      "action": "create",
+      "id": 82
+    },
+    {
+      "key": "PF-F12-T01",
+      "action": "create",
+      "id": 83
+    },
+    {
+      "key": "PF-F12-T02",
+      "action": "create",
+      "id": 84
+    },
+    {
+      "key": "PF-F12-T03",
+      "action": "create",
+      "id": 85
+    },
+    {
+      "key": "PF-F12-T04",
+      "action": "create",
+      "id": 86
+    }
+  ]
+}
