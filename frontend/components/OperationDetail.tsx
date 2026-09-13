@@ -40,7 +40,7 @@ export function OperationDetail({ id, number, onClose }: { id: string; number: s
     (async () => {
       try {
         const result = await Promise.all(queries.map(async ([key, table, columns, order]) => {
-          const { data: rows, error: failure } = await supabase.from(table).select(columns).eq('operation_id', id).order(order, { ascending: key === 'stages' || key === 'locations' }).limit(100);
+          const { data: rows, error: failure } = await supabase.from(table).select(columns).eq('operation_id', id).order(order, { ascending: key === 'stages' || key === 'locations' }).limit(100).overrideTypes<Row[], { merge: false }>();
           if (failure) throw failure;
           return [key, rows || []] as const;
         }));

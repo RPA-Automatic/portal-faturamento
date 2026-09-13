@@ -9,6 +9,8 @@
 
 Data: 2026-05-06
 
+> Registro histórico. Os achados abaixo descrevem a situação de maio, antes do endurecimento de RLS. Para o estado atual consulte [validação do esquema](../quality/schema-delivery-2026-09-13.md) e [autenticação vigente](oauth-auth-setup.md).
+
 ## Escopo
 
 Auditoria do workspace atual com foco em:

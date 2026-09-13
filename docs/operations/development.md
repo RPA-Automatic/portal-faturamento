@@ -1,144 +1,69 @@
-# Desenvolvimento Local
-
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](../data/fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+# Desenvolvimento local e publicação
 
 > Status: Aprovado  
 > Responsável: @RodrigoFreitas16n91  
-> Versão: 1.0  
-> Última revisão: 2026-09-13  
-> Próxima revisão: 2026-12-13
-> Documentos relacionados: [Catálogo documental](../README.md)  
+> Versão: 2.0  
+> Última revisão: 2026-09-13
 
-## Pré-Requisitos
+## Ambientes
 
-- Node.js 22 (também usado em CI e no Netlify).
-- Git.
-- Docker Desktop.
-- Supabase CLI.
-- pnpm ou npm.
+O projeto usa Node.js 22, React/Vite e Supabase. `dev` é a branch de desenvolvimento; `main` publica produção no Netlify. O banco remoto fiscal é único, conforme a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md); testes de banco devem usar uma instância local isolada.
 
-## Fluxo de Trabalho
+| Ambiente | Aplicação | Banco |
+|---|---|---|
+| Desenvolvimento | Vite local | Supabase/Postgres local |
+| CI | Build e testes sintéticos | Postgres 17 efêmero |
+| Produção | `https://portal-fiscal-faturamento.netlify.app` | `eukazzizamxratkavcap` |
 
-```bash
-git clone https://github.com/RPA-Automatic/portal-faturamento.git
-cd portal-faturamento
-git switch dev
-```
+Não apontar testes de carga ou cenários sintéticos para o banco remoto. Não provisionar outra branch paga como pré-requisito do desenvolvimento.
 
-## Variáveis de Ambiente Local
+## Configuração local
 
-Criar um arquivo `.env.local` dentro de `frontend/` para a aplicacao React + Vite. Esse arquivo fica somente na maquina local e nao deve ser enviado ao Git.
-
-Use `frontend/.env.example` como modelo:
-
-Variáveis esperadas:
+Copie `frontend/.env.example` para `frontend/.env.local` e configure URL e chave pública do banco local. Esse arquivo é ignorado pelo Git.
 
 ```bash
-VITE_SUPABASE_URL=https://seu-projeto-dev.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_sua_chave_publicavel_dev
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_ANON_KEY=<chave publica local>
+VITE_AUTH_OAUTH_PROVIDERS=
 ```
 
-Para desenvolvimento local, aponte essas variaveis para o projeto Supabase DEV.
+A lista de provedores sociais permanece vazia até os aplicativos estarem configurados. A chave publicável `sb_publishable_*` pode estar no frontend; `sb_secret_*`, `service_role` e Client Secrets OAuth nunca podem estar em arquivos públicos ou variáveis `VITE_`.
 
-Em 2026-09-13, o DEV fiscal exclusivo ainda aguarda provisionamento. Registre sua referência em `supabase/targets.json`; até lá, os scripts bloqueiam cargas DEV remotas. A produção fiscal usa `eukazzizamxratkavcap`. Consulte o [procedimento de separação](database-separation.md).
-
-Nao exponha `SUPABASE_SERVICE_ROLE_KEY`, `sb_secret_*` ou `service_role` no frontend. Chaves privilegiadas devem existir somente em Edge Functions, jobs server-side ou configuracoes seguras do Supabase.
-
-## Ambientes Netlify e Supabase
-
-O portal usa ambientes separados para evitar que testes afetem dados de producao:
-
-```text
-GitHub dev  -> Netlify Branch Deploy dev -> Supabase Portal Faturamento Dev
-GitHub main -> Netlify Production         -> Supabase Portal Faturamento
+```bash
+npm --prefix frontend ci
+npm --prefix frontend run dev
 ```
 
-No Netlify, configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY` com valores diferentes por contexto:
-
-```text
-Production      -> URL e publishable key do Supabase PROD
-Deploy Previews -> URL e publishable key do Supabase DEV
-Branch deploys  -> URL e publishable key do Supabase DEV
-```
-
-As variaveis do frontend devem usar apenas a chave `sb_publishable_*` do Supabase. Nunca use chaves `sb_secret_*` ou `service_role` no Netlify frontend.
+O Vite deste repositório usa a porta 3000 por padrão. Para OAuth local, registre exatamente o endereço efetivamente usado e o callback da instância Supabase local. Não reutilize credenciais de aplicativos de clientes.
 
 ## Autenticação
 
-O frontend usa Supabase Auth com tres caminhos:
+O acesso por e-mail permite cadastro, confirmação, login e logout. A conta criada não recebe acesso automático às operações: depende do perfil autorizado e das políticas RLS. Os provedores sociais planejados são Microsoft (`azure`), GitHub (`github`) e Google (`google`).
 
-```text
-Colaborador interno -> Azure/Microsoft OAuth
-Acesso Externo   -> e-mail e senha
-Acesso Externo   -> GitHub OAuth
-```
+O SDK usa PKCE, armazena a sessão e processa o callback uma única vez. Não reintroduzir troca manual concorrente de tokens ou roteamento que consuma o fragmento OAuth antes do SDK.
 
-Para que esses fluxos funcionem, habilite os providers em cada projeto Supabase usado pelo ambiente:
+A configuração dos aplicativos, os callbacks e a habilitação por `VITE_AUTH_OAUTH_PROVIDERS` estão no [passo a passo OAuth](../security/oauth-auth-setup.md). Não declarar um provedor homologado somente porque seu botão aparece ou porque `/authorize` responde com redirecionamento.
 
-```text
-Supabase DEV  -> habilitar Azure, Email e GitHub
-Supabase PROD -> habilitar Azure, Email e GitHub antes do go-live
-```
-
-Os providers OAuth precisam ter suas redirect URLs configuradas no provedor externo e no Supabase Auth. Para Netlify dev, use a URL `https://dev--portal-fiscal-faturamento.netlify.app`; para producao, use `https://portal-fiscal-faturamento.netlify.app`.
-
-## Migrações Supabase
-
-As mudancas de banco devem ser versionadas em `supabase/migrations/`.
-
-Fluxo recomendado sem Supabase Branching pago:
-
-```text
-1. Criar ou alterar uma migration em supabase/migrations/
-2. Aplicar primeiro no Supabase DEV
-3. Testar no Netlify dev
-4. Abrir PR de dev para main
-5. Aplicar a mesma migration no Supabase PROD
-6. Fazer merge para main
-```
-
-Como `supabase/config.toml` pode apontar para um projeto especifico, confirme sempre o projeto alvo antes de rodar comandos como `supabase link`, `supabase db push` ou `supabase migration list`.
-
-## Containers
-
-O ambiente local deve usar containers para banco, serviços auxiliares, filas e ferramentas de desenvolvimento quando aplicável.
-
-Opções recomendadas:
-
-- Supabase CLI para subir stack local do Supabase.
-- Docker Compose para serviços auxiliares que não forem cobertos pelo Supabase local.
-- n8n local opcional para prototipar ingestão e orquestração.
-
-## Scripts Esperados
-
-No frontend atual, usar os scripts do Vite dentro de `frontend/`:
+## Validação
 
 ```bash
-npm install
-npm run dev
-npm run lint
-npm run build
+npm --prefix frontend run lint
+npm --prefix frontend run build
+node scripts/test_auth_ui.cjs
+node scripts/test_portal_ui.cjs
+python3 -m unittest discover -s scripts -p 'test_*.py' -v
 ```
 
-## Qualidade
+`lint` executa TypeScript (`tsc --noEmit`). Os testes de navegador requerem Chromium do Playwright; a instalação em CI já está configurada. Eles interceptam o Supabase com dados sintéticos e não autenticam contas reais nos provedores.
 
-- ESLint e Prettier configurados.
-- TypeScript em modo estrito.
-- Testes unitários para regras de estado e consolidação do Farol.
-- Testes de integração para ingestão e normalização.
-- Playwright para fluxos principais da UI.
+Para alterações de banco, execute também `python3 scripts/test_database.py` contra Postgres local. O script cria e descarta um banco isolado, aplica migrations e verifica invariantes e RLS. Versões e hash das migrations remotas constam no manifesto de implantação.
 
-## Branches
+## Publicação
 
-- `main`: produção/estável.
-- `dev`: desenvolvimento contínuo.
-- `feature/*`: funcionalidades específicas.
+1. Desenvolver e validar na `dev`.
+2. Revisar alterações e documentação. Para migrations, validar localmente antes de aplicar no alvo fiscal autorizado.
+3. Integrar a `main`; o Netlify compila `frontend/` e publica `frontend/dist/`.
+4. Confirmar o commit efetivamente publicado, os checks de CI e a interface no domínio de produção.
+5. Validar login real após configurar cada provedor OAuth. Registrar limitações e evidências sem credenciais ou dados pessoais.
 
-## Critérios Antes de Abrir PR
-
-- Build passando.
-- Lint sem erros.
-- Testes relevantes passando.
-- Migrações revisadas.
-- RLS revisada quando houver nova tabela.
-- Documentação atualizada quando houver mudança de domínio, regra ou fluxo.
+A configuração pública de produção está em `[context.production.environment]` de `netlify.toml`. Ela contém URL fiscal, chave publicável e lista de provedores habilitados. Nenhum segredo OAuth pertence a esse arquivo. Previews e branch deploys precisam de sua própria configuração explícita; não herdar produção para testes de escrita.

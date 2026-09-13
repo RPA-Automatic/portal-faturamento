@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { OperationDetail } from './components/OperationDetail';
 import { Auth } from './components/Auth';
-import { supabase } from './lib/supabase';
+import { authErrorMessage, initializeAuth, supabase } from './lib/supabase';
 
 type SessionLike = {
   user?: {
@@ -105,47 +105,12 @@ const App: React.FC = () => {
 
     const initializeSession = async () => {
       try {
-        const url = new URL(window.location.href);
-        const authError = url.searchParams.get('error_description') || url.searchParams.get('error');
-        const authCode = url.searchParams.get('code');
-        const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''));
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-
-        if (authError) {
-          url.searchParams.delete('error');
-          url.searchParams.delete('error_code');
-          url.searchParams.delete('error_description');
-          window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-          throw new Error(authError);
-        }
-
-        if (authCode) {
-          url.searchParams.delete('code');
-          window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-          throw new Error('O retorno de autenticacao usou um fluxo antigo que expirou. Tente entrar novamente na mesma janela do navegador.');
-        }
-
-        if (accessToken && refreshToken) {
-          const { data, error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          if (sessionError) throw sessionError;
-
-          window.history.replaceState({}, document.title, `${url.pathname}${url.search}`);
-
-          if (!mounted) return;
-          setSession(data.session);
-          return;
-        }
-
-        const { data } = await supabase.auth.getSession();
+        const nextSession = await initializeAuth();
         if (!mounted) return;
-        setSession(data.session);
+        setSession(nextSession);
       } catch (err: any) {
         if (!mounted) return;
-        setError(err.message || 'Nao foi possivel concluir a autenticacao.');
+        setError(authErrorMessage(err));
       } finally {
         if (mounted) setLoadingAuth(false);
       }
@@ -154,8 +119,7 @@ const App: React.FC = () => {
     initializeSession();
 
     const { data } = supabase.auth.onAuthStateChange((_event: string, nextSession: SessionLike | null) => {
-      setSession(nextSession);
-      setLoadingAuth(false);
+      if (mounted) setSession(nextSession);
     });
 
     return () => {
@@ -254,7 +218,8 @@ const App: React.FC = () => {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">Portal de Faturamento</p>
+            <div aria-label="RPA Automatic" className="text-2xl tracking-tight text-[#102A43]"><span className="font-extrabold">RPA</span> <span className="font-medium">Automatic</span></div>
+            <p className="text-xs font-bold uppercase tracking-wide text-[#087985]">Portal de Faturamento</p>
             <h1 className="text-2xl font-bold text-slate-950">Farol de Liberacao de Embarque</h1>
           </div>
 

@@ -21,6 +21,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
         working-directory: frontend
       - run: node scripts/test_portal_ui.cjs
+      - run: node scripts/test_auth_ui.cjs
   database:
     runs-on: ubuntu-latest
     services:

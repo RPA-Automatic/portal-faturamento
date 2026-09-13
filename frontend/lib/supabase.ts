@@ -1,88 +1,64 @@
-
+/// <reference types="vite/client" />
 import { createClient } from '@supabase/supabase-js';
 
-/**
- * No Vite, variáveis de ambiente devem obrigatoriamente começar com VITE_
- * para serem acessíveis no código do cliente.
- */
-const getEnv = (key: string): string => {
-  try {
-    // Tenta import.meta.env (Padrão Vite)
-    // @ts-ignore
-    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
-      // @ts-ignore
-      return import.meta.env[key] as string;
-    }
-    // Fallback para process.env caso o plugin de ambiente do Node esteja ativo
-    if (typeof process !== 'undefined' && process.env && process.env[key]) {
-      return process.env[key] as string;
-    }
-  } catch (e) {
-    // Silently fail
-  }
-  return '';
-};
-
-// Alterado para o padrão VITE_ exigido pelo seu bundler
-const supabaseUrl = getEnv('VITE_SUPABASE_URL');
-const supabaseAnonKey = getEnv('VITE_SUPABASE_ANON_KEY');
-
-// Log de depuração atualizado
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('DEBUG SUPABASE: Variáveis VITE_SUPABASE_URL ou VITE_SUPABASE_ANON_KEY não encontradas.');
-}
-
-const isPlaceholder = (url: string) =>
-  !url ||
-  url.includes('sua-url-do-supabase') ||
-  !url.startsWith('http');
-
-const isPlaceholderKey = (key: string) =>
-  !key ||
-  key.includes('sua-chave') ||
-  key.includes('supabase-anon-key');
-
-export const isSupabaseConfigured = !isPlaceholder(supabaseUrl) && !isPlaceholderKey(supabaseAnonKey);
-
+export const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim();
+const publicKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || '').trim();
+export const isSupabaseConfigured = /^https?:\/\//.test(supabaseUrl)
+  && Boolean(publicKey) && !publicKey.includes('sua_chave') && !publicKey.includes('sua-chave')
+  && !publicKey.startsWith('sb_secret_');
 export const authConfigurationMessage =
-  'Autenticação não configurada para este deploy. No painel da Netlify, configure VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY para esta branch e execute um novo deploy.';
+  'O acesso está temporariamente indisponível. Entre em contato com a administração do portal.';
 
-const authConfigurationError = () => new Error(authConfigurationMessage);
+export const supabase = createClient(
+  isSupabaseConfigured ? supabaseUrl : 'https://unconfigured.invalid',
+  isSupabaseConfigured ? publicKey : 'sb_publishable_unconfigured',
+  { auth: { autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce', persistSession: true } },
+);
 
-let supabaseInstance: any;
+export type SocialProvider = 'azure' | 'github' | 'google';
+// Enable only after the corresponding RPA Automatic OAuth app is configured and tested.
+export const enabledOAuthProviders = new Set<string>(
+  (import.meta.env.VITE_AUTH_OAUTH_PROVIDERS || '').split(',').map((value: string) => value.trim()).filter(Boolean),
+);
 
-try {
-  if (!isSupabaseConfigured) {
-    supabaseInstance = {
-      auth: {
-        getSession: async () => ({ data: { session: null }, error: null }),
-        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-        exchangeCodeForSession: async () => ({ data: { session: null }, error: authConfigurationError() }),
-        setSession: async () => ({ data: { session: null }, error: authConfigurationError() }),
-        signInWithOAuth: async () => ({ data: {}, error: authConfigurationError() }),
-        signInWithPassword: async () => ({ data: {}, error: authConfigurationError() }),
-        signUp: async () => ({ data: {}, error: authConfigurationError() }),
-        signOut: async () => ({ error: null }),
-      },
-      from: () => ({
-        select: () => ({
-          order: () => Promise.resolve({ data: [], error: null }),
-          then: (cb: any) => cb({ data: [], error: null }),
-        }),
-      }),
-    };
-  } else {
-    supabaseInstance = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'implicit',
-        persistSession: true,
-      },
-    });
-  }
-} catch (e) {
-  console.error('Erro crítico ao inicializar cliente Supabase:', e);
+export function authErrorMessage(error: unknown): string {
+  const code = (error as { code?: string })?.code;
+  if (code === 'invalid_credentials') return 'E-mail ou senha incorretos. Confira os dados e tente novamente.';
+  if (code === 'email_not_confirmed') return 'Confirme seu e-mail antes de entrar. Verifique também a pasta de spam.';
+  if (code === 'over_request_rate_limit' || code === 'over_email_send_rate_limit') return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
+  if (code === 'weak_password') return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.';
+  if (code === 'user_already_exists') return 'Não foi possível concluir o cadastro. Tente entrar com seu e-mail.';
+  if (code === 'access_denied') return 'O login foi cancelado ou não foi autorizado. Você pode tentar novamente.';
+  return 'Não foi possível concluir o acesso. Tente novamente; se o problema continuar, contate a administração do portal.';
 }
 
-export const supabase = supabaseInstance;
+let startup: Promise<Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']> | undefined;
+export function initializeAuth() {
+  // StrictMode and all consumers share a single callback exchange.
+  return startup ??= (async () => {
+    if (!isSupabaseConfigured) return null;
+    const url = new URL(window.location.href);
+    const hash = new URLSearchParams(url.hash.slice(1));
+    const callbackError = url.searchParams.get('error') || hash.get('error');
+    const hasCode = url.searchParams.has('code');
+    try {
+      const { error: initializationError } = await supabase.auth.initialize();
+      if (callbackError) throw { code: callbackError };
+      if (initializationError) throw initializationError;
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      if (hasCode && !data.session) throw { code: 'invalid_flow_state' };
+      return data.session;
+    } finally {
+      // Remove credentials and provider diagnostics from browser history.
+      const sensitive = ['code', 'error', 'error_code', 'error_description', 'access_token',
+        'refresh_token', 'provider_token', 'provider_refresh_token', 'expires_at', 'expires_in', 'token_type', 'type'];
+      const current = new URL(window.location.href);
+      const fragment = new URLSearchParams(current.hash.slice(1));
+      const hasAuthHash = sensitive.some(key => fragment.has(key));
+      sensitive.forEach(key => { current.searchParams.delete(key); fragment.delete(key); });
+      if (hasAuthHash) current.hash = fragment.toString();
+      window.history.replaceState({}, document.title, current.pathname + current.search + current.hash);
+    }
+  })();
+}

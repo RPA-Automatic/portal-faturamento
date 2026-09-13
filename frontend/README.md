@@ -1,4 +1,4 @@
-# Portal de Faturamento Biond Agro (Frontend)
+# Portal de Faturamento RPA Automatic (Frontend)
 
 Aplicação frontend em **React + Vite + TypeScript** para acompanhamento de OPs, Farol de liberacao de embarque, pendencias por area e dados consolidados do Supabase.
 

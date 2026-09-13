@@ -1,450 +1,97 @@
-
 import React, { useState } from 'react';
-import { authConfigurationMessage, isSupabaseConfigured, supabase } from '../lib/supabase';
+import { authConfigurationMessage, authErrorMessage, enabledOAuthProviders, isSupabaseConfigured, SocialProvider, supabase } from '../lib/supabase';
 
-interface AuthProps {
-  onAuthSuccess: (user: any) => void;
-  initialError?: string | null;
-}
-
-type AccessType = 'INTERNAL' | 'EXTERNAL' | null;
-type ExternalAuthMode = 'SIGN_IN' | 'SIGN_UP';
+interface AuthProps { onAuthSuccess: (user: any) => void; initialError?: string | null; }
+const providers: { id: SocialProvider; label: string; symbol: string }[] = [
+  { id: 'azure', label: 'Microsoft', symbol: 'M' },
+  { id: 'github', label: 'GitHub', symbol: 'GH' },
+  { id: 'google', label: 'Google', symbol: 'G' },
+];
 
 export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }) => {
-  const [accessType, setAccessType] = useState<AccessType>(null);
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [externalMode, setExternalMode] = useState<ExternalAuthMode>('SIGN_IN');
-  const [loading, setLoading] = useState(false);
-  const [azureLoading, setAzureLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [githubLoading, setGithubLoading] = useState(false);
-  const [error, setError] = useState<string | null>(initialError || (isSupabaseConfigured ? null : authConfigurationMessage));
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError);
   const [message, setMessage] = useState<string | null>(null);
 
-  const handleAuth = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setMessage(null);
-
+  async function handleEmail(event: React.FormEvent) {
+    event.preventDefault();
+    if (!isSupabaseConfigured || busy) return;
+    setBusy('email'); setError(null); setMessage(null);
     try {
-      if (externalMode === 'SIGN_UP') {
-        const trimmedFirstName = firstName.trim();
-        const trimmedLastName = lastName.trim();
-
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: window.location.origin,
-            data: {
-              first_name: trimmedFirstName,
-              last_name: trimmedLastName,
-              full_name: [trimmedFirstName, trimmedLastName].filter(Boolean).join(' '),
-            },
-          },
-        });
-        if (signUpError) throw signUpError;
-
-        if (data.session && data.user) {
-          onAuthSuccess(data.user);
-          return;
-        }
-
-        setMessage('Cadastro criado. Verifique seu e-mail para confirmar o acesso.');
-        return;
+      if (mode === 'signup') {
+        const { data, error } = await supabase.auth.signUp({ email: email.trim(), password,
+          options: { emailRedirectTo: window.location.origin + '/', data: { full_name: name.trim() } } });
+        if (error) throw error;
+        if (data.session && data.user) onAuthSuccess(data.user);
+        else setMessage('Confira seu e-mail para confirmar o cadastro. Depois, seu acesso às operações dependerá da aprovação da administração.');
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+        if (data.user) onAuthSuccess(data.user);
       }
+    } catch (error) { setError(authErrorMessage(error)); }
+    finally { setBusy(null); }
+  }
 
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({ email, password });
-      if (loginError) throw loginError;
-      if (data.user) onAuthSuccess(data.user);
-    } catch (err: any) {
-      setError(err.message || 'Ocorreu um erro na autenticação.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAzureLogin = async () => {
-    setAzureLoading(true);
-    setError(null);
-    setMessage(null);
+  async function handleSocial(provider: SocialProvider) {
+    if (!isSupabaseConfigured || busy || !enabledOAuthProviders.has(provider)) return;
+    setBusy(provider); setError(null); setMessage(null);
     try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'azure',
-        options: {
-          redirectTo: window.location.origin,
-          scopes: 'email profile openid',
-        },
-      });
-      if (oauthError) throw oauthError;
-    } catch (err: any) {
-      setError(err.message || 'Erro ao conectar com Microsoft.');
-      setAzureLoading(false);
-    }
-  };
+      const { error } = await supabase.auth.signInWithOAuth({ provider,
+        options: { redirectTo: window.location.origin + '/', scopes: provider === 'azure' ? 'email openid profile' : undefined } });
+      if (error) throw error;
+    } catch (error) { setError(authErrorMessage(error)); setBusy(null); }
+  }
 
-  const handleGithubLogin = async () => {
-    setGithubLoading(true);
-    setError(null);
-    setMessage(null);
-    try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'github',
-        options: {
-          redirectTo: window.location.origin,
-          scopes: 'read:user user:email',
-        },
-      });
-      if (oauthError) throw oauthError;
-    } catch (err: any) {
-      setError(err.message || 'Erro ao conectar com GitHub.');
-      setGithubLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setGoogleLoading(true);
-    setError(null);
-    setMessage(null);
-    try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-          scopes: 'email profile openid',
-        },
-      });
-      if (oauthError) throw oauthError;
-    } catch (err: any) {
-      setError(err.message || 'Erro ao conectar com Google.');
-      setGoogleLoading(false);
-    }
-  };
-
-  const renderSelection = () => (
-    <div className="space-y-4 animate-fade-in">
-      <p className="text-gray-500 text-center text-sm mb-6">Escolha como deseja acessar o portal:</p>
-
-      <button
-        onClick={handleAzureLogin}
-        disabled={azureLoading || !isSupabaseConfigured}
-        className={`w-full flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-xl hover:border-[#3AE4B0] hover:shadow-md transition-all group text-left ${azureLoading ? 'opacity-70 cursor-wait' : ''}`}
-      >
-        <div className="w-12 h-12 bg-[#3AE4B0]/10 rounded-lg flex items-center justify-center text-[#3AE4B0] group-hover:bg-[#3AE4B0] group-hover:text-white transition-colors">
-          {azureLoading ? (
-            <svg className="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            <svg className="w-6 h-6" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 0h10v10H0z" fill="currentColor"/><path d="M11 0h10v10H11z" fill="currentColor"/><path d="M0 11h10v10H0z" fill="currentColor"/><path d="M11 11h10v10H11z" fill="currentColor"/>
-            </svg>
-          )}
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-800">Colaborador Biond</h4>
-          <p className="text-xs text-gray-400 font-medium">
-            {azureLoading ? 'Iniciando autenticação...' : 'Acesso via Single Sign-On (@biondagro)'}
-          </p>
-        </div>
-      </button>
-
-      <button
-        onClick={() => { setAccessType('EXTERNAL'); setExternalMode('SIGN_IN'); setError(null); setMessage(null); }}
-        className="w-full flex items-center gap-4 p-4 bg-white border-2 border-gray-100 rounded-xl hover:border-[#3AE4B0] hover:shadow-md transition-all group text-left"
-      >
-        <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 group-hover:bg-[#3AE4B0] group-hover:text-white transition-colors">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
-        <div>
-          <h4 className="font-bold text-gray-800">Acesso Externo</h4>
-          <p className="text-xs text-gray-400 font-medium">Clientes e parceiros externos</p>
-        </div>
-      </button>
-    </div>
-  );
-
-  const renderInternal = () => (
-    <div className="space-y-6 animate-fade-in text-center">
-      <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl mb-4">
-        <p className="text-sm text-blue-700 font-medium leading-relaxed">
-          Você será redirecionado para a página de login da Microsoft para validar suas credenciais corporativas.
-        </p>
-      </div>
-
-      <button
-        type="button"
-        onClick={handleAzureLogin}
-        disabled={azureLoading || !isSupabaseConfigured}
-        className="w-full bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold py-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-50"
-      >
-        {azureLoading ? (
-          <svg className="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        ) : (
-          <>
-            <svg className="w-6 h-6" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 0h10v10H0z" fill="#f25022"/><path d="M11 0h10v10H11z" fill="#7fba00"/><path d="M0 11h10v10H0z" fill="#00a4ef"/><path d="M11 11h10v10H11z" fill="#ffb900"/>
-            </svg>
-            Entrar com Microsoft
-          </>
-        )}
-      </button>
-
-      <button
-        onClick={() => { setAccessType(null); setError(null); }}
-        className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
-      >
-        ← Voltar para seleção
-      </button>
-    </div>
-  );
-
-  const renderExternal = () => (
-    <div className="animate-fade-in">
-      <div className="grid grid-cols-2 gap-2 rounded-xl bg-gray-100 p-1 mb-5">
-        <button
-          type="button"
-          onClick={() => { setExternalMode('SIGN_IN'); setError(null); setMessage(null); }}
-          className={`rounded-lg py-2 text-sm font-bold transition-colors ${externalMode === 'SIGN_IN' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-        >
-          Entrar
-        </button>
-        <button
-          type="button"
-          onClick={() => { setExternalMode('SIGN_UP'); setError(null); setMessage(null); }}
-          className={`rounded-lg py-2 text-sm font-bold transition-colors ${externalMode === 'SIGN_UP' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-        >
-          Cadastrar
-        </button>
-      </div>
-
-      <form onSubmit={handleAuth} className="space-y-5">
-        {externalMode === 'SIGN_UP' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Nome</label>
-              <input
-                type="text"
-                required
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all"
-                placeholder="Rodrigo"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Sobrenome</label>
-              <input
-                type="text"
-                required
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all"
-                placeholder="Freitas"
-              />
-            </div>
-          </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">E-mail</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all"
-            placeholder="seu@email.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Senha</label>
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#3AE4B0] focus:border-transparent outline-none transition-all pr-10"
-              placeholder="••••••••"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading || !isSupabaseConfigured}
-          className="w-full bg-[#3AE4B0] hover:bg-[#34ce9f] text-white font-bold py-3 rounded-lg shadow-lg shadow-green-100 transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center"
-        >
-          {loading ? (
-            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            externalMode === 'SIGN_UP' ? 'Cadastrar novo usuário' : 'Entrar'
-          )}
-        </button>
-
-        <div className="flex items-center gap-3 text-xs font-semibold text-gray-300">
-          <div className="h-px flex-1 bg-gray-200"></div>
-          <span>ou</span>
-          <div className="h-px flex-1 bg-gray-200"></div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGithubLogin}
-          disabled={githubLoading || !isSupabaseConfigured}
-          className="w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3 rounded-lg shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center gap-3"
-        >
-          {githubLoading ? (
-            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            <>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.59 2 12.253c0 4.53 2.865 8.371 6.839 9.727.5.094.683-.222.683-.494 0-.244-.009-.89-.014-1.747-2.782.62-3.369-1.374-3.369-1.374-.455-1.185-1.11-1.5-1.11-1.5-.908-.637.069-.624.069-.624 1.004.073 1.532 1.057 1.532 1.057.892 1.566 2.341 1.114 2.91.852.091-.662.35-1.114.636-1.37-2.221-.259-4.555-1.139-4.555-5.067 0-1.12.39-2.034 1.029-2.75-.103-.26-.446-1.302.098-2.714 0 0 .84-.276 2.75 1.05A9.34 9.34 0 0112 6.958a9.34 9.34 0 012.504.345c1.909-1.326 2.747-1.05 2.747-1.05.546 1.412.203 2.455.1 2.714.64.716 1.028 1.63 1.028 2.75 0 3.938-2.337 4.805-4.566 5.059.36.317.679.943.679 1.9 0 1.37-.012 2.475-.012 2.81 0 .274.18.593.688.492C19.138 20.621 22 16.782 22 12.253 22 6.59 17.523 2 12 2z" />
-              </svg>
-              Continuar com GitHub
-            </>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleGoogleLogin}
-          disabled={googleLoading || !isSupabaseConfigured}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 rounded-lg border border-gray-200 shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center gap-3"
-        >
-          {googleLoading ? (
-            <svg className="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            <>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#FBBC05" d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.84z" />
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06L5.84 9.9C6.71 7.31 9.14 5.38 12 5.38z" />
-              </svg>
-              Continuar com Google
-            </>
-          )}
-        </button>
-
-        <button
-          type="button"
-          onClick={handleAzureLogin}
-          disabled={azureLoading || !isSupabaseConfigured}
-          className="w-full bg-white hover:bg-gray-50 text-gray-800 font-bold py-3 rounded-lg border border-gray-200 shadow-sm transition-all active:scale-[0.98] disabled:opacity-50 flex justify-center items-center gap-3"
-        >
-          {azureLoading ? (
-            <svg className="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          ) : (
-            <>
-              <svg className="w-5 h-5" viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M0 0h10v10H0z" fill="#f25022"/><path d="M11 0h10v10H11z" fill="#7fba00"/><path d="M0 11h10v10H0z" fill="#00a4ef"/><path d="M11 11h10v10H11z" fill="#ffb900"/>
-              </svg>
-              Continuar com Microsoft
-            </>
-          )}
-        </button>
-
-        <div className="text-center pt-2">
-          <button
-            type="button"
-            onClick={() => { setAccessType(null); setError(null); setMessage(null); }}
-            className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            ← Voltar para seleção
-          </button>
-        </div>
-      </form>
-    </div>
-  );
-
+  const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100';
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] px-4 py-12 relative overflow-hidden">
-      {/* Background Decorativo */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[60%] bg-[#3AE4B0] rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[-10%] right-[-5%] w-[40%] h-[60%] bg-[#7D8D6D] rounded-full blur-[120px]"></div>
-      </div>
-
-      <div className="max-w-md w-full z-10">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
-          <div className="bg-[#3AE4B0] p-8 text-center">
-            <div className="w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-4 overflow-hidden">
-              <img src="https://ysrkicujlhnmovaycbol.supabase.co/storage/v1/object/public/icon_site/biond-agro-squareLogo-1681762663084.webp" alt="Biond Logo" className="w-[110%] h-[110%] max-w-none object-cover" />
+    <main className="min-h-screen bg-[#F3F7FA] text-[#102A43] flex flex-col items-center justify-center px-5 py-8 sm:py-12">
+      <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 border border-slate-200 grid lg:grid-cols-2">
+        <section className="relative bg-[#EAF7F8] p-7 sm:p-10 lg:p-12 flex flex-col justify-between">
+          <div aria-label="RPA Automatic" className="text-2xl tracking-tight text-[#102A43]"><span className="font-extrabold">RPA</span> <span className="font-medium">Automatic</span></div>
+          <div className="py-7 lg:py-12">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#087985] mb-4">Portal de Faturamento</p>
+            <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">Clareza em cada<br className="hidden sm:block" /> etapa do embarque.</h1>
+            <p className="mt-5 text-sm sm:text-base text-slate-600 leading-relaxed max-w-sm">Acompanhe operações, documentos e pendências em um só lugar.</p>
+          </div>
+          <div className="hidden lg:flex items-center gap-3 text-xs font-medium text-[#087985]"><span className="h-2 w-2 rounded-full bg-[#18B5C3]" aria-hidden="true" />Visibilidade para decidir. Controle para liberar.</div>
+        </section>
+        <section className="p-7 sm:p-10 lg:p-12" aria-label="Acesso ao portal">
+          <h2 className="text-2xl font-bold">{mode === 'login' ? 'Acesse seu portal' : 'Crie sua conta'}</h2>
+          <p className="mt-2 mb-7 text-sm text-slate-500">{mode === 'login' ? 'Entre com seu e-mail e senha.' : 'Seu acesso às operações será autorizado pela administração.'}</p>
+          {(!isSupabaseConfigured || error) && <p role="alert" className="mb-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{!isSupabaseConfigured ? authConfigurationMessage : error}</p>}
+          {message && <p role="status" className="mb-5 rounded-xl border border-teal-200 bg-teal-50 p-4 text-sm text-teal-900">{message}</p>}
+          <form onSubmit={handleEmail} className="space-y-4">
+            {mode === 'signup' && <div><label htmlFor="full-name" className="block text-sm font-semibold mb-2">Nome completo</label><input id="full-name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} required className={inputClass} /></div>}
+            <div><label htmlFor="email" className="block text-sm font-semibold mb-2">E-mail</label><input id="email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="voce@exemplo.com" className={inputClass} /></div>
+            <div><label htmlFor="password" className="block text-sm font-semibold mb-2">Senha</label>
+              <div className="relative">
+                <input id="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={mode === 'signup' ? 8 : undefined} required value={password} onChange={e => setPassword(e.target.value)} className={`${inputClass} pr-20`} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} className="absolute right-3 inset-y-0 text-xs font-semibold text-[#087985]">{showPassword ? 'Ocultar' : 'Mostrar'}</button>
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-white tracking-tight">
-              Portal Biond Agro
-            </h2>
-            <p className="text-white/80 text-sm mt-2">
-              Biond Agro Corporate Access
-            </p>
+            <button type="submit" disabled={Boolean(busy) || !isSupabaseConfigured} className="w-full rounded-xl bg-[#102A43] hover:bg-[#173F61] text-white py-3 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{busy === 'email' ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar conta'}</button>
+          </form>
+          <p className="my-5 text-center text-sm text-slate-500">{mode === 'login' ? 'Primeiro acesso? ' : 'Já possui uma conta? '}<button type="button" disabled={Boolean(busy)} onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setPassword(''); setError(null); setMessage(null); }} className="font-semibold text-[#087985] hover:underline">{mode === 'login' ? 'Criar conta' : 'Entrar com e-mail'}</button></p>
+          <div className="border-t border-slate-200 pt-5">
+            <p className="text-xs font-semibold text-slate-500 mb-3">Outras formas de acesso</p>
+            <div className="space-y-2">{providers.map(provider => {
+              const available = enabledOAuthProviders.has(provider.id);
+              return <button key={provider.id} type="button" onClick={() => handleSocial(provider.id)} disabled={!available || !isSupabaseConfigured || Boolean(busy)} className="w-full flex items-center justify-between gap-2 rounded-xl border border-slate-200 p-3 text-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400" aria-describedby={!available ? 'social-setup' : undefined}>
+                <span className="flex items-center gap-3"><span className="w-7 text-center text-xs font-bold" aria-hidden="true">{provider.symbol}</span><span>{busy === provider.id ? 'Conectando...' : `Continuar com ${provider.label}`}</span></span>
+                {!available && <span className="text-[10px] font-medium">Em configuração</span>}
+              </button>;
+            })}</div>
+            {providers.some(p => !enabledOAuthProviders.has(p.id)) && <p id="social-setup" className="text-xs leading-relaxed text-slate-500 mt-3">O login social está em configuração. Use e-mail e senha para acessar sua conta.</p>}
           </div>
-
-          <div className="p-8">
-            {error && (
-              <div className="bg-red-50 border-l-4 border-red-500 p-3 rounded text-xs text-red-700 font-medium animate-pulse mb-4">
-                {error}
-              </div>
-            )}
-
-            {message && (
-              <div className="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded text-xs text-emerald-700 font-medium mb-4">
-                {message}
-              </div>
-            )}
-
-            {accessType === null && renderSelection()}
-            {accessType === 'INTERNAL' && renderInternal()}
-            {accessType === 'EXTERNAL' && renderExternal()}
-          </div>
-        </div>
-
-        <p className="text-center text-gray-400 text-xs mt-8">
-          &copy; {new Date().getFullYear()} Biond Agro. Todos os direitos reservados.
-        </p>
+        </section>
       </div>
-    </div>
+      <footer className="mt-7 text-xs text-slate-500 text-center">© {new Date().getFullYear()} RPA Automatic · Portal de Faturamento</footer>
+    </main>
   );
 };

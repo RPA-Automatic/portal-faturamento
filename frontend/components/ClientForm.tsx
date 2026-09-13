@@ -38,7 +38,7 @@ const SUPPLIER_GROUP_OPTIONS = [
   { code: '30', label: '30 - Fornecedores Servicos' },
   { code: '35', label: '35 - Transportadoras' },
   { code: '40', label: '40 - Portos e Terminais' },
-  { code: '45', label: '45 - Filiais BIOND' },
+  { code: '45', label: '45 - Filiais' },
   { code: '50', label: '50 - Funcionarios' },
   { code: '55', label: '55 - Intercompany' },
   { code: '60', label: '60 - Impostos' },

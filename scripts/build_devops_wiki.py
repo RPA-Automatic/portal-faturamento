@@ -15,11 +15,12 @@ SECTIONS = {
     'Modelo-de-dados': ['data/fiscal-schema.md', 'architecture/domain-model.md'],
     'Referencias-de-mercado': ['product/market-benchmark.md'],
     'Integracoes': ['integrations/totvs-data-sources.md'],
-    'Seguranca': ['security/security-lgpd-audit.md'],
+    'Seguranca': ['security/security-lgpd-audit.md', 'security/oauth-auth-setup.md'],
+    'Identidade-visual': ['product/brand.md'],
     'DevOps-e-operacao': ['operations/azure-devops.md', 'operations/development.md'],
     'To-do': ['product/delivery-plan.md'],
     'Decisoes': ['decisions/ADR-0001-organizacao-azure-devops.md'],
-    'Qualidade': ['quality/schema-delivery-2026-09-13.md', 'quality/devops-planning-2026-09-13.md', 'quality/source-review-2026-09-13.md', 'quality/environment-audit-2026-09-13.md'],
+    'Qualidade': ['quality/auth-branding-2026-09-13.md', 'quality/schema-delivery-2026-09-13.md', 'quality/devops-planning-2026-09-13.md', 'quality/source-review-2026-09-13.md', 'quality/environment-audit-2026-09-13.md'],
 }
 
 

@@ -5,7 +5,8 @@ Trabalhe em português do Brasil. Leia `docs/README.md` antes de alterar produto
 ## Regras do repositório
 
 - O domínio é faturamento e liberação de embarque com OP, contratos, TOTVS/Datasul, Farol e etapas E1 a E6.
-- Não introduza conceitos do Portal Orchestrator AI neste produto sem integração explicitamente aprovada.
+- Não introduza conceitos de outros produtos sem integração explicitamente aprovada.
+- A identidade pública é exclusivamente RPA Automatic. Nunca publicar nomes, logotipos, imagens, domínios ou referências de clientes ou de projetos usados como contexto; isso inclui telas, favicon, metadados, exemplos e mensagens de erro.
 - A branch `dev` representa desenvolvimento; `main` representa produção.
 - Mudanças Supabase devem ser versionadas em `supabase/migrations/`, validadas em DEV e acompanhadas de revisão de RLS.
 - Nunca exponha `service_role`, `sb_secret_*`, credenciais OAuth ou dados privados no frontend, Git ou logs.

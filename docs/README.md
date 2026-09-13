@@ -16,6 +16,8 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 
 ## Produto
 
+- [Identidade pública — RPA Automatic](product/brand.md)
+
 - [Contexto fiscal derivado do acervo privado](product/fiscal-context.md)
 - [Referências de mercado](product/market-benchmark.md)
 - [Visão do produto](product/vision.md)
@@ -66,3 +68,5 @@ Novas decisões ficam em `decisions/ADR-NNNN-titulo.md`. Evidências de teste ou
 - [ADR-0002 — Banco fiscal remoto único](decisions/ADR-0002-banco-fiscal-unico.md)
 
 - [Validação do esquema e ficha](quality/schema-delivery-2026-09-13.md)
+
+- [Validação de autenticação e identidade](quality/auth-branding-2026-09-13.md)

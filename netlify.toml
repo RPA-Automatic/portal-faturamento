@@ -11,6 +11,8 @@
 
 # Configuração pública incorporada ao bundle; nunca colocar service_role/secret aqui.
 [context.production.environment]
+# Habilitar individualmente após configurar e homologar cada aplicativo OAuth.
+VITE_AUTH_OAUTH_PROVIDERS = ""
   VITE_SUPABASE_URL = "https://eukazzizamxratkavcap.supabase.co"
   VITE_SUPABASE_ANON_KEY = "sb_publishable_ocqGpcA-fJGB7fsqWzcAHg_g07eOffM"
 
