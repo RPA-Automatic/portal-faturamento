@@ -43,6 +43,8 @@ O primeiro push confirmou CI remota aprovada em main/dev. A revisão adicional c
 
 O runtime de desenvolvimento/CI/Netlify foi fixado em Node 22, e o import map antigo de CDNs foi removido: as dependências vêm do lockfile do Vite.
 
+A escrita de variáveis pelo conector Netlify retornou sucesso, mas a consulta posterior e o bundle mostraram valores ausentes. A configuração pública foi registrada em `[context.production.environment]` no `netlify.toml`: URL fiscal e chave `sb_publishable_*`, própria para o navegador. Não contém service_role ou segredo. Os contextos de desenvolvimento não recebem esses valores de produção.
+
 
 > Fonte: `docs/quality/devops-planning-2026-09-13.md`
 

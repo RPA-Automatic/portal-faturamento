@@ -38,3 +38,5 @@ A main anterior (`604c5c0`) continha um protótipo diferente, com frontend na ra
 O primeiro push confirmou CI remota aprovada em main/dev. A revisão adicional corrigiu os dez avisos do npm audit: atualizações do lockfile e React Router 7.18.3 (mantendo React 18 e HashRouter). O resultado local final é zero vulnerabilidades reportadas pelo npm audit; isso não equivale a garantia de ausência de falhas. Build, TypeScript e cenários de navegador foram repetidos após a atualização.
 
 O runtime de desenvolvimento/CI/Netlify foi fixado em Node 22, e o import map antigo de CDNs foi removido: as dependências vêm do lockfile do Vite.
+
+A escrita de variáveis pelo conector Netlify retornou sucesso, mas a consulta posterior e o bundle mostraram valores ausentes. A configuração pública foi registrada em `[context.production.environment]` no `netlify.toml`: URL fiscal e chave `sb_publishable_*`, própria para o navegador. Não contém service_role ou segredo. Os contextos de desenvolvimento não recebem esses valores de produção.
