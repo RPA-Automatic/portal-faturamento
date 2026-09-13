@@ -1,89 +1,345 @@
-# Portal Faturamento
+# Portal de Faturamento e Liberacao de Embarque
 
-Frontend do Portal de Faturamento para liberação de embarque, com autenticação via Supabase OAuth e deploy previsto no Netlify.
+Portal Faturamento Fiscal da RPA Automatic para acompanhar OPs/Operacoes B2B, contratos de compra e venda, documentos fiscais, ordens logisticas, checklists por area e pendencias de faturamento em um fluxo sequencial E1..E6.
 
-## Stack
+O projeto transforma relatorios TOTVS/Datasul e checklists operacionais em um Farol auditavel, com Kanban por etapa, pendencias por area, evidencias, historico e base para automacao de regras.
 
-- React + TypeScript + Vite
-- Supabase Auth e Postgres
-- Netlify para hospedagem do frontend
-- GitHub Actions para CI em `main` e `desenvolvimento`
+## Objetivos
 
-## Configuração local
+- Centralizar a visao de cada OP em um unico portal.
+- Reduzir controle manual em planilhas e trocas dispersas de documentos.
+- Relacionar contratos de compra, contratos de venda, fornecedores, clientes, OLs e NFs.
+- Dar clareza sobre qual area precisa agir em cada etapa.
+- Criar trilha auditavel de pendencias, evidencias e mudancas de estado.
+- Preparar o produto para boas praticas de seguranca, RLS e LGPD.
 
-1. Instale as dependências:
+## Estado Atual
 
-   ```bash
-   npm ci
-   ```
+O projeto esta em fase de MVP tecnico na branch `dev`.
 
-2. Copie as variáveis de ambiente:
+Ja existe:
 
-   ```bash
-   cp .env.example .env.local
-   ```
+- frontend React + Vite publicado via Netlify branch deploy;
+- autenticacao Supabase Auth com e-mail/senha, GitHub e Azure/Microsoft OAuth;
+- schema Supabase inicial com tabelas operacionais, staging, views, regras e RLS;
+- importador local dos principais XLSX para tabelas `stg_*`;
+- registro de hashes/metadados dos documentos das OPs em `documents`;
+- Kanban E1..E6 no frontend;
+- documentacao de arquitetura, dominio, fontes de dados, ingestao, LGPD e checklist operacional.
 
-3. Preencha `VITE_SUPABASE_ANON_KEY` com a chave pública `anon` do projeto Supabase `eukazzizamxratkavcap`.
+Ainda falta:
 
-4. Rode o frontend:
+- consolidar staging em tabelas normalizadas (`operations`, `contracts`, `partners`, `logistics_orders`, `fiscal_documents`);
+- gerar `pending_items` e `evidence` automaticamente a partir das regras;
+- criar painel lateral de OP com checklist editavel por area;
+- aplicar hardening RLS no Supabase DEV/PROD;
+- criar tela administrativa para aprovar usuarios e definir area/perfil.
 
-   ```bash
-   npm run dev
-   ```
+## Fluxo Operacional
 
-## Supabase
+As operacoes seguem uma maquina de estados sequencial:
 
-O projeto usa o endpoint público `https://eukazzizamxratkavcap.supabase.co`.
-
-O arquivo `supabase/config.toml` deve ser mantido no repositório para que o Supabase CLI consiga localizar a configuração Postgres local e aplicar migrations. A associação com o projeto remoto é feita pelo comando `supabase link --project-ref eukazzizamxratkavcap`.
-
-A migration inicial está em `supabase/migrations/20260501223500_create_portal_tables.sql` e cria:
-
-- `portal_profiles`
-- `customers`
-- `carriers`
-- `shipment_releases`
-- `release_documents`
-
-As tabelas foram modeladas para o fluxo de liberação de embarque e podem ser ajustadas quando o arquivo XLSX mencionado no escopo estiver disponível no repositório.
-
-Para aplicar as migrations no projeto remoto:
-
-```bash
-supabase login
-supabase link --project-ref eukazzizamxratkavcap
-supabase db push
+```text
+E1 Documentacao Basica
+-> E2 Validacao Fiscal
+-> E3 Contratos e Regras TOTVS
+-> E4 Logistica
+-> E5 Faturamento
+-> E6 Concluido
 ```
 
-Se o CLI retornar `unexpected status 404: {"message":"Postgres config not found"}`, confirme se o usuário autenticado tem acesso ao projeto `eukazzizamxratkavcap` e se o banco Postgres do projeto está ativo no dashboard do Supabase antes de executar `supabase db push` novamente.
+Cada OP deve permanecer na primeira etapa com pendencia bloqueante. Quando nao houver bloqueios nem alertas, a operacao pode avancar para `E6`.
 
-### Autenticação
+### Semaforo
 
-Habilite os provedores no Supabase Auth:
+- `verde`: etapa atual OK e sem pendencias abertas.
+- `amarelo`: alerta, divergencia nao bloqueante ou observacao pendente.
+- `vermelho`: pendencia bloqueante para avancar.
 
-- Google
-- Azure/Microsoft
-- GitHub
+## Areas Envolvidas
 
-Configure as URLs de callback dos provedores para o domínio do Netlify e para o ambiente local quando necessário.
-O domínio de produção previsto é `https://portal-liberacao-embarque.netlify.app`; mantenha essa URL cadastrada nos provedores OAuth e no dashboard do Supabase.
+| Area | Responsabilidade principal |
+|---|---|
+| Comercial | Documentacao inicial, IF compra/venda, cliente, fornecedor, pedido e comunicacao. |
+| Fiscal | CFOP, cadastro cliente x fornecedor, regras fiscais, validacao de NF. |
+| Gestao de Contratos | Contratos, regras Datasul, liberacao de contrato/pedido. |
+| Logistica | OL, agendamento, origem, destino, transportadora e portais logisticos. |
+| Faturamento | Primeira NF, dados adicionais, observacoes fiscais e conclusao operacional. |
+| Administracao | Usuarios, regras, excecoes, templates e governanca. |
 
-## Netlify
+## Dados e Fontes
 
-O arquivo `netlify.toml` define:
+Os principais relatorios XLSX usados no MVP sao:
 
-- comando de build: `npm run build`
-- pasta publicada: `dist`
-- fallback SPA para `/index.html`
+| Fonte | Papel | Staging |
+|---|---|---|
+| ES4004 | Hub de OP/Operacao B2B e contratos | `stg_es4004_contracts` |
+| GG4164 | Contratos de compra e fornecedores | `stg_gg4164_purchase_contracts` |
+| GG2037 | Contratos de venda e clientes | `stg_gg2037_sales_contracts` |
+| GPLP40180 | Ordens logisticas, OL/rota e transporte | `stg_gplp40180_logistics_orders` |
+| Documentos Fiscais | NFs, CFOP e dados fiscais | `stg_fiscal_documents` |
+| Checklist RS/MT/Pre-Faturamento | Regras manuais por area | templates/checklist operacional |
 
-Configure no Netlify as variáveis:
+Os documentos reais das OPs sao inventariados por hash SHA-256 e registrados na tabela `documents`. Os arquivos fisicos devem permanecer fora do Git e, em uma etapa futura, podem ir para Supabase Storage ou outro repositório documental controlado.
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
+## Arquitetura
 
-## Validação
+```text
+Relatorios XLSX / Documentos OP
+        |
+        v
+Scripts locais seguros / jobs server-side
+        |
+        v
+Supabase PostgreSQL
+  - stg_* para dados brutos
+  - operations, contracts, partners
+  - logistics_orders, fiscal_documents
+  - documents, rules, pending_items, evidence
+        |
+        v
+Views e RPCs seguras
+        |
+        v
+Frontend React + Vite no Netlify
+```
+
+Principios adotados:
+
+- preservar dados brutos em staging para auditoria e reprocessamento;
+- consolidar dados em tabelas normalizadas para o produto;
+- separar autenticacao de autorizacao;
+- usar RLS e perfis por area;
+- nunca expor service role no frontend;
+- manter dados reais e segredos fora do Git.
+
+## Estrutura do Repositorio
+
+```text
+.
+├── docs/                         # Documentacao de produto, arquitetura, dados, seguranca e roadmap
+├── frontend/                     # Aplicacao React + Vite + TypeScript
+├── scripts/                      # Scripts locais de inventario/importacao usando service role local
+├── supabase/                     # Backend Supabase oficial e migrations versionadas
+├── netlify.toml                  # Build/deploy Netlify
+├── .gitignore                    # Protecao de dados privados, builds e segredos
+└── README.md                     # Este documento
+```
+
+Arquivos importantes:
+
+- [docs/README.md](docs/README.md): índice e governança documental.
+- [docs/product/vision.md](docs/product/vision.md): visão de produto.
+- [docs/architecture/overview.md](docs/architecture/overview.md): arquitetura geral.
+- [docs/architecture/domain-model.md](docs/architecture/domain-model.md): entidades e conceitos.
+- [docs/integrations/totvs-data-sources.md](docs/integrations/totvs-data-sources.md): fontes TOTVS/Datasul.
+- [docs/product/operational-workflow.md](docs/product/operational-workflow.md): fluxo E1..E6.
+- [docs/data/xlsx-ingestion-plan.md](docs/data/xlsx-ingestion-plan.md): plano de ingestão XLSX.
+- [docs/product/checklist-portal-template.md](docs/product/checklist-portal-template.md): template recomendado para checklist.
+- [docs/security/security-lgpd-audit.md](docs/security/security-lgpd-audit.md): auditoria LGPD/RLS.
+- [supabase/migrations](supabase/migrations): migrations oficiais do backend.
+
+## Frontend
+
+Stack:
+
+- React 18;
+- Vite 6;
+- TypeScript;
+- Supabase JS v2;
+- Netlify para deploy.
+
+Comandos:
 
 ```bash
+cd frontend
+npm install
+npm run dev
 npm run lint
 npm run build
+npm run preview
 ```
+
+Variaveis de ambiente do frontend:
+
+```env
+VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_sua_chave_publicavel
+```
+
+Use somente `sb_publishable_*` no frontend. Nunca use `sb_secret_*` ou `service_role` em Netlify/Vite.
+
+## Backend Supabase
+
+A migration principal cria:
+
+- tabelas normalizadas: `operations`, `contracts`, `partners`, `logistics_orders`, `fiscal_documents`, `documents`;
+- governanca operacional: `rules`, `pending_items`, `evidence`, `state_history`, `exceptions`;
+- observabilidade: `import_runs`, `job_logs`, `audit_logs`;
+- staging: `stg_es4004_contracts`, `stg_gg4164_purchase_contracts`, `stg_gg2037_sales_contracts`, `stg_gplp40180_logistics_orders`, `stg_fiscal_documents`;
+- views: `v_operations_farol`, `v_area_backlog`, `v_contract_drilldown`;
+- RLS e policies iniciais.
+
+### Autenticacao
+
+O portal usa Supabase Auth com:
+
+- Azure/Microsoft OAuth para colaboradores;
+- e-mail e senha para acesso externo;
+- GitHub OAuth para acesso externo/controlado.
+
+Providers devem estar habilitados em cada projeto Supabase usado pelo ambiente.
+
+## Seguranca e LGPD
+
+Boas praticas ja adotadas:
+
+- `data/private/` ignorado pelo Git;
+- arquivos reais em `docs/**/*.xlsx`, `docs/**/*.docx`, `docs/**/*.pdf` ignorados;
+- `supabase/supabase/` legado ignorado;
+- scripts administrativos usam `SUPABASE_SERVICE_ROLE_KEY` somente via ambiente local;
+- RLS habilitado nas tabelas sensiveis.
+
+Hardening planejado:
+
+- usuarios novos ficam `pending` ate aprovacao;
+- usuarios precisam de `profile.status = active` para ler dados operacionais;
+- usuarios externos devem ser vinculados a `partner_id`;
+- externos so podem ver operacoes relacionadas ao proprio parceiro;
+- staging e dados brutos ficam restritos a admin/job/service role;
+- senhas de portais logisticos nao devem ser armazenadas em texto no banco operacional.
+
+A migration de hardening esta em:
+
+- [supabase/migrations/20260506000100_harden_rls_profiles.sql](supabase/migrations/20260506000100_harden_rls_profiles.sql)
+
+Antes de aplicar em producao, valide no Supabase DEV e configure pelo menos um usuario administrador ativo.
+
+Depois de aplicar a migration de hardening no Supabase DEV, promova o primeiro administrador pelo SQL Editor usando a conta que ja fez login no portal:
+
+```sql
+select public.bootstrap_admin_profile('seu-email@empresa.com');
+```
+
+Essa funcao so pode ser executada com contexto privilegiado/service role; usuarios autenticados comuns nao recebem permissao para executa-la.
+
+## Ingestao dos XLSX
+
+Os arquivos reais devem ficar fora do Git, por exemplo:
+
+```text
+data/private/relatorios-xlsx/
+data/private/operacoes/
+data/private/documentos-processo/
+```
+
+Inventariar XLSX:
+
+```bash
+c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/inventory_xlsx.py data/private/relatorios-xlsx --output data/private/xlsx-inventory.json
+```
+
+Dry-run da importacao:
+
+```bash
+c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/import_xlsx_to_supabase.py data/private/relatorios-xlsx --dry-run
+```
+
+Importar para Supabase DEV:
+
+```powershell
+$env:SUPABASE_URL = "https://seu-projeto-dev.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_EXEMPLO"
+c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/import_xlsx_to_supabase.py data/private/relatorios-xlsx
+```
+
+O importador cria `import_runs`, grava hash SHA-256 e pula arquivos que ja possuem importacao concluida, salvo quando usado `--force`.
+
+## Controle de Documentos
+
+Inventariar documentos das OPs:
+
+```bash
+c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/inventory_documents.py data/private/operacoes --output data/private/documents-inventory.json
+```
+
+Registrar hashes/metadados no Supabase:
+
+```powershell
+$env:SUPABASE_URL = "https://seu-projeto-dev.supabase.co"
+$env:SUPABASE_SERVICE_ROLE_KEY = "sb_secret_EXEMPLO"
+c:/Projetos/portal-faturamento/.venv/Scripts/python.exe scripts/register_documents_to_supabase.py data/private/documents-inventory.json
+```
+
+Neste momento o sistema registra metadados e assinatura dos arquivos. Upload fisico para Storage deve ser tratado em etapa posterior com buckets privados e signed URLs.
+
+## Ambientes
+
+Fluxo recomendado:
+
+```text
+GitHub dev  -> Netlify Branch Deploy dev -> Supabase DEV
+GitHub main -> Netlify Production         -> Supabase PROD
+```
+
+No Netlify, configure variaveis por contexto:
+
+| Contexto | Supabase |
+|---|---|
+| Production | PROD |
+| Branch deploys | DEV |
+| Deploy previews | DEV |
+
+## Deploy
+
+O Netlify usa [netlify.toml](netlify.toml):
+
+```toml
+[build]
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
+```
+
+Para atualizar o branch deploy, envie commits para `dev`.
+
+## Roadmap Tecnico
+
+1. Aplicar hardening RLS no Supabase DEV.
+2. Criar rotina de consolidacao staging -> modelo operacional.
+3. Gerar pendencias e evidencias automaticamente a partir das regras.
+4. Criar painel lateral de OP com abas de Resumo, Checklist, Contratos, Logistica, Fiscal/NF, Documentos e Historico.
+5. Criar administracao de usuarios/perfis/areas.
+6. Criar importacao dos checklists como templates versionados.
+7. Adicionar testes de regras criticas e Playwright para fluxos principais.
+8. Promover fluxo DEV -> PROD com checklist de seguranca.
+
+## Cuidados Operacionais
+
+- Nunca commitar `.env`, dumps, XLSX reais, documentos fiscais, DOCX/PDF de operacao ou chaves.
+- Nunca colocar `sb_secret_*` no frontend ou Netlify client-side.
+- Rotacionar chaves se forem expostas em chat, print ou commit.
+- Validar `supabase/config.toml` e projeto alvo antes de rodar `db push`.
+- Aplicar migrations primeiro em DEV.
+- Revisar policies RLS antes de liberar usuarios externos.
+
+## Licenca e Uso
+
+Repositorio publico para desenvolvimento do Portal Faturamento Fiscal da RPA Automatic. Dados reais de operacao, documentos fiscais, chaves e arquivos privados nao fazem parte do repositorio e devem permanecer em ambientes controlados.
+
+## Planejamento e documentação no Azure DevOps
+
+- [Épico #26 — Portal de Faturamento](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_workitems/edit/26)
+- [Wiki do produto](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento)
+- [Plano de quatro sprints](docs/product/delivery-plan.md)
+- [Publicação e governança DevOps](docs/operations/azure-devops.md)
+
+## Incremento do modelo fiscal — setembro de 2026
+
+Banco fiscal com nove migrations e 32 tabelas protegidas por RLS. A OP abre uma ficha de consulta com contratos, documentos/versões, verificações E1–E5, pendências, logística e histórico. Liberação e encerramento são decisões independentes.
+
+- [Modelo de dados e diagnóstico das migrations](docs/data/fiscal-schema.md)
+- [Comparação com soluções de mercado](docs/product/market-benchmark.md)
+- [Estratégia de banco remoto único e testes locais](docs/decisions/ADR-0002-banco-fiscal-unico.md)
+
+O banco está preparado, mas as cargas históricas ainda permanecem na origem. Homologação, automação das aprovações e implantação operacional completa continuam no backlog.

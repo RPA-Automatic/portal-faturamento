@@ -1,0 +1,8 @@
+flowchart LR
+    DevBranch[Branch dev] --> DevBuild[Netlify branch deploy]
+    DevBuild --> DevDB[Supabase DEV]
+    DevDB --> Review[Validação e aprovação]
+    Review --> Main[Branch main]
+    Main --> ProdBuild[Netlify produção]
+    ProdBuild --> ProdDB[Supabase PROD]
+    DevDB -. sem promoção automática de dados .-> ProdDB

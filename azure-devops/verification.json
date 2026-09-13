@@ -1,0 +1,45 @@
+{
+  "checked_at": "2026-09-13T18:03:59.333960+00:00",
+  "organization": "https://dev.azure.com/rpa-automatic",
+  "project": "RPA Automatic",
+  "epics": {
+    "sda": 1,
+    "portal-faturamento": 26,
+    "portal-orchestrator-ai": 87
+  },
+  "wiki_pages": {
+    "portal-faturamento": 13,
+    "portal-orchestrator-ai": 12,
+    "solution-design-architecture-agent": 12
+  },
+  "shared_pages": 2,
+  "wiki_roots": [
+    "/Catalogo-de-projetos",
+    "/portal-faturamento",
+    "/portal-orchestrator-ai",
+    "/solution-design-architecture-agent",
+    "/Padrao-de-documentacao"
+  ],
+  "sprints": {
+    "1": {
+      "issues": 3,
+      "tasks": 12
+    },
+    "2": {
+      "issues": 3,
+      "tasks": 12
+    },
+    "3": {
+      "issues": 3,
+      "tasks": 12
+    },
+    "4": {
+      "issues": 3,
+      "tasks": 12
+    }
+  },
+  "dependencies_verified": 23,
+  "backlog_replay": "60 reused; 0 new",
+  "wiki_replay": "all unchanged",
+  "ui_validation": "Browser unavailable; content, hierarchy and links verified through REST API"
+}

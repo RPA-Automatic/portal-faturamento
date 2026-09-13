@@ -1,0 +1,10 @@
+{
+  "organization": "https://dev.azure.com/rpa-automatic",
+  "project": "RPA Automatic",
+  "project_id": "a972b098-8166-40cb-a859-cb22b71287b8",
+  "wiki_id": "a872b434-77b1-4e65-ba18-923abf5021f1",
+  "page_root": "/portal-faturamento",
+  "epic_id": 26,
+  "repo_url": "https://github.com/RPA-Automatic/portal-faturamento",
+  "branch": "dev"
+}

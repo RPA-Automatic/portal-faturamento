@@ -1,27 +1,45 @@
-name: CI
-
+name: Portal validation
 on:
-  pull_request:
-    branches: [main, desenvolvimento]
   push:
-    branches: [main, desenvolvimento]
-
+    branches: [dev, main]
+  pull_request:
+permissions:
+  contents: read
 jobs:
-  validate:
+  frontend:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: '22'
           cache: npm
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint
-        run: npm run lint
-      - name: Build
-        run: npm run build
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm --prefix frontend ci
+      - run: npm --prefix frontend run lint
+      - run: npm --prefix frontend run build
+      - run: npx playwright install --with-deps chromium
+        working-directory: frontend
+      - run: node scripts/test_portal_ui.cjs
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: local_ci_only
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGUSER: postgres
+      PGPASSWORD: local_ci_only
+      PF_TEST_PG_PORT: '5432'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - run: python3 scripts/test_database.py
+      - run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

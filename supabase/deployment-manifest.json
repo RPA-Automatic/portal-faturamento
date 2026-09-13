@@ -1,0 +1,72 @@
+{
+  "project_ref": "eukazzizamxratkavcap",
+  "date": "2026-09-13",
+  "method": "MCP apply_migration; version alignment guarded by exact SHA-256",
+  "migrations": [
+    {
+      "version": "20260501000100",
+      "name": "initial_backend_schema",
+      "sha256": "5c3a1caddd715c8f8ba379bd9a0ce9c6f272fa1ac27c2f7034a3030d93dd225e",
+      "execution_version_before_alignment": "20260913214544"
+    },
+    {
+      "version": "20260506000100",
+      "name": "harden_rls_profiles",
+      "sha256": "ce9516a0b97ec6ca34af76c495716d0323ea017c6388e32319de4f94d144134b",
+      "execution_version_before_alignment": "20260913214553"
+    },
+    {
+      "version": "20260506000200",
+      "name": "fix_supabase_advisor_findings",
+      "sha256": "f18cbc315f9f6f877f7d48f19775d7e7da95e996101c52f01e9a82816430f089",
+      "execution_version_before_alignment": "20260913214555"
+    },
+    {
+      "version": "20260506000300",
+      "name": "add_audit_and_controlled_pending_rpc",
+      "sha256": "cbd2f1eadf3645c11cbca95e67b3fa85cb6ab1958c22f72b23b3412b71a150cd",
+      "execution_version_before_alignment": "20260913214556"
+    },
+    {
+      "version": "20260506000400",
+      "name": "add_private_operation_document_storage",
+      "sha256": "4cc52e9556d9ec7b0e479001e02b2c6d57e2a2e4ee3a46c46dbb8321b42a10a5",
+      "execution_version_before_alignment": "20260913214558"
+    },
+    {
+      "version": "20260506000500",
+      "name": "fix_local_advisor_warnings",
+      "sha256": "dc6a3271f759093275b5539ba84f075adec66f6f9115b8223aabee3274c1c608",
+      "execution_version_before_alignment": "20260913214559"
+    },
+    {
+      "version": "20260506000600",
+      "name": "revoke_legacy_rls_auto_enable_execute",
+      "sha256": "cfb3e7f943067600ce5a3bb0bb82f2b90b291848e6be2845e51b6b78b368dde2",
+      "execution_version_before_alignment": "20260913214600"
+    },
+    {
+      "version": "20260913213506",
+      "name": "fiscal_operational_model",
+      "sha256": "c3ef2f78cb2b7eca51fa264c896c1c0f72b3c3cd05b8f0f893d76127345cf244",
+      "execution_version_before_alignment": "20260913214602"
+    },
+    {
+      "version": "20260913214652",
+      "name": "fiscal_query_indexes",
+      "sha256": "b863ec29939f476ebd8dc5dc99fbbcf8c6470be081d596467d7ffe25a0dafc66",
+      "execution_version_before_alignment": "20260913214801"
+    }
+  ],
+  "verification": {
+    "public_tables": 32,
+    "tables_without_rls": 0,
+    "local_postgres": "16.15",
+    "remote_postgres": "17",
+    "sql_tests": "passed; remote fixture rolled back",
+    "synthetic_users_remaining": 0,
+    "operations_after_setup": 0,
+    "security_advisor": "authenticated GraphQL schema discovery warning; RLS enforced",
+    "performance_advisor": "unused indexes only after fixing 23 missing FK indexes"
+  }
+}

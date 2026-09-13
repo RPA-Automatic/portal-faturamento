@@ -1,0 +1,23 @@
+[
+  {
+    "product": "portal-faturamento",
+    "epic": 26,
+    "query_id": "25bbb215-ea03-4d92-bcca-658451359c4a",
+    "relation_count": 66,
+    "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/25bbb215-ea03-4d92-bcca-658451359c4a"
+  },
+  {
+    "product": "solution-design-architecture-agent",
+    "epic": 1,
+    "query_id": "f8147250-a8a4-4fcd-9d0a-6226b2e2861f",
+    "relation_count": 28,
+    "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/f8147250-a8a4-4fcd-9d0a-6226b2e2861f"
+  },
+  {
+    "product": "portal-orchestrator-ai",
+    "epic": 87,
+    "query_id": "95f949d5-59ab-4f6a-b9cf-a330186d53bb",
+    "relation_count": 1,
+    "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/95f949d5-59ab-4f6a-b9cf-a330186d53bb"
+  }
+]

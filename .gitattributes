@@ -1,0 +1,2 @@
+# Markdown usa dois espaços finais para quebras de linha intencionais.
+*.md whitespace=-blank-at-eol

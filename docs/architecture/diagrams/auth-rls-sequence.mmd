@@ -1,0 +1,15 @@
+sequenceDiagram
+    actor User as Usuário
+    participant UI as React SPA
+    participant Auth as Supabase Auth
+    participant DB as PostgreSQL/RLS
+    User->>UI: Entrar
+    UI->>Auth: Autenticar
+    Auth-->>UI: Sessão/JWT
+    UI->>DB: Consulta com JWT
+    DB->>DB: Avaliar role e ownership
+    alt autorizado
+        DB-->>UI: Linhas permitidas
+    else negado
+        DB-->>UI: Sem dados/erro de permissão
+    end

@@ -1,0 +1,54 @@
+{
+  "area": "RPA Automatic\\portal-faturamento",
+  "team_default_area": "RPA Automatic",
+  "iterations": [
+    {
+      "id": "af6eca89-fb13-4caf-81cc-c0171045050a",
+      "name": "Sprint 1"
+    },
+    {
+      "id": "76e8ebc6-0b09-4f18-9728-52d8802e7e05",
+      "name": "Sprint 2"
+    },
+    {
+      "id": "66641ba8-07ea-4f9b-b749-53389010f166",
+      "name": "Sprint 3"
+    },
+    {
+      "id": "bc7090ea-76ee-4e51-bd80-166a53124ca8",
+      "name": "Sprint 4"
+    }
+  ],
+  "queries": [
+    {
+      "name": "00 - Backlog completo",
+      "id": "d8b71d2e-7433-49f0-b360-80aae00e25ef",
+      "count": 66,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/d8b71d2e-7433-49f0-b360-80aae00e25ef"
+    },
+    {
+      "name": "01 - Sprint 1",
+      "id": "85d9214d-c005-4874-b3a6-4250640574f8",
+      "count": 15,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/85d9214d-c005-4874-b3a6-4250640574f8"
+    },
+    {
+      "name": "02 - Sprint 2",
+      "id": "8f703990-a2b3-46ac-9bd8-bced80fc9329",
+      "count": 15,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/8f703990-a2b3-46ac-9bd8-bced80fc9329"
+    },
+    {
+      "name": "03 - Sprint 3",
+      "id": "48c04abc-62b1-4559-afbb-8c555f794351",
+      "count": 15,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/48c04abc-62b1-4559-afbb-8c555f794351"
+    },
+    {
+      "name": "04 - Sprint 4",
+      "id": "d24a1277-cd63-427c-86fd-0d3ff4d807dc",
+      "count": 15,
+      "url": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_queries/query/d24a1277-cd63-427c-86fd-0d3ff4d807dc"
+    }
+  ]
+}

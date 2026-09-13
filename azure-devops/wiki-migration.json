@@ -1,0 +1,54 @@
+{
+  "orchestrator_epic": 87,
+  "moves": [
+    {
+      "old": "/Home",
+      "new": "/solution-design-architecture-agent",
+      "id": 4,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Architecture",
+      "new": "/solution-design-architecture-agent/Architecture",
+      "id": 1,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Operating-Model",
+      "new": "/solution-design-architecture-agent/Operating-Model",
+      "id": 6,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Azure-DevOps",
+      "new": "/solution-design-architecture-agent/Azure-DevOps",
+      "id": 3,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/SharePoint",
+      "new": "/solution-design-architecture-agent/SharePoint",
+      "id": 14,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Security",
+      "new": "/solution-design-architecture-agent/Security",
+      "id": 12,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Runbook",
+      "new": "/solution-design-architecture-agent/Runbook",
+      "id": 10,
+      "action": "moved; content and id preserved"
+    },
+    {
+      "old": "/Roadmap",
+      "new": "/solution-design-architecture-agent/Roadmap",
+      "id": 8,
+      "action": "moved; content and id preserved"
+    }
+  ],
+  "catalog": "https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2FCatalogo-de-projetos"
+}
