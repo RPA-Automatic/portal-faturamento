@@ -1,5 +1,5 @@
-export function BrandFooter() {
-  return <footer className="w-full bg-white border-t border-slate-100 px-5 py-6 flex flex-col items-center gap-3 text-center">
+export function BrandFooter({ compact = false }: { compact?: boolean }) {
+  return <footer className={compact ? 'auth-footer' : 'w-full bg-white border-t border-slate-100 px-5 py-6 flex flex-col items-center gap-3 text-center'}>
     <img src="/brand/rpa-automatic-horizontal.png" alt="RPA Automatic" width={2172} height={724} className="w-52 h-auto max-w-full"/>
     <small className="text-xs text-[#123B82]">© {new Date().getFullYear()} RPA Automatic. Todos os direitos reservados.</small>
   </footer>;

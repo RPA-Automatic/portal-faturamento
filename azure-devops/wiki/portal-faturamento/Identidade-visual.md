@@ -31,9 +31,16 @@ O ícone compacto usa o robô sem o texto e as órbitas, para preservar a leitur
 - Azul principal: `#1264ED`, usado também no botão de entrada.
 - Ciano: `#08BFF0`, para detalhes do símbolo.
 - Azul de leitura: `#123B82`; links da interface usam `#1254BC`.
-- Fundo da marca e da tela de entrada: branco `#FFFFFF`.
+- Fundo de suporte dos logos e do formulário: branco `#FFFFFF`.
+- Painel de apresentação do login: azul profundo `#0D2855` a `#123B82`, com detalhes em ciano; fundo externo claro `#F0F4FA`.
 
 Usar os arquivos sem distorção, preservar proporções e margens e não aplicar filtros que alterem as cores. Sobre fundos escuros, manter uma área branca de suporte. Verde, amarelo e vermelho continuam reservados aos significados operacionais do Farol.
+
+## Composição da tela de entrada
+
+A apresentação e o acesso formam um único conjunto: painel azul com a marca completa sobre branco, formulário branco e rodapé alinhado às duas colunas. O contraste separa a mensagem do produto dos campos de acesso. A marca tem tamanho contido para não empurrar o formulário para fora da área de leitura. No celular, as áreas se empilham e a apresentação fica compacta, com rolagem natural para cadastro e mensagens.
+
+Os provedores sociais aparecem lado a lado com o estado “Em configuração” enquanto indisponíveis. O acesso principal por e-mail recebe destaque. O layout não altera autenticação, autorização nem o estado dos provedores. Os estilos de entrada são locais ao componente, incluindo foco de teclado, contraste e adaptação à largura da tela.
 
 ## Proteção da identidade
 
