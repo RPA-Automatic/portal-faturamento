@@ -11,7 +11,7 @@
 
 ## Pré-Requisitos
 
-- Node.js LTS.
+- Node.js 22 (também usado em CI e no Netlify).
 - Git.
 - Docker Desktop.
 - Supabase CLI.

@@ -32,3 +32,9 @@ O banco do Orchestrator foi apenas consultado. Seus dados fiscais ainda precisam
 ## Reconciliação de main/dev
 
 A main anterior (`604c5c0`) continha um protótipo diferente, com frontend na raiz e cinco tabelas próprias. O merge preserva ambos os históricos, adota o frontend em `frontend/`, mantém o fallback SPA do Netlify e arquiva a migration antiga fora da cadeia ativa. A CI passa a validar o frontend atual e as migrations em PostgreSQL 17, com Node 22.
+
+## Dependências e publicação
+
+O primeiro push confirmou CI remota aprovada em main/dev. A revisão adicional corrigiu os dez avisos do npm audit: atualizações do lockfile e React Router 7.18.3 (mantendo React 18 e HashRouter). O resultado local final é zero vulnerabilidades reportadas pelo npm audit; isso não equivale a garantia de ausência de falhas. Build, TypeScript e cenários de navegador foram repetidos após a atualização.
+
+O runtime de desenvolvimento/CI/Netlify foi fixado em Node 22, e o import map antigo de CDNs foi removido: as dependências vêm do lockfile do Vite.
