@@ -8,6 +8,8 @@
 > Responsável: @RodrigoFreitas16n91  
 > Última revisão: 2026-09-13
 
+> Atualização posterior: a identidade tipográfica provisória descrita neste registro foi substituída pela marca escolhida pelo responsável. Consulte a [identidade vigente](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FIdentidade-visual).
+
 ## Entrega
 
 - Identidade pública RPA Automatic no login, cabeçalho, título, descrição e favicon; referências e imagem externa removidas do frontend.

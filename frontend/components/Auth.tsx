@@ -50,16 +50,16 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
 
   const inputClass = 'w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100';
   return (
-    <main className="min-h-screen bg-[#F3F7FA] text-[#102A43] flex flex-col items-center justify-center px-5 py-8 sm:py-12">
+    <main className="min-h-screen bg-white text-[#123B82] flex flex-col items-center justify-center px-5 py-8 sm:py-12">
       <div className="w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 border border-slate-200 grid lg:grid-cols-2">
-        <section className="relative bg-[#EAF7F8] p-7 sm:p-10 lg:p-12 flex flex-col justify-between">
-          <div aria-label="RPA Automatic" className="text-2xl tracking-tight text-[#102A43]"><span className="font-extrabold">RPA</span> <span className="font-medium">Automatic</span></div>
-          <div className="py-7 lg:py-12">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#087985] mb-4">Portal de Faturamento</p>
+        <section className="relative bg-white border-b lg:border-b-0 lg:border-r border-slate-100 p-7 sm:p-10 lg:p-12 flex flex-col justify-between">
+          <img src="/brand/rpa-automatic-primary.png" alt="RPA Automatic" width="1254" height="1254" className="w-44 sm:w-56 lg:w-72 h-auto max-w-full mx-auto" fetchPriority="high" />
+          <div className="py-7 lg:py-8">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#1254BC] mb-4">Portal de Faturamento</p>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight">Clareza em cada<br className="hidden sm:block" /> etapa do embarque.</h1>
             <p className="mt-5 text-sm sm:text-base text-slate-600 leading-relaxed max-w-sm">Acompanhe operações, documentos e pendências em um só lugar.</p>
           </div>
-          <div className="hidden lg:flex items-center gap-3 text-xs font-medium text-[#087985]"><span className="h-2 w-2 rounded-full bg-[#18B5C3]" aria-hidden="true" />Visibilidade para decidir. Controle para liberar.</div>
+          <div className="hidden lg:flex items-center gap-3 text-xs font-medium text-[#1254BC]"><span className="h-2 w-2 rounded-full bg-[#08BFF0]" aria-hidden="true" />Visibilidade para decidir. Controle para liberar.</div>
         </section>
         <section className="p-7 sm:p-10 lg:p-12" aria-label="Acesso ao portal">
           <h2 className="text-2xl font-bold">{mode === 'login' ? 'Acesse seu portal' : 'Crie sua conta'}</h2>
@@ -72,12 +72,12 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
             <div><label htmlFor="password" className="block text-sm font-semibold mb-2">Senha</label>
               <div className="relative">
                 <input id="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={mode === 'signup' ? 8 : undefined} required value={password} onChange={e => setPassword(e.target.value)} className={`${inputClass} pr-20`} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} className="absolute right-3 inset-y-0 text-xs font-semibold text-[#087985]">{showPassword ? 'Ocultar' : 'Mostrar'}</button>
+                <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'} className="absolute right-3 inset-y-0 text-xs font-semibold text-[#1254BC]">{showPassword ? 'Ocultar' : 'Mostrar'}</button>
               </div>
             </div>
-            <button type="submit" disabled={Boolean(busy) || !isSupabaseConfigured} className="w-full rounded-xl bg-[#102A43] hover:bg-[#173F61] text-white py-3 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{busy === 'email' ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar conta'}</button>
+            <button type="submit" disabled={Boolean(busy) || !isSupabaseConfigured} className="w-full rounded-xl bg-[#1264ED] hover:bg-[#0D50CA] text-white py-3 text-sm font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed">{busy === 'email' ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar conta'}</button>
           </form>
-          <p className="my-5 text-center text-sm text-slate-500">{mode === 'login' ? 'Primeiro acesso? ' : 'Já possui uma conta? '}<button type="button" disabled={Boolean(busy)} onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setPassword(''); setError(null); setMessage(null); }} className="font-semibold text-[#087985] hover:underline">{mode === 'login' ? 'Criar conta' : 'Entrar com e-mail'}</button></p>
+          <p className="my-5 text-center text-sm text-slate-500">{mode === 'login' ? 'Primeiro acesso? ' : 'Já possui uma conta? '}<button type="button" disabled={Boolean(busy)} onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setPassword(''); setError(null); setMessage(null); }} className="font-semibold text-[#1254BC] hover:underline">{mode === 'login' ? 'Criar conta' : 'Entrar com e-mail'}</button></p>
           <div className="border-t border-slate-200 pt-5">
             <p className="text-xs font-semibold text-slate-500 mb-3">Outras formas de acesso</p>
             <div className="space-y-2">{providers.map(provider => {

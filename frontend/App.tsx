@@ -218,8 +218,8 @@ const App: React.FC = () => {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <div aria-label="RPA Automatic" className="text-2xl tracking-tight text-[#102A43]"><span className="font-extrabold">RPA</span> <span className="font-medium">Automatic</span></div>
-            <p className="text-xs font-bold uppercase tracking-wide text-[#087985]">Portal de Faturamento</p>
+            <img src="/brand/rpa-automatic-horizontal.png" alt="RPA Automatic" width="1536" height="512" className="w-48 sm:w-56 h-auto mb-2" />
+            <p className="text-xs font-bold uppercase tracking-wide text-[#1254BC]">Portal de Faturamento</p>
             <h1 className="text-2xl font-bold text-slate-950">Farol de Liberacao de Embarque</h1>
           </div>
 

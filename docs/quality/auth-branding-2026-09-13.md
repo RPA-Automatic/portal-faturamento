@@ -4,6 +4,8 @@
 > Responsável: @RodrigoFreitas16n91  
 > Última revisão: 2026-09-13
 
+> Atualização posterior: a identidade tipográfica provisória descrita neste registro foi substituída pela marca escolhida pelo responsável. Consulte a [identidade vigente](../product/brand.md).
+
 ## Entrega
 
 - Identidade pública RPA Automatic no login, cabeçalho, título, descrição e favicon; referências e imagem externa removidas do frontend.
