@@ -10,6 +10,15 @@ const providers: { id: SocialProvider; label: string; symbol: string }[] = [
   { id: 'google', label: 'Google', symbol: 'G' },
 ];
 
+const journeyStages = [
+  { code: 'E1', name: 'Documentos', description: 'Reunimos instruções, contratos e autorizações que formam a base segura da operação.' },
+  { code: 'E2', name: 'Fiscal', description: 'Conferimos regras fiscais, cadastros e condições para evitar divergências na emissão.' },
+  { code: 'E3', name: 'Contratos', description: 'Validamos vínculos e regras operacionais antes de preparar o embarque.' },
+  { code: 'E4', name: 'Logística', description: 'Acompanhamos rota, agendamento, origem e destino para liberar o carregamento.' },
+  { code: 'E5', name: 'Faturamento', description: 'Revisamos notas e dados de faturamento para manter a operação consistente.' },
+  { code: 'E6', name: 'Conclusão', description: 'Confirmamos a entrega documental e encerramos a jornada com rastreabilidade.' },
+] as const;
+
 export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [name, setName] = useState('');
@@ -19,6 +28,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(initialError);
   const [message, setMessage] = useState<string | null>(null);
+  const [activeJourneyStage, setActiveJourneyStage] = useState<(typeof journeyStages)[number] | null>(null);
   const canResendConfirmation = Boolean(message?.includes('confirmar o cadastro') || error?.includes('Confirme seu e-mail') || error?.includes('link de confirmação'));
 
   async function handleEmail(event: React.FormEvent) {
@@ -83,8 +93,22 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
             <p>Uma visão clara de operações, documentos e pendências para decidir e liberar com confiança.</p>
           </div>
           <div className="auth-process" aria-label="Acompanhamento do embarque">
-            <div><p>Jornada operacional</p><span>E1 a E6</span></div>
-            <ol><li><span>E1</span></li><li><span>E2</span></li><li><span>E3</span></li><li><span>E4</span></li><li><span>E5</span></li><li><span>E6</span></li></ol>
+            <div className="auth-process-heading">
+              <div><p>Conheça a jornada</p><small>Passe o mouse ou selecione uma etapa</small></div>
+              <span>E1 a E6</span>
+            </div>
+            <div id="journey-description" className={`auth-process-description${activeJourneyStage ? ' is-active' : ''}`} aria-live="polite">
+              <strong>{activeJourneyStage ? `${activeJourneyStage.code} · ${activeJourneyStage.name}` : 'Da preparação à conclusão'}</strong>
+              <p>{activeJourneyStage?.description || 'Explore cada etapa e veja como cuidamos das informações do seu embarque.'}</p>
+            </div>
+            <ol>{journeyStages.map(stage => <li key={stage.code}>
+              <button type="button" aria-label={`${stage.code}: ${stage.name}`} aria-describedby="journey-description"
+                onMouseEnter={() => setActiveJourneyStage(stage)} onMouseLeave={() => setActiveJourneyStage(null)}
+                onFocus={() => setActiveJourneyStage(stage)} onBlur={() => setActiveJourneyStage(null)}
+                onClick={() => setActiveJourneyStage(current => current?.code === stage.code ? null : stage)}>
+                <span>{stage.code}</span><small>{stage.name}</small>
+              </button>
+            </li>)}</ol>
           </div>
         </section>
         <section className="auth-access" aria-label="Acesso ao portal">

@@ -126,6 +126,9 @@ async function pageWithMock(handler) {
   const gatedBase=await serve(5189,'');
   const gated=await pageWithMock(); await gated.goto(gatedBase);
   await gated.getByRole('heading',{name:'Acesse seu portal'}).waitFor();
+  await gated.getByText('Explore cada etapa e veja como cuidamos das informações do seu embarque.').waitFor();
+  await gated.getByRole('button',{name:'E3: Contratos',exact:true}).hover();
+  await gated.getByText('Validamos vínculos e regras operacionais antes de preparar o embarque.').waitFor();
   for(const label of ['Microsoft','GitHub','Google']) assert.equal(await gated.getByRole('button',{name:`Continuar com ${label}`,exact:false}).count(), 0);
   assert.ok(await gated.getByRole('button',{name:'Entrar',exact:true}).isEnabled());
   assert.equal(await gated.getByRole('alert').count(),0);
