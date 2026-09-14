@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Selo opcional da hospedagem: manter a identidade própria também para leitores de tela. */
+#nl-badge-frame {
+  display: none !important;
+}
