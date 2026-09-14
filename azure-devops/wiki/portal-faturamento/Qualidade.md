@@ -35,7 +35,7 @@ O desenho separa conteúdo bruto, normalização, evidência, decisão e apresen
 
 ## Azure DevOps
 
-O produto permanece no projeto compartilhado `RPA Automatic`, sob o épico #26 e a árvore de wiki `/portal-faturamento`. A estrutura possui cinco Features, 12 User Stories e 48 Tasks distribuídas em quatro sprints de duas semanas. Queries separadas permitem acompanhar Features, Stories, Tasks, Bugs e Issues. A consulta remota de 2026-09-13 às 22:20 (America/Sao_Paulo) encontrou os 65 itens em estado `New`: o planejamento está provisionado, mas o progresso realizado ainda precisa ser revisado nos cards contra os critérios de aceite.
+O produto permanece no projeto compartilhado `RPA Automatic`, sob o épico #26 e a árvore de wiki `/portal-faturamento`. A estrutura possui cinco Features, 12 User Stories e 48 Tasks distribuídas em quatro sprints de duas semanas. Queries separadas permitem acompanhar Features, Stories, Tasks, Bugs e Issues. Em 2026-09-13 às 22:26 (America/Sao_Paulo), a Task #39 de CI e documentação passou para `Active` com evidência do workflow; os outros 64 itens permanecem em `New`. O card não foi fechado porque seu critério de verificação automática de links ainda está pendente.
 
 `docs/` é a fonte técnica. `azure-devops/wiki/` é uma projeção gerada por lista explícita, e o publicador impede escrita fora da árvore do produto. A skill `$rpa-devops-sync` e `scripts/sync_devops_increment.py` passam a sincronizar documentação e wiki ao final de cada incremento material. `scripts/update_devops_task_progress.py` registra estado e evidência somente na Task indicada e validada; não modifica responsável, esforço, datas ou aceite por inferência.
 

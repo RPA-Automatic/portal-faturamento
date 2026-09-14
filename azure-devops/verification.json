@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-09-13T22:20:24-03:00",
+  "checked_at": "2026-09-13T22:26:43-03:00",
   "organization": "https://dev.azure.com/rpa-automatic",
   "project": "RPA Automatic",
   "epics": {
@@ -40,7 +40,7 @@
   },
   "dependencies_verified": 23,
   "backlog_replay": "5 features, 12 user stories and 48 tasks present; 60 reusable planned items; 0 new",
-  "work_item_states": "65 New; no state inferred from repository changes",
+  "work_item_states": "64 New; Task #39 Active with workflow evidence; no completion inferred",
   "wiki_replay": "16 product pages verified; post-publication replay all unchanged",
   "ui_validation": "Content, hierarchy and links verified through REST API"
 }
