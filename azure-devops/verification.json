@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-09-13T18:03:59.333960+00:00",
+  "checked_at": "2026-09-13T22:20:24-03:00",
   "organization": "https://dev.azure.com/rpa-automatic",
   "project": "RPA Automatic",
   "epics": {
@@ -8,7 +8,7 @@
     "portal-orchestrator-ai": 87
   },
   "wiki_pages": {
-    "portal-faturamento": 13,
+    "portal-faturamento": 16,
     "portal-orchestrator-ai": 12,
     "solution-design-architecture-agent": 12
   },
@@ -39,7 +39,8 @@
     }
   },
   "dependencies_verified": 23,
-  "backlog_replay": "60 reused; 0 new",
-  "wiki_replay": "all unchanged",
-  "ui_validation": "Browser unavailable; content, hierarchy and links verified through REST API"
+  "backlog_replay": "5 features, 12 user stories and 48 tasks present; 60 reusable planned items; 0 new",
+  "work_item_states": "65 New; no state inferred from repository changes",
+  "wiki_replay": "16 product pages verified; post-publication replay all unchanged",
+  "ui_validation": "Content, hierarchy and links verified through REST API"
 }

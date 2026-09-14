@@ -60,6 +60,7 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 ## Decisões e qualidade
 
 - [DevOps e planejamento de implantação — 2026-09-13](quality/devops-planning-2026-09-13.md)
+- [Estado atual do produto](quality/current-status.md)
 - [ADR-0001 — Organização Azure DevOps](decisions/ADR-0001-organizacao-azure-devops.md)
 
 - [Revisão do acervo privado](quality/source-review-2026-09-13.md)

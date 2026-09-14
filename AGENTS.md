@@ -15,6 +15,7 @@ Trabalhe em português do Brasil. Leia `docs/README.md` antes de alterar produto
 - `supabase/targets.json` é a fonte das referências remotas: PROD está definido; DEV é local; o usuário confirmou um único banco remoto fiscal (ADR-0002). Nunca usar banco de outro produto para desenvolvimento fiscal.
 - Para frontend, execute os comandos de validação documentados em `docs/operations/development.md`.
 - Atualize o documento normativo correspondente e registre decisões arquiteturais relevantes em `docs/decisions/`.
+- Ao concluir cada incremento que altere comportamento, arquitetura, dados, segurança, operação ou escopo, aplique a skill `$rpa-devops-sync` quando disponível, atualize o status canônico e sincronize a árvore `/portal-faturamento` da wiki. Não altere estado, responsável, esforço ou conclusão de cards por inferência.
 
 ## Conclusão
 

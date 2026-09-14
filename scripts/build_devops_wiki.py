@@ -20,7 +20,7 @@ SECTIONS = {
     'DevOps-e-operacao': ['operations/azure-devops.md', 'operations/development.md'],
     'To-do': ['product/delivery-plan.md'],
     'Decisoes': ['decisions/ADR-0001-organizacao-azure-devops.md', 'decisions/ADR-0002-banco-fiscal-unico.md', 'decisions/ADR-0003-dossie-documental-e-fontes.md'],
-    'Qualidade': ['quality/auth-branding-2026-09-13.md', 'quality/schema-delivery-2026-09-13.md', 'quality/devops-planning-2026-09-13.md', 'quality/source-review-2026-09-13.md', 'quality/environment-audit-2026-09-13.md'],
+    'Qualidade': ['quality/current-status.md', 'quality/auth-branding-2026-09-13.md', 'quality/schema-delivery-2026-09-13.md', 'quality/devops-planning-2026-09-13.md', 'quality/source-review-2026-09-13.md', 'quality/environment-audit-2026-09-13.md'],
 }
 
 

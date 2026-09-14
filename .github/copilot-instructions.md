@@ -16,3 +16,4 @@ Use the repository documentation as the source of truth before changing behavior
 - Preserve the canonical operation keys and evidence trail described in `docs/architecture/overview.md`.
 - Read the relevant existing implementation and tests before editing. Keep changes focused and update documentation when domain behavior changes.
 - Validate frontend changes with `npm run lint` and `npm run build` from `frontend/`.
+- Ao concluir um incremento material, atualize o documento canônico e `docs/quality/current-status.md`, execute `scripts/sync_devops_increment.py` e publique somente a árvore `/portal-faturamento` quando autorizado. Não inferir estado, responsável, esforço ou conclusão dos cards.

@@ -25,8 +25,8 @@ A ficha da OP implementa consulta de contratos, dossiê documental, documentos/v
 | Detalhe da OP | Contratos, dossiê, documentos, checklist, controles auxiliares, etapas, logística, impedimentos e histórico | Consulta implementada; validação com dados reais pendente |
 | Ações operacionais | Receber/associar/validar documento; resolver/reabrir pendência | Sprint 2 |
 | Cliente de dados | Consultas autenticadas às views do Farol e backlog | Implementado; validar no DEV correto |
-| PostgreSQL e políticas | Entidades, dossiê, staging integral, evidências e autorização por perfil | Cadeia local validada; aplicação remota deve usar a migration versionada |
-| Importadores Python | Leitura dos relatórios e carga controlada | Existentes; compras corrigidas localmente |
+| PostgreSQL e políticas | Entidades, dossiê, staging integral, evidências e autorização por perfil | 11 migrations aplicadas; 51 tabelas remotas com RLS |
+| Importadores Python | Leitura dos relatórios e carga controlada | 17 famílias validadas; consolidação operacional pendente |
 | Reconciliação e regras | Idempotência, vínculos, pior estado e exceções parametrizadas | Consolidação e homologação na sprint 3 |
 | Rotina monitorada | Cargas, falhas, reprocessamento e alertas | Preparar antes da entrada em operação |
 

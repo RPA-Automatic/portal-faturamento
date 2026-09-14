@@ -35,7 +35,10 @@ Subpáginas mínimas: visão, arquitetura, especificação técnica, diagramas, 
 python3 scripts/build_devops_wiki.py
 python3 scripts/publish_devops_wiki.py
 python3 scripts/publish_devops_wiki.py --apply
+python3 scripts/sync_devops_increment.py --apply
 ```
+
+O último comando executa geração, testes, preflight e publicação como um único fluxo. A skill pessoal `$rpa-devops-sync` orienta a atualização semântica dos documentos antes dessa automação. Ela se aplica ao final de cada incremento material; perguntas e mensagens sem mudança de estado não geram publicação.
 
 Autenticar pelo Azure CLI ou configurar `AZURE_DEVOPS_BEARER_TOKEN` / `AZURE_DEVOPS_PAT` fora do chat e do Git. `AZURE_CLI_WRAPPER` permite usar um wrapper já instalado. O publicador consulta todas as páginas antes de escrever, exige ETag para edição e confirma o conteúdo remoto após cada escrita. Em conflito, interromper e reconciliar. Nunca publicar `docs/docs_antigos/`.
 
@@ -49,6 +52,16 @@ python3 scripts/configure_devops_backlog.py --apply --out azure-devops/backlog-s
 ```
 
 O script cria apenas itens ausentes identificados pelas tags do plano, valida o pai e adiciona dependências entre entregas. Não redefine responsável, horas, estado, datas ou conteúdo de cards já existentes. `backlog-state.json` registra os IDs; o Azure Boards é a fonte do estado atual. Qualquer mudança de escopo posterior deve ser revisada nos cards e no plano canônico.
+
+Um incremento comprovado pode atualizar uma Task específica sem alterar seu texto ou seus demais campos:
+
+```bash
+python3 scripts/update_devops_task_progress.py --task PF-F00-T00 --state Active \
+  --evidence-url https://github.com/RPA-Automatic/portal-faturamento/actions/runs/ID \
+  --summary "Resumo objetivo da implementação e da validação"
+```
+
+O comando usa plano por padrão e exige `--apply` para escrever. Ele valida projeto, tipo, pai e revisão, adiciona a evidência como hyperlink e é idempotente para a mesma URL. Use `Active` enquanto houver revisão ou critério pendente; `Closed` exige evidência direta de todos os critérios e nenhum aceite humano pendente.
 
 ## Critérios operacionais
 
