@@ -40,6 +40,8 @@ Usar os arquivos sem distorção, preservar proporções e margens e não aplica
 
 A apresentação e o acesso formam um único conjunto: painel azul com a marca completa sobre branco, formulário branco e rodapé alinhado às duas colunas. O contraste separa a mensagem do produto dos campos de acesso. A marca tem tamanho contido para não empurrar o formulário para fora da área de leitura. No celular, as áreas se empilham e a apresentação fica compacta, com rolagem natural para cadastro e mensagens.
 
+No desktop, apresentação e formulário ocupam colunas de mesma largura. O rodapé repete essa grade: a marca horizontal fica centralizada sob o painel azul e o copyright começa no mesmo eixo horizontal dos campos do formulário. No celular, o rodapé passa para uma coluna. O enquadramento da marca considera as margens internas dos PNGs para manter o peso visual sem recorte.
+
 O enquadramento usa uma área quadrada branca, imagem centralizada com `object-fit: contain` e margem de proteção. Nenhum logo é recortado, esticado ou recolorido. No desktop, a área da marca principal tem 176 px, o título do produto 23 px, a chamada principal até 48 px e o texto de apoio 17 px. As larguras intermediárias e o celular têm escalas próprias, sem reduzir a leitura aos tamanhos de legenda. O logo horizontal do rodapé usa 190 px no desktop e 160 px no celular, com os direitos reservados em duas linhas legíveis.
 
 A mensagem de entrada é “Seu embarque. Sob controle.”, com destaque em ciano na segunda linha. Os textos de apoio descrevem o acompanhamento de operações, documentos e pendências, sem promessas de automações ainda não implementadas.
