@@ -88,6 +88,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
           </div>
         </section>
         <section className="auth-access" aria-label="Acesso ao portal">
+          <div className="auth-access-content">
           <div className="auth-heading">
             <p className="auth-eyebrow">{mode === 'login' ? 'Bem-vindo de volta' : 'Primeiro acesso'}</p>
             <h2>{mode === 'login' ? 'Acesse seu portal' : 'Crie sua conta'}</h2>
@@ -121,6 +122,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
               </button>;
             })}</div>
           </div>}
+          </div>
           <BrandFooter compact />
         </section>
       </div>

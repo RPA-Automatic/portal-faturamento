@@ -78,6 +78,7 @@
 .auth-process li:last-child span { border-color: #8be8ff; background: #8be8ff; color: #082658; box-shadow: 0 0 0 5px #8be8ff18, 0 0 22px #54dcff59; }
 
 .auth-access { min-width: 0; display: flex; flex-direction: column; padding: 46px 52px 24px; }
+.auth-access-content { width: 100%; margin-block: auto; padding-block: 6px 24px; }
 .auth-heading { margin-bottom: 24px; }
 .auth-heading .auth-eyebrow { color: #1254bc; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; margin: 0 0 10px; }
 .auth-heading h2 { margin: 0; font-size: 32px; font-weight: 700; line-height: 1.16; letter-spacing: -.04em; color: #102c56; }
@@ -135,6 +136,7 @@
   .auth-product p { font-size: 21px; }
   .auth-product > span { font-size: 11px; }
   .auth-access { padding: 36px 34px 22px; }
+  .auth-access-content { padding-bottom: 18px; }
   .auth-intro h1 { font-size: 44px; }
   .auth-intro > p { font-size: 16px; }
   .auth-footer { gap: 12px; }
@@ -155,6 +157,7 @@
   .auth-intro h1 { font-size: 37px; }
   .auth-intro > p { margin-top: 14px; font-size: 15px; line-height: 1.6; }
   .auth-access { padding: 28px 24px; }
+  .auth-access-content { margin-block: 0; padding-block: 0 24px; }
   .auth-heading h2 { font-size: 26px; }
   .auth-footer { gap: 14px; padding-top: 16px; }
   .auth-footer-logo { width: 138px; height: 37px; }
@@ -174,6 +177,7 @@
   .auth-process { padding-top: 16px; }
   .auth-process > div { margin-bottom: 10px; }
   .auth-access { padding-block: 30px 18px; }
+  .auth-access-content { padding-block: 0 14px; }
   .auth-heading { margin-bottom: 18px; }
   .auth-heading .auth-eyebrow { margin-bottom: 6px; }
   .auth-form { gap: 12px; }
