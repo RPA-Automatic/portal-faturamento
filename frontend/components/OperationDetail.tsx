@@ -6,8 +6,12 @@ type Detail = Record<string, Row[]>;
 const queries = [
   ['stages', 'v_operation_stage_readiness', 'stage,result,reason,assessed_at', 'stage'],
   ['contracts', 'operation_contract_links', 'contract_id,contracts(contract_number,contract_type,establishment,item_description,normalized_status,data_carga)', 'linked_at'],
-  ['documents', 'documents', 'id,title,type,status,updated_at', 'updated_at'],
+  ['documents', 'documents', 'id,title,type,document_type_code,status,updated_at,document_type_catalog(name)', 'updated_at'],
   ['versions', 'document_versions', 'id,document_id,version_no,received_at', 'version_no'],
+  ['documentRequirements', 'operation_document_requirements', 'id,status,reason,document_id,updated_at,document_requirements(stage,owner_area,blocking,document_type_code,document_type_catalog(name))', 'updated_at'],
+  ['checklist', 'operation_checklist_answers', 'id,answer_status,notes,answered_at,checklist_items(label,stage,owner_area)', 'updated_at'],
+  ['financial', 'operation_financial_checks', 'id,check_type,result,amount,currency,due_date,checked_at', 'checked_at'],
+  ['inventory', 'operation_inventory_checks', 'id,item_code,warehouse_code,available_quantity,unit,result,checked_at', 'checked_at'],
   ['pending', 'pending_items', 'id,stage,owner_area,severity,status,message,next_step,due_at', 'opened_at'],
   ['locations', 'operation_locations', 'id,role,description,city,state,sequence_no', 'sequence_no'],
   ['logistics', 'logistics_orders', 'id,ol_rota,status_transito,origem_name,destino_name,data_carregamento', 'created_at'],
@@ -19,6 +23,8 @@ const words: Record<string, string> = {
   liberacao_embarque: 'Liberação de embarque', encerramento: 'Encerramento', revogado: 'Revogado',
   origem: 'Origem', entrega: 'Entrega', transbordo: 'Transbordo', destino_final: 'Destino final',
   gestao_contratos: 'Gestão de contratos', em_tratativa: 'Em tratativa', aberta: 'Aberta', resolvida: 'Resolvida', dispensada: 'Dispensada',
+  recebido: 'Recebido', em_revisao: 'Em revisão', rejeitado: 'Rejeitado',
+  regular: 'Regular', bloqueado: 'Bloqueado', suficiente: 'Suficiente', insuficiente: 'Insuficiente',
 };
 const label = (value: unknown) => words[String(value)] || String(value ?? 'Não informado').replaceAll('_', ' ');
 const date = (value: unknown) => typeof value === 'string' && !Number.isNaN(Date.parse(value))
@@ -86,15 +92,33 @@ export function OperationDetail({ id, number, onClose }: { id: string; number: s
         <Table title="Contratos vinculados" rows={data.contracts.map(row => (row.contracts || {}) as Row)} columns={[
           ['contract_number','Contrato'],['contract_type','Tipo'],['establishment','Filial'],['item_description','Produto'],['normalized_status','Situação'],['data_carga','Data da carga'],
         ]} />
+        <section><h3 className="mb-3 text-lg font-bold">Dossiê para liberação</h3>
+          <p className="mb-3 text-sm text-slate-600">Cada requisito é acompanhado separadamente. Arquivo recebido ainda pode estar em revisão, rejeitado ou pendente.</p>
+          {!data.documentRequirements.length ? <Empty text="Nenhum conjunto de requisitos documentais foi aplicado a esta OP." /> : <div className="grid gap-2 sm:grid-cols-2">{data.documentRequirements.map(row => {
+            const requirement = (row.document_requirements || {}) as Row;
+            const documentType = (requirement.document_type_catalog || {}) as Row;
+            const approved = row.status === 'aprovado' || row.status === 'nao_aplicavel' || row.status === 'dispensado';
+            return <article key={String(row.id)} className="rounded-lg border bg-white p-4">
+              <p className="text-xs font-semibold uppercase text-slate-500">{label(requirement.stage)} · {label(requirement.owner_area)}{requirement.blocking ? ' · Bloqueante' : ''}</p>
+              <h4 className="mt-1 font-semibold">{String(documentType.name || requirement.document_type_code || 'Documento')}</h4>
+              <p className={`mt-2 text-sm font-semibold ${approved ? 'text-emerald-700' : row.status === 'rejeitado' ? 'text-red-700' : 'text-amber-800'}`}>{label(row.status)}</p>
+              {Boolean(row.reason) && <p className="mt-1 text-sm text-slate-600">{String(row.reason)}</p>}
+            </article>;
+          })}</div>}
+        </section>
         <section><h3 className="mb-3 text-lg font-bold">Documentos e versões</h3>
           {!data.documents.length ? <Empty /> : data.documents.map(row => {
             const version = data.versions.find(v => v.document_id === row.id);
             const reviews = (data.reviews || []).filter(r => r.document_version_id === version?.id);
-            return <article key={String(row.id)} className="mb-2 rounded-lg border bg-white p-4"><h4 className="font-semibold">{String(row.title)}</h4><p className="text-sm text-slate-600">{label(row.type)} · {version ? `Versão ${version.version_no} recebida em ${date(version.received_at)}` : 'Sem versão de arquivo registrada'}</p>
+            const documentType = (row.document_type_catalog || {}) as Row;
+            return <article key={String(row.id)} className="mb-2 rounded-lg border bg-white p-4"><h4 className="font-semibold">{String(row.title)}</h4><p className="text-sm text-slate-600">{String(documentType.name || label(row.document_type_code || row.type))} · {version ? `Versão ${version.version_no} recebida em ${date(version.received_at)}` : 'Sem versão de arquivo registrada'}</p>
               {!reviews.length ? <p className="mt-2 text-sm text-amber-800">Sem revisão registrada para a versão exibida.</p> : reviews.map((r,i) => <p key={i} className="mt-2 text-sm">{label(r.area)}: {label(r.result)} · {date(r.reviewed_at)}</p>)}
             </article>;
           })}
         </section>
+        <Table title="Checklist operacional" rows={data.checklist.map(row => ({ ...row, ...((row.checklist_items || {}) as Row) }))} columns={[["stage","Etapa"],["label","Verificação"],["owner_area","Área"],["answer_status","Resposta"],["answered_at","Atualizado em"]]} />
+        <Table title="Verificações financeiras" rows={data.financial} columns={[["check_type","Verificação"],["result","Resultado"],["amount","Valor"],["currency","Moeda"],["due_date","Vencimento"]]} />
+        <Table title="Disponibilidade e estoque" rows={data.inventory} columns={[["item_code","Item"],["warehouse_code","Depósito"],["available_quantity","Disponível"],["unit","Unidade"],["result","Resultado"]]} />
         <Table title="Origem e destinos" rows={data.locations} columns={[['role','Papel'],['description','Local'],['city','Cidade'],['state','UF']]} />
         <Table title="Ordens logísticas" rows={data.logistics} columns={[['ol_rota','OL / rota'],['status_transito','Situação'],['origem_name','Origem'],['destino_name','Destino']]} />
         <Table title="Histórico da operação" rows={data.history} columns={[['new_stage','Etapa'],['new_semaphore','Farol'],['reason','Motivo'],['created_at','Registrado em']]} />

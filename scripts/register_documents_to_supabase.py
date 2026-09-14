@@ -46,7 +46,8 @@ class SupabaseRest:
 def build_document_row(item: dict[str, Any]) -> dict[str, Any]:
     storage_path = f"operations/{item['operation_folder']}/{item['file_name']}".replace("\\", "/")
     return {
-        "type": item["document_type"],
+        "type": item.get("legacy_document_type", "outro"),
+        "document_type_code": item["document_type"],
         "title": item["file_name"],
         "storage_path": storage_path,
         "file_signature": item["sha256"],

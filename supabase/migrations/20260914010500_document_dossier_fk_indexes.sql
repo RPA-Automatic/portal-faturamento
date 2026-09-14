@@ -1,0 +1,25 @@
+-- Cover foreign keys introduced by the document dossier and source catalog.
+create index idx_checklist_items_requirement on public.checklist_items(document_requirement_id);
+create index idx_checklist_items_owner_area on public.checklist_items(owner_area);
+create index idx_checklist_items_rule on public.checklist_items(rule_id);
+create index idx_checklist_templates_approved_by on public.checklist_templates(approved_by);
+create index idx_document_extracted_fields_field on public.document_extracted_fields(field_key);
+create index idx_document_extracted_fields_verified_by on public.document_extracted_fields(verified_by);
+create index idx_document_extractions_reviewed_by on public.document_extractions(reviewed_by);
+create index idx_document_requirement_sets_approved_by on public.document_requirement_sets(approved_by);
+create index idx_document_requirements_owner_area on public.document_requirements(owner_area);
+create index idx_document_type_catalog_owner_area on public.document_type_catalog(owner_area);
+create index idx_document_type_fields_field on public.document_type_fields(field_key);
+create index idx_operation_checklist_answers_answered_by on public.operation_checklist_answers(answered_by);
+create index idx_operation_checklist_answers_item on public.operation_checklist_answers(checklist_item_id);
+create index idx_operation_checklist_answers_document_operation on public.operation_checklist_answers(document_id,operation_id);
+create index idx_operation_checklist_answers_evidence_operation on public.operation_checklist_answers(evidence_id,operation_id);
+create index idx_operation_document_requirements_decided_by on public.operation_document_requirements(decided_by);
+create index idx_operation_document_requirements_requirement on public.operation_document_requirements(requirement_id);
+create index idx_operation_financial_checks_evidence_operation on public.operation_financial_checks(evidence_id,operation_id);
+create index idx_operation_financial_checks_operation_contract on public.operation_financial_checks(operation_id,contract_id);
+create index idx_operation_financial_checks_source on public.operation_financial_checks(source_record_id);
+create index idx_operation_inventory_checks_evidence_operation on public.operation_inventory_checks(evidence_id,operation_id);
+create index idx_operation_inventory_checks_source on public.operation_inventory_checks(source_record_id);
+create index idx_operation_source_links_confirmed_by on public.operation_source_links(confirmed_by);
+create index idx_operation_source_links_operation_contract on public.operation_source_links(operation_id,contract_id);

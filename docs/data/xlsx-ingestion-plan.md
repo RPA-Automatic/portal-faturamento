@@ -11,7 +11,7 @@ Este plano explica como usar os relatorios XLSX enviados para montar os vinculos
 
 ## Revisão de 2026-09-13
 
-O acervo atual também está em `docs/docs_antigos/`, integralmente privado e ignorado pelo Git. Consulte a [revisão do acervo](../quality/source-review-2026-09-13.md). Produção fiscal está definida em `eukazzizamxratkavcap`; DEV aguarda projeto exclusivo. A [separação dos bancos](../operations/database-separation.md) precede novas cargas remotas.
+O acervo atual também está em `docs/docs_antigos/`, integralmente privado e ignorado pelo Git. Consulte a [revisão do acervo](../quality/source-review-2026-09-13.md). O ambiente remoto único foi confirmado; desenvolvimento e testes de migrations usam PostgreSQL local descartável antes da aplicação remota.
 
 O GG4164 usa mapeamento por cabeçalhos explícitos. As 93 linhas históricas têm divergência de Safra/Frete em relação ao `raw_data` e precisam ser reprocessadas após preservar a evidência original. Os demais layouts ainda precisam de homologação por campo antes da transferência final.
 
@@ -27,7 +27,7 @@ Os nomes dos arquivos enviados indicam as fontes esperadas:
 | `GPLP40180*.xlsx` | GPLP40180 | Ordens logisticas e OL/Rota | `stg_gplp40180_logistics_orders` |
 | `DocumentosFiscais*.xlsx` | Documentos Fiscais | Notas, CFOP e dados fiscais | `stg_fiscal_documents` |
 
-Tambem foram enviados arquivos como `GG4081`, `GG4160`, `GG402858269`, `GG408458243`, `GG411258197`, `RE0522`, `ACR303AA`, `APB322AA` e `CD0590`. Eles precisam ser abertos para confirmar se sao fontes auxiliares, relatorios equivalentes ou bases complementares.
+As demais famílias foram classificadas como financeiro, estoque, cadastro de parceiros ou checklist. Todas entram no staging comum; a transformação para tabelas operacionais depende da homologação de chaves e campos.
 
 ## Arquivos Encontrados
 
@@ -121,8 +121,8 @@ As chaves que devem guiar os vinculos sao:
 
 1. Ler o XLSX em ambiente server-side/local seguro, nunca direto do frontend.
 2. Calcular SHA-256 do arquivo.
-3. Criar registro em `import_runs` com `source_name`, `file_name`, `file_hash`, `status` e `metadata`.
-4. Inserir linhas brutas nas tabelas `stg_*`, preservando `raw_data`.
+3. Criar registro em `import_runs` com fonte, nome do arquivo, hash, status e metadados.
+4. Inserir todas as abas e linhas não vazias em `source_records`, preservando coluna, aba, número da linha e hash; para as cinco fontes centrais, preencher também `stg_*`.
 5. Normalizar textos, datas, numeros e codigos.
 6. Fazer upsert em `partners`.
 7. Fazer upsert em `operations` a partir da OP.
@@ -136,9 +136,9 @@ As chaves que devem guiar os vinculos sao:
 
 Recomendacao de implementacao:
 
-1. Comecar pelo Supabase DEV.
-2. Criar um script local de importacao com service role em `.env.local` fora do Git.
-3. Carregar primeiro somente `ES4004`, `GG4164`, `GG2037`, `GPLP40180` e `DocumentosFiscais` nas tabelas `stg_*` existentes.
+1. Validar a carga no PostgreSQL local descartável.
+2. Executar o script local com service role mantida fora do Git.
+3. Carregar as 17 famílias em `source_records`; as cinco fontes centrais também alimentam as tabelas `stg_*` existentes.
 4. Validar contagens e chaves canonicas.
 5. Implementar a consolidacao para as tabelas normalizadas.
 6. So depois promover o mesmo fluxo para producao.
@@ -153,34 +153,33 @@ As migrations oficiais definem staging para cinco fontes principais. A existênc
 | GPLP40180 | `stg_gplp40180_logistics_orders` |
 | Documentos Fiscais | `stg_fiscal_documents` |
 
-Os arquivos auxiliares (`ACR*`, `APB*`, `GG408*`, `GG411*`, `GG4160`) devem entrar em uma segunda etapa. Antes de importar, precisamos decidir se criamos novas tabelas `stg_*` para financeiro, estoque, fornecedores e fixacoes.
+A migration de dossiê acrescenta `source_datasets`, `source_records` e `operation_source_links`. Essa camada recebe as **17 famílias XLSX** e preserva cada linha como JSONB com hash, aba e número da linha. Os cinco relatórios principais continuam usando suas tabelas tipadas; fontes financeiras, cadastro de parceiros, estoque, fixações e checklists permanecem no staging comum até a homologação do mapeamento normalizado.
+
+Os relatórios financeiros, de estoque, cadastro, fixações e checklists já entram no staging comum. Novas tabelas tipadas só serão criadas quando o mapeamento de negócio de cada família estiver homologado.
 
 ### Script local de importacao
 
-Foi criado `scripts/import_xlsx_to_supabase.py` para carregar os cinco relatorios principais nas tabelas staging do Supabase.
+O script `scripts/import_xlsx_to_supabase.py` carrega todas as 17 famílias no staging comum e mantém o staging tipado dos cinco relatórios centrais.
 
 Validar leitura sem enviar dados:
 
 ```bash
-python scripts/import_xlsx_to_supabase.py data/private/relatorios-xlsx --dry-run
+python scripts/import_xlsx_to_supabase.py docs/docs_antigos --dry-run
 ```
 
-Resultado esperado atual:
+Resultado validado no acervo deduplicado:
 
-| Arquivo | Tabela | Linhas |
-|---|---|---:|
-| `ES4004(56).xlsx` | `stg_es4004_contracts` | 231 |
-| `GG4164(40).xlsx` | `stg_gg4164_purchase_contracts` | 93 |
-| `gg2037-03660.xlsx` | `stg_gg2037_sales_contracts` | 110 |
-| `GPLP40180(43).xlsx` | `stg_gplp40180_logistics_orders` | 2370 |
-| `DocumentosFiscais-20260220091958.xlsx` | `stg_fiscal_documents` | 155 |
+| Escopo | Arquivos | Linhas não vazias |
+|---|---:|---:|
+| Staging comum `source_records` | 17 | 20.587 |
+| Staging tipado adicional | 5 | 2.959 |
 
 Para importar no Supabase DEV, configure variaveis locais no terminal. Nunca salve `SUPABASE_SERVICE_ROLE_KEY` no Git.
 
 ```bash
 export SUPABASE_URL="https://SEU_PROJETO_DEV.supabase.co"
 export SUPABASE_SERVICE_ROLE_KEY="sua_service_role_key_dev"
-python scripts/import_xlsx_to_supabase.py data/private/relatorios-xlsx
+python scripts/import_xlsx_to_supabase.py docs/docs_antigos
 ```
 
 No PowerShell:

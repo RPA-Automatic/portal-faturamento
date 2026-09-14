@@ -9,9 +9,9 @@
 
 **Conformidade integral não comprovada.** A revisão atual distingue o endurecimento já aplicado das pendências de governança. O relatório histórico de maio não descreve as políticas atuais.
 
-Consulta remota somente de metadados: 32 tabelas públicas com RLS, nenhuma com SELECT anônimo; cinco views com `security_invoker=true`; 15 funções públicas SECURITY DEFINER sem EXECUTE concedido aos papéis anônimo/autenticado. Bucket `operation-documents` privado, limite 50 MB. Políticas operacionais consultam perfil ativo e escopo da operação. Não foram lidos dados pessoais nem criados usuários ou registros de teste em produção.
+Consulta remota somente de metadados: 51 tabelas públicas com RLS; cinco views com `security_invoker=true`; funções SECURITY DEFINER sem execução pública indevida. Bucket `operation-documents` privado, limite 50 MB. Políticas operacionais consultam perfil ativo e escopo da operação. A aplicação do esquema não leu dados pessoais nem criou usuários ou registros operacionais.
 
-O assessor de segurança retornou proteção de senhas vazadas desativada e 29 alertas sobre metadados de schema disponíveis ao papel autenticado via GraphQL. A exposição de metadados não comprova acesso indevido às linhas. Avaliar necessidade dessa interface e executar testes de acesso por perfil em DEV. A região do banco é `us-east-2`, nos EUA; contratos e mecanismo de transferência internacional não foram comprovados.
+O assessor de segurança retornou proteção de senhas vazadas desativada e 48 alertas sobre metadados de schema disponíveis ao papel autenticado via GraphQL. A exposição de metadados não comprova acesso indevido às linhas. Avaliar necessidade dessa interface e executar testes de acesso por perfil no banco local/ambiente de homologação. A região do banco é `us-east-2`, nos EUA; contratos e mecanismo de transferência internacional não foram comprovados.
 
 ## Correções do incremento
 
@@ -22,7 +22,7 @@ O assessor de segurança retornou proteção de senhas vazadas desativada e 29 a
 - Provedores de login não configurados ocultos; fluxo federado habilitado continua identificando a conta de destino.
 - Referências comparativas de produto substituídas por critérios próprios RPA Automatic.
 
-Nenhuma alteração remota de schema, políticas, usuários ou documentos foi executada neste incremento.
+O esquema remoto recebeu as migrations versionadas do dossiê e dos índices. Nenhum documento privado, linha de planilha ou registro operacional foi carregado.
 
 ## Pendências prioritárias
 

@@ -8,7 +8,7 @@ O portal antecipa impedimentos de embarque e apresenta, por OP, o que falta, que
 
 ## Situação verificada
 
-Farol inicial, filtros, indicadores e autenticação existem no código. Documentação organizada e correção local do importador de compras disponíveis. Ficha de consulta da OP e esquema fiscal de 32 tabelas implantados. Cargas, ações de aprovação, validação integral das regras e implantação operacional permanecem no plano. Typecheck e build locais passaram em 2026-09-13; isso não comprova operação remota.
+Farol inicial, filtros, indicadores e autenticação existem no código. A ficha da OP consulta dossiê, checklist e verificações auxiliares. O esquema fiscal de 51 tabelas com RLS e os catálogos das 17 famílias XLSX estão implantados; a carga dos dados privados, ações de aprovação e homologação das regras permanecem no plano. A cadeia de onze migrations, o frontend e a leitura integral das planilhas passaram em 2026-09-13.
 
 ## Entrega em quatro sprints
 

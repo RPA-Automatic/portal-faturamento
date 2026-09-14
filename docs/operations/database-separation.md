@@ -1,6 +1,6 @@
 # Separação dos bancos e recuperação das cargas fiscais
 
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](../data/fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+> Atualização de 2026-09-13: onze migrations aplicadas no banco fiscal, 51 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](../data/fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
 
 > Status: Em revisão  
 > Responsável: @RodrigoFreitas16n91  

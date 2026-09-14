@@ -10,7 +10,7 @@
 
 As sete migrations fiscais de maio já estavam em `portal-faturamento/supabase/migrations/`. Elas foram executadas no projeto Supabase do Orchestrator durante a troca de repositório. Esse projeto contém também as migrations e tabelas `ao_*`, próprias do Orchestrator. Não copiar essas tabelas para o portal fiscal.
 
-O destino `eukazzizamxratkavcap` estava sem migrations e sem tabelas em `public`. Em 2026-09-13 foram aplicadas as sete migrations históricas e duas evoluções: `fiscal_operational_model` e `fiscal_query_indexes`. Resultado: **32 tabelas públicas, todas com RLS, cinco views operacionais e 12 versões de regras em rascunho**. Nenhum dado operacional do Orchestrator foi transferido ou apagado.
+O destino `eukazzizamxratkavcap` recebeu as sete migrations históricas e quatro evoluções do modelo fiscal. O resultado remoto validado é **11 migrations, 51 tabelas públicas, todas com RLS, cinco views operacionais, 15 tipos documentais, 33 campos extraíveis, 17 famílias de planilha e 12 requisitos de dossiê em rascunho**. Nenhum dado operacional de outro produto deve ser transferido.
 
 O conector atribuiu timestamps de execução às migrations. Os identificadores foram alinhados aos arquivos canônicos somente após comparação SHA-256 exata dos statements realmente aplicados. Nomes e conteúdo SQL foram preservados; nenhuma migration ausente foi marcada como executada. O manifesto de implantação fica em `supabase/deployment-manifest.json`.
 
@@ -22,11 +22,16 @@ O conector atribuiu timestamps de execução às migrations. Os identificadores 
 | Núcleo | `operations`, `contracts`, `partners`, `operation_contract_links` | OP, snapshots de compra/venda e vínculos explícitos N:N |
 | Logística e fiscal | `logistics_orders`, `fiscal_documents`, `operation_locations` | OL/movimentação, notas, origem, entrega, transbordo e destino final |
 | Documentos | `documents`, `document_versions`, `document_reviews` | Cadastro, arquivo/versionamento e revisão por área |
+| Dossiê documental | `document_type_catalog`, `document_field_catalog`, `document_type_fields`, `document_requirement_sets`, `document_requirements`, `operation_document_requirements` | Tipos, campos esperados, requisitos versionados e atendimento por OP |
+| Vínculos documentais | `document_contract_links`, `document_fiscal_links`, `document_logistics_links` | Relações N:N do documento com contratos, notas e OLs da mesma OP |
+| Extração documental | `document_extractions`, `document_extracted_fields` | Execuções de extração, campos tipados, confiança, origem e revisão humana |
 | Verificações | `rules`, `rule_versions`, `rule_evaluations`, `operation_stage_assessments` | Catálogo versionado, resultado/evidência e avaliação das etapas |
 | Tratamento | `pending_items`, `evidence`, `state_history`, `operation_milestones` | Pendência, responsável/prazo, prova, histórico, liberação e encerramento |
 | Exceções | `exceptions`, `exception_approvals` | Exceção vinculada à OP/regra, evidência, aprovador e vigência |
 | Ingestão | `import_runs`, `job_logs`, `reconciliation_items` | Hash, extração, versão do mapeamento, falhas e vínculos ambíguos |
 | Staging | `stg_es4004_contracts`, `stg_gg4164_purchase_contracts`, `stg_gg2037_sales_contracts`, `stg_gplp40180_logistics_orders`, `stg_fiscal_documents` | Dados brutos dos cinco relatórios, sem substituir o domínio consolidado |
+| Cobertura integral de fontes | `source_datasets`, `source_records`, `operation_source_links` | Staging privado de todas as 17 famílias XLSX e vínculo reconciliável com OP/contrato |
+| Checklist e controles auxiliares | `checklist_templates`, `checklist_items`, `operation_checklist_answers`, `operation_financial_checks`, `operation_inventory_checks` | Perguntas versionadas e resultados financeiros/estoque relevantes à liberação |
 | Auditoria | `audit_logs` | Alterações sensíveis e eventos de decisão |
 
 ## Chaves e cardinalidade
@@ -36,6 +41,9 @@ O conector atribuiu timestamps de execução às migrations. Os identificadores 
 - `operation_contract_links` permite múltiplos contratos por OP e múltiplas OPs por snapshot de contrato. O campo legado `contracts.operation_id` continua compatível por trigger; novos consolidadores devem escrever vínculos explícitos. O trigger só remove um vínculo antigo quando ele próprio o criou, sem apagar vínculos confirmados por outro processo.
 - As contagens de contratos do Farol representam vínculos a snapshots. Selecionar o snapshot vigente por origem/filial/item é responsabilidade do consolidador; não anexar todas as cargas históricas como novos contratos ativos.
 - Documentos têm versões identificadas por `(document_id, version_no)`, hash SHA-256 e caminho exclusivo. Metadados antigos não são convertidos em versões de arquivo sem upload confirmado.
+- `documents.document_type_code` usa catálogo extensível. O enum `documents.type` permanece temporariamente para compatibilidade com integrações anteriores.
+- Um documento pode sustentar vários contratos, notas ou ordens da mesma OP. FKs compostas impedem vínculo cruzado entre operações.
+- Campos extraídos são tipados e registram página/referência, confiança e verificação. O banco não mantém texto integral extraído nessa camada e nunca considera confiança do extrator como aprovação.
 - FKs compostas impedem vincular avaliação, versão de documento ou evidência a outra OP. Revisões apontam para uma versão concreta; não são copiadas para sua sucessora.
 - Uma origem/linha/campo tem uma ocorrência de reconciliação por execução de importação. Nova execução pode reprocessar o mesmo hash com um mapeamento corrigido.
 
@@ -52,6 +60,8 @@ As views usam `security_invoker`; o resumo calcula validade na leitura e não de
 ## Segurança e integração
 
 Novas tabelas: leitura somente de perfis internos ativos; escrita somente pelo backend `service_role`. Não conceder essa chave ao frontend. O fluxo de aprovação/escrita dessas novas entidades ainda será implementado e homologado. A ficha da OP é de consulta.
+
+Catálogos e templates podem ser mantidos por administradores ativos. Registros de origem, extrações, vínculos e respostas operacionais continuam reservados ao backend. Dados fiscais pessoais permanecem protegidos por RLS e não devem aparecer em logs de importação.
 
 Históricos de versões, revisões, avaliações e marcos recusam UPDATE/DELETE, inclusive do backend; correções geram novo evento. Contas existentes sem perfil recebem perfil `pending/external`, sem aprovação automática. Perfis de acesso, regras e exceções mantêm policies administrativas. Logs e staging não ficam disponíveis ao usuário comum.
 

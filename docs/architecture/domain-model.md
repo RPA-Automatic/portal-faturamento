@@ -1,6 +1,6 @@
 # Modelo de Domínio
 
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](../data/fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+> Atualização de 2026-09-13: o modelo versionado possui onze migrations e 51 tabelas com RLS. A ficha da OP consulta o dossiê, checklist e verificações auxiliares. Consulte o [modelo vigente](../data/fiscal-schema.md) e a [ADR-0003](../decisions/ADR-0003-dossie-documental-e-fontes.md).
 
 > Status: Em revisão  
 > Responsável: @RodrigoFreitas16n91  
@@ -49,18 +49,30 @@ Campos esperados:
 - `janela_inicio`
 - `janela_fim`
 
-### Documento
+### Documento e dossiê
 
 Representa documentos localizados, importados ou gerados.
 
-Tipos iniciais:
+Tipos do catálogo atual:
 
-- `INSTRUCAO_COMPRA`
-- `INSTRUCAO_VENDA`
-- `LIBERACAO_EMBARQUE`
-- `LIBERACAO_FISCAL`
-- `NOTA_FISCAL`
-- `ORDEM_LOGISTICA`
+- instruções fiscais de compra e venda;
+- instrução e liberação de embarque;
+- autorização de transferência;
+- liberação fiscal, nota e orientação de emissão;
+- procedimento fiscal;
+- confirmação comercial e evidência de comunicação;
+- instrução de descarga, manual de agendamento e ordem logística;
+- outro, sempre sujeito a reconciliação.
+
+O dossiê separa tipo, requisito, atendimento, versão, revisão e campos extraídos. Um documento pode sustentar vários contratos, notas e ordens da mesma OP. O catálogo de campos inclui partes, emissão, quantidade/unidade, produto, contratos, vigência, locais, frete, CFOP/NCM, nota, OL, agendamento e assinatura.
+
+### Fonte de dados
+
+`source_datasets` cataloga as 17 famílias XLSX. `source_records` preserva linha, aba, hash e todas as colunas antes da normalização. `operation_source_links` registra vínculo candidato ou confirmado com OP/contrato, método e confiança.
+
+### Checklist e verificações auxiliares
+
+Templates e itens de checklist são versionados; respostas apontam para documento/evidência. Resultados financeiros e de estoque ficam em entidades próprias, vinculados à linha de origem, sem substituir a decisão operacional homologada.
 
 ### Pendencia
 

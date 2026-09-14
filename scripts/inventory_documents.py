@@ -10,13 +10,38 @@ from typing import Any
 
 
 DOCUMENT_TYPE_RULES: list[tuple[str, str]] = [
-    ("instrucao_compra", r"instr[uú]c[aã]o fiscal|instru[cç][oõ]es fiscais|orienta[cç][aã]o para a emiss[aã]o"),
-    ("instrucao_venda", r"venda|5102|cfop"),
-    ("liberacao_embarque", r"libera[cç][aã]o|autoriza[cç][aã]o|embarque"),
-    ("liberacao_fiscal", r"fiscal|faturamento|nota|nf\s"),
+    ("autorizacao_transferencia", r"autoriza[cç][aã]o"),
+    ("instrucao_embarque", r"instr[uú][cç][aã]o de embarque"),
+    ("instrucao_descarga", r"instr[uú][cç][aã]o de descarga|terminal"),
+    ("manual_agendamento", r"manual|plataforma|agendamento"),
+    ("orientacao_emissao_nf", r"orienta[cç][aã]o para a emiss[aã]o"),
+    ("instrucao_fiscal_compra", r"instr[uú][cç][aã]o fiscal contrato|instru[cç][oõ]es fiscais"),
+    ("instrucao_fiscal_venda", r"venda dentro do estado|5102|5502"),
     ("nota_fiscal", r"^nf\s|nota fiscal"),
-    ("ordem_logistica", r"agendamento|manual|plataforma|descarga|terminal|rota"),
+    ("confirmacao_comercial", r"^enc_|^res_|confirma[cç][aã]o|\bcn\b"),
+    ("liberacao_embarque", r"libera[cç][aã]o.*embarque|libera[cç][aã]o op"),
+    ("evidencia_email", r"\.eml$|\.msg$|^re_"),
+    ("procedimento_fiscal", r"cfop|natureza de opera[cç][aã]o|dados adicionais"),
+    ("ordem_logistica", r"rota|ordem log[ií]stica"),
 ]
+
+LEGACY_DOCUMENT_TYPES = {
+    "instrucao_fiscal_compra": "instrucao_compra",
+    "instrucao_fiscal_venda": "instrucao_venda",
+    "orientacao_emissao_nf": "instrucao_venda",
+    "procedimento_fiscal": "instrucao_venda",
+    "liberacao_embarque": "liberacao_embarque",
+    "autorizacao_transferencia": "liberacao_embarque",
+    "liberacao_fiscal": "liberacao_fiscal",
+    "nota_fiscal": "nota_fiscal",
+    "instrucao_embarque": "ordem_logistica",
+    "instrucao_descarga": "ordem_logistica",
+    "manual_agendamento": "ordem_logistica",
+    "ordem_logistica": "ordem_logistica",
+    "confirmacao_comercial": "outro",
+    "evidencia_email": "outro",
+    "outro": "outro",
+}
 
 
 def sha256_file(path: Path) -> str:
@@ -37,6 +62,8 @@ def detect_contracts(text: str) -> list[str]:
 
 
 def classify_document(path: Path) -> str:
+    if path.suffix.lower() in {".eml", ".msg"}:
+        return "evidencia_email"
     normalized = path.name.lower()
     for document_type, pattern in DOCUMENT_TYPE_RULES:
         if re.search(pattern, normalized, flags=re.IGNORECASE):
@@ -50,13 +77,15 @@ def inventory_file(path: Path, source_root: Path) -> dict[str, Any]:
     mime_type, _ = mimetypes.guess_type(path.name)
     contracts = detect_contracts(path.name)
 
+    document_type = classify_document(path)
     return {
         "relative_path": str(relative),
         "file_name": path.name,
         "operation_folder": operation_folder,
         "operation_number": detect_operation(operation_folder),
         "contracts_from_name": contracts,
-        "document_type": classify_document(path),
+        "document_type": document_type,
+        "legacy_document_type": LEGACY_DOCUMENT_TYPES[document_type],
         "extension": path.suffix.lower(),
         "mime_type": mime_type or "application/octet-stream",
         "size_bytes": path.stat().st_size,

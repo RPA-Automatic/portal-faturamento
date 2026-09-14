@@ -40,6 +40,7 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 - [Banco Supabase](data/database.md)
 - [Recursos Supabase](data/supabase.md)
 - [Plano de ingestão XLSX](data/xlsx-ingestion-plan.md)
+- [Cobertura das fontes históricas](data/legacy-source-coverage.md)
 - [Fontes TOTVS/Datasul](integrations/totvs-data-sources.md)
 
 ## Segurança e operação
@@ -67,6 +68,7 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 Novas decisões ficam em `decisions/ADR-NNNN-titulo.md`. Evidências de teste ou revisão transversal ficam em `quality/`. As pastas podem permanecer sem documentos até existir conteúdo real; não crie arquivos vazios apenas para completar a taxonomia.
 
 - [ADR-0002 — Banco fiscal remoto único](decisions/ADR-0002-banco-fiscal-unico.md)
+- [ADR-0003 — Dossiê documental e cobertura das fontes históricas](decisions/ADR-0003-dossie-documental-e-fontes.md)
 
 - [Validação do esquema e ficha](quality/schema-delivery-2026-09-13.md)
 

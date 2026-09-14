@@ -43,10 +43,12 @@ Os testes de autenticação usam respostas simuladas. Não comprovam envio de e-
 > Status: Evidência técnica; homologação de negócio pendente  
 > Data: 2026-09-13
 
-- Nove migrations executadas do zero em PostgreSQL 16.15 local descartável.
+- Onze migrations executadas do zero em PostgreSQL 16.15 local descartável.
 - Mesma cadeia aplicada no Supabase fiscal `eukazzizamxratkavcap`, PostgreSQL 17.
 - SHA-256 dos statements remotos comparados aos arquivos e versões do histórico reconciliadas. Manifesto em `supabase/deployment-manifest.json`.
-- 32 tabelas em `public`, todas com RLS; cinco views operacionais com `security_invoker`.
+- 51 tabelas em `public`, todas com RLS; cinco views operacionais com `security_invoker`.
+- A cobertura histórica acrescenta 15 tipos documentais, 33 campos extraíveis, 17 famílias de planilha, 12 requisitos de dossiê e três checklists em rascunho.
+- O dry-run das 17 planilhas preservou 20.587 linhas no staging comum e mapeou 2.959 linhas nas cinco tabelas tipadas.
 - Cenários SQL de integridade, isolamento, histórico, auditoria e Farol passaram localmente e no remoto. Dados sintéticos remotos foram revertidos por ROLLBACK; contagem posterior: zero OP e zero contas `@example.test`.
 - TypeScript e build Vite passaram.
 - Teste de navegador com API simulada: abertura da ficha, conteúdo da pendência, fechamento por Escape, erro/retry e viewport móvel; nenhum erro JavaScript. Capturas desktop/mobile foram inspecionadas. Isso não comprova sessão OAuth ou cargas reais ponta a ponta.
@@ -55,7 +57,7 @@ Os testes de autenticação usam respostas simuladas. Não comprovam envio de e-
 
 O Advisor não apontou tabela sem RLS nem exposição anônima. Apontou descoberta do schema GraphQL por `authenticated` em 29 objetos que precisam de SELECT para o frontend. Essa descoberta não equivale a leitura irrestrita: grants foram mantidos com policies e testes de acesso. [Explicação do aviso](https://supabase.com/docs/guides/database/database-linter?lint=0027_pg_graphql_authenticated_table_exposed).
 
-Os 23 índices de FK ausentes foram corrigidos por migration complementar. Restam avisos informativos de índices ainda não usados, esperados em banco novo e vazio; não removê-los com base em ausência de tráfego. [Explicação do aviso de índices](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index).
+Os índices de FK ausentes, inclusive os 24 introduzidos pelo dossiê, foram corrigidos por migrations complementares. O Advisor remoto não aponta FK sem índice. Restam avisos informativos de índices ainda não usados, esperados em banco novo e vazio; não removê-los com base em ausência de tráfego. [Explicação do aviso de índices](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index).
 
 ## Limites
 
@@ -159,11 +161,25 @@ Prazo proposto: quatro sprints de duas semanas, oito semanas no total. Definir d
 
 O inventário de `docs/docs_antigos/`, excluindo diretórios Git e os resultados desta análise, encontrou 540 arquivos e 226 conteúdos distintos por SHA-256. Entre os conteúdos distintos há 17 XLSX, 20 DOCX, 21 PDF, 7 DOC, 9 ZIP, 2 EML e 1 MSG; o restante é composto principalmente por código e documentação histórica.
 
-Foi feita extração textual de 20 DOCX e 21 PDFs e leitura estrutural das 17 planilhas. A inspeção dos nove ZIPs distintos não encontrou documentos suportados exclusivos ausentes das cópias extraídas (entradas de até 30 MB). Isso não equivale a revisão visual integral nem homologação de todos os documentos. Arquivos Word binários e mensagens foram inventariados; sua interpretação detalhada permanece pendente. PDFs com conteúdo em imagem também exigem leitura visual/OCR adicional.
+Foi feita extração textual de 20 DOCX e 21 PDFs, leitura estrutural das 17 planilhas e varredura local dos 7 DOC binários, 2 EML e 1 MSG distintos. Excluídas as cópias idênticas, arquivos da análise e repositórios históricos empacotados, **68 fontes funcionais distintas receberam uma linha de cobertura individual** no relatório privado `legacy-source-coverage.json`. A inspeção dos nove ZIPs documentais distintos não encontrou documentos suportados exclusivos ausentes das cópias extraídas. PDFs com conteúdo exclusivamente em imagem ainda exigem OCR quando entrarem no pipeline operacional.
 
-A leitura aprofundada concentrou-se nas duas versões do PDD, nas reuniões de checklist e automação, e nos cabeçalhos e dados estruturais dos relatórios/checklists. Transcrições Comercial, Logística e Fiscal apresentam trechos severamente corrompidos; não foram usadas para estabelecer novas regras autônomas. O PDF de histórico de prompts é referência de ideias, não decisão aprovada.
+A leitura aprofundada incluiu as duas versões distintas do PDD, reuniões de checklist e automação, cabeçalhos dos 17 XLSX e todas as famílias documentais das pastas de OP. Foram identificadas 7 fontes financeiras, 3 checklists, 6 autorizações, 10 instruções fiscais, 6 liberações, 5 notas, 4 procedimentos fiscais, instrução de embarque, instrução de descarga, manual de agendamento, confirmações comerciais e comunicações. Transcrições com trechos corrompidos não foram usadas para estabelecer regras autônomas. O PDF de histórico de prompts continua sendo referência de ideias, não decisão aprovada.
 
-O PDD-01 foi renderizado em 22 páginas; as páginas 2, 12 e 18 foram inspecionadas visualmente para conferir o fluxo, o mapeamento de instruções e as telas fiscais. O diagrama posiciona a criação da OL antes do envio da liberação, enquanto o texto descreve a liberação como entrada para criar a OL. Essa divergência de precedência deve ser resolvida antes de automatizar transições. Não houve revisão visual de todas as páginas do acervo.
+O PDD-01 foi renderizado em 22 páginas; as páginas 2, 12 e 18 foram inspecionadas visualmente para conferir o fluxo, o mapeamento de instruções e as telas fiscais. A autorização indicada pelo responsável também foi renderizada integralmente e confirmou campos de remetente, destinatário, emissão, quantidade, unidade, produto, identificadores fiscais e assinatura. O diagrama do PDD posiciona a criação da OL antes do envio da liberação, enquanto o texto descreve a liberação como entrada para criar a OL. Essa divergência de precedência deve ser resolvida antes de automatizar transições.
+
+## Correção de cobertura no banco
+
+A migration `20260913220000_document_dossier_and_source_catalog.sql` corrige as lacunas verificadas:
+
+- catálogo extensível com 15 tipos documentais e 33 campos extraíveis;
+- requisitos documentais versionados e atendimento por OP;
+- vínculos N:N entre arquivo, contrato, nota e ordem logística;
+- extrações versionadas com campo tipado, página/referência, confiança e revisão;
+- staging genérico para as 17 famílias XLSX, sem perda de colunas ainda não normalizadas;
+- checklist versionado e verificações financeiras/estoque ligadas à evidência de origem;
+- RLS em todas as tabelas novas, leitura interna e escrita operacional somente pelo backend.
+
+O relatório privado registra, para cada uma das 68 fontes, tipo, método de leitura, campos semânticos detectados e tabelas de destino. Ele não guarda caminhos, nomes ou valores reais na documentação pública.
 
 ## Rastreabilidade sem publicação dos originais
 

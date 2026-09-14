@@ -336,7 +336,7 @@ Repositorio publico para desenvolvimento do Portal Faturamento Fiscal da RPA Aut
 
 ## Incremento do modelo fiscal — setembro de 2026
 
-Banco fiscal com nove migrations e 32 tabelas protegidas por RLS. A OP abre uma ficha de consulta com contratos, documentos/versões, verificações E1–E5, pendências, logística e histórico. Liberação e encerramento são decisões independentes.
+Banco fiscal com onze migrations e 51 tabelas protegidas por RLS. A OP abre uma ficha de consulta com contratos, dossiê documental, checklist, verificações E1–E5, pendências, logística e histórico. Liberação e encerramento são decisões independentes.
 
 - [Modelo de dados e diagnóstico das migrations](docs/data/fiscal-schema.md)
 - [Comparação com soluções de mercado](docs/product/market-benchmark.md)

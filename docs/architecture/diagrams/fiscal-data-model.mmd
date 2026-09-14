@@ -8,6 +8,17 @@ erDiagram
   operations ||--o{ documents : documenta
   documents ||--o{ document_versions : versiona
   document_versions ||--o{ document_reviews : revisa
+  document_type_catalog ||--o{ documents : classifica
+  document_type_catalog ||--o{ document_type_fields : exige
+  document_field_catalog ||--o{ document_type_fields : define
+  document_versions ||--o{ document_extractions : extrai
+  document_extractions ||--o{ document_extracted_fields : estrutura
+  document_requirement_sets ||--o{ document_requirements : versiona
+  document_requirements ||--o{ operation_document_requirements : aplica
+  operations ||--o{ operation_document_requirements : compoe_dossie
+  documents ||--o{ document_contract_links : vincula
+  documents ||--o{ document_fiscal_links : vincula
+  documents ||--o{ document_logistics_links : vincula
   operations ||--o{ pending_items : acompanha
   operations ||--o{ evidence : comprova
   rules ||--o{ rule_versions : versiona
@@ -17,3 +28,11 @@ erDiagram
   operations ||--o{ operation_milestones : decide
   operations ||--o{ exception_approvals : excepcionaliza
   import_runs ||--o{ reconciliation_items : reconcilia
+  source_datasets ||--o{ source_records : cataloga
+  import_runs ||--o{ source_records : importa
+  source_records ||--o{ operation_source_links : reconcilia
+  operations ||--o{ operation_source_links : recebe
+  checklist_templates ||--o{ checklist_items : define
+  checklist_items ||--o{ operation_checklist_answers : responde
+  operations ||--o{ operation_financial_checks : verifica
+  operations ||--o{ operation_inventory_checks : verifica

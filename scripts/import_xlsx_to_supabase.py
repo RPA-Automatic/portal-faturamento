@@ -102,6 +102,36 @@ REPORTS: dict[str, dict[str, Any]] = {
     },
 }
 
+# Every historical workbook has a neutral dataset in the common staging layer.
+# Some reports also keep their typed staging table above for deterministic normalization.
+DATASETS: dict[str, str] = {
+    "ACR.lst.xlsx": "CONTAS_RECEBER_ANALITICO",
+    "ACR303AA.xlsx": "CONTAS_RECEBER_POSICAO",
+    "APB322AA.xlsx": "CONTAS_PAGAR",
+    "Checklist_MT.xlsx": "CHECKLIST_REGIONAL_A",
+    "Checklist_RS (1).xlsx": "CHECKLIST_REGIONAL_B",
+    "DocumentosFiscais-20260220091958.xlsx": "DOCUMENTOS_FISCAIS",
+    "ES4004(56).xlsx": "ES4004",
+    "GG402874862.xlsx": "MAPA_ESTOQUE",
+    "GG4081.xlsx": "PREVISAO_CONTRATUAL",
+    "GG408474836.xlsx": "CADASTRO_PARCEIROS",
+    "GG4089.xlsx": "PREVISAO_PAGAMENTO",
+    "GG411274787.xlsx": "FIXACOES_CONTRATO",
+    "GG4160.xlsx": "ADIANTAMENTOS_FORNECEDOR",
+    "GG4164(40).xlsx": "GG4164",
+    "GPLP40180(43).xlsx": "GPLP40180",
+    "gg2037-03660.xlsx": "GG2037",
+}
+
+
+def mapped_files(source: Path) -> dict[Path, str]:
+    result = {source / file_name: dataset for file_name, dataset in DATASETS.items()}
+    private_checklists = sorted(source.glob("CHECKLIST_Pre_Faturamento_*.xlsx"))
+    if len(private_checklists) != 1:
+        raise ValueError("Esperado exatamente um checklist geral privado no diretório de origem.")
+    result[private_checklists[0]] = "CHECKLIST_PRE_FATURAMENTO"
+    return result
+
 DATE_COLUMNS = {
     "dt_inclusao", "pz_ini_entr", "pz_fim_ent", "dt_ult_ent", "dt_inclusao_contrato", "dt_emis_nf",
     "data_carregamento", "data_descarga", "data_pagamento", "emissao", "dt_docto",
@@ -257,6 +287,25 @@ def read_rows(path: Path, sheet_name: str, header_row: int, expected_headers: di
         return rows
 
 
+def read_source_rows(path: Path) -> list[tuple[str, int, dict[str, str]]]:
+    """Read every non-empty row from every sheet without assuming a report layout."""
+    rows: list[tuple[str, int, dict[str, str]]] = []
+    with zipfile.ZipFile(path) as workbook:
+        shared_strings = load_shared_strings(workbook)
+        for sheet_name, sheet_path in sheet_paths(workbook).items():
+            root = ET.fromstring(workbook.read(sheet_path))
+            for row in root.findall("main:sheetData/main:row", NS):
+                row_number = int(float(row.attrib.get("r", "0") or 0))
+                raw_data = {
+                    re.sub(r"[^A-Z]", "", cell.attrib.get("r", "").upper()): cell_value(cell, shared_strings)
+                    for cell in row.findall("main:c", NS)
+                    if cell_value(cell, shared_strings)
+                }
+                if raw_data:
+                    rows.append((sheet_name, row_number, raw_data))
+    return rows
+
+
 class SupabaseRest:
     def __init__(self, url: str, key: str):
         self.base_url = url.rstrip("/")
@@ -323,45 +372,87 @@ def build_staging_rows(file_path: Path, config: dict[str, Any], import_run_id: s
     return rows
 
 
+def build_source_rows(file_path: Path, dataset_code: str, import_run_id: str) -> list[dict[str, Any]]:
+    rows = []
+    for sheet_name, row_number, raw_data in read_source_rows(file_path):
+        canonical = json.dumps(raw_data, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        row_hash = hashlib.sha256(
+            f"{dataset_code}\0{sheet_name}\0{row_number}\0{canonical}".encode("utf-8")
+        ).hexdigest()
+        rows.append(
+            {
+                "import_run_id": import_run_id,
+                "dataset_code": dataset_code,
+                "sheet_name": sheet_name,
+                "source_row_no": row_number,
+                "raw_data": raw_data,
+                "row_sha256": row_hash,
+            }
+        )
+    return rows
+
+
 def chunks(rows: list[dict[str, Any]], size: int) -> list[list[dict[str, Any]]]:
     return [rows[index : index + size] for index in range(0, len(rows), size)]
 
 
-def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, Any], dry_run: bool, force: bool) -> dict[str, Any]:
+def import_file(
+    client: SupabaseRest | None,
+    file_path: Path,
+    dataset_code: str,
+    config: dict[str, Any] | None,
+    dry_run: bool,
+    force: bool,
+) -> dict[str, Any]:
     file_hash = sha256_file(file_path)
-    # Validate the complete mapping before any remote insert, including in dry-run.
-    preview_rows = build_staging_rows(file_path, config, "dry-run")
-    rows_total = len(preview_rows)
+    # Validate both the common and typed mappings before any remote insert.
+    source_preview = build_source_rows(file_path, dataset_code, "dry-run")
+    typed_preview = build_staging_rows(file_path, config, "dry-run") if config else []
+    rows_total = len(source_preview)
 
     if dry_run:
-        return {"file": file_path.name, "table": config["table"], "rows_total": rows_total, "sha256": file_hash}
+        return {
+            "file": file_path.name,
+            "dataset": dataset_code,
+            "source_rows": rows_total,
+            "typed_table": config["table"] if config else None,
+            "typed_rows": len(typed_preview),
+            "sha256": file_hash,
+        }
 
     assert client is not None
     if not force and client.succeeded_import_exists(file_path.name):
-        return {"file": file_path.name, "table": config["table"], "rows_total": rows_total, "skipped": "import_run succeeded already", "sha256": file_hash}
+        return {"file": file_path.name, "dataset": dataset_code, "rows_total": rows_total, "skipped": "import_run succeeded already", "sha256": file_hash}
 
     import_run = client.insert(
         "import_runs?select=id",
         [
             {
-                "source_name": config["source_name"],
+                "source_name": dataset_code,
                 "source_file_name": file_path.name,
                 "status": "running",
                 "rows_total": rows_total,
                 "started_at": dt.datetime.now(dt.UTC).isoformat(),
-                "metadata": {"sha256": file_hash, "sheet": config["sheet"], "header_row": config["header_row"]},
+                "metadata": {
+                    "sha256": file_hash,
+                    "dataset_code": dataset_code,
+                    "typed_table": config["table"] if config else None,
+                },
             }
         ],
         returning=True,
     )[0]
 
     import_run_id = import_run["id"]
-    staging_rows = build_staging_rows(file_path, config, import_run_id)
+    source_rows = build_source_rows(file_path, dataset_code, import_run_id)
+    staging_rows = build_staging_rows(file_path, config, import_run_id) if config else []
     processed = 0
     try:
+        for batch in chunks(source_rows, 500):
+            client.insert("source_records", batch)
+            processed += len(batch)
         for batch in chunks(staging_rows, 500):
             client.insert(config["table"], batch)
-            processed += len(batch)
         client.patch(
             "import_runs",
             {"id": import_run_id},
@@ -381,20 +472,29 @@ def import_file(client: SupabaseRest | None, file_path: Path, config: dict[str, 
         )
         raise
 
-    return {"file": file_path.name, "table": config["table"], "rows_total": rows_total, "rows_processed": processed, "sha256": file_hash}
+    return {
+        "file": file_path.name,
+        "dataset": dataset_code,
+        "source_rows": rows_total,
+        "typed_table": config["table"] if config else None,
+        "typed_rows": len(staging_rows),
+        "rows_processed": processed,
+        "sha256": file_hash,
+    }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Import primary XLSX reports into Supabase staging tables.")
+    parser = argparse.ArgumentParser(description="Import every mapped XLSX into common staging and primary reports into typed staging.")
     parser.add_argument("source", type=Path, help="Directory containing XLSX reports")
-    parser.add_argument("--only", nargs="*", choices=sorted(REPORTS), help="Specific report files to import")
+    parser.add_argument("--only", nargs="*", choices=sorted(set(DATASETS.values()) | {"CHECKLIST_PRE_FATURAMENTO"}), help="Specific dataset codes to import")
     parser.add_argument("--dry-run", action="store_true", help="Parse files without sending data to Supabase")
     parser.add_argument("--force", action="store_true", help="Import even if a previous succeeded import_run exists")
     parser.add_argument("--environment", choices=("dev", "prod"), default="dev")
     parser.add_argument("--confirm-production", action="store_true")
     args = parser.parse_args()
 
-    selected_files = args.only or list(REPORTS)
+    sources = mapped_files(args.source)
+    selected = [(path, dataset) for path, dataset in sources.items() if not args.only or dataset in args.only]
     client = None
     if not args.dry_run:
         supabase_url = os.environ.get("SUPABASE_URL")
@@ -405,11 +505,10 @@ def main() -> None:
         client = SupabaseRest(supabase_url, service_role_key)
 
     results = []
-    for file_name in selected_files:
-        file_path = args.source / file_name
+    for file_path, dataset_code in selected:
         if not file_path.exists():
             raise FileNotFoundError(file_path)
-        results.append(import_file(client, file_path, REPORTS[file_name], args.dry_run, args.force))
+        results.append(import_file(client, file_path, dataset_code, REPORTS.get(file_path.name), args.dry_run, args.force))
 
     print(json.dumps(results, ensure_ascii=False, indent=2))
 

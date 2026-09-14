@@ -39,18 +39,63 @@ do $$ begin
  values('40000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000002',3,repeat('c',64),'test/cross.pdf','application/pdf',100);
  raise exception 'Cross-operation version accepted'; exception when foreign_key_violation then null; end;
 end $$;
+select pg_temp.assert_true((select count(*)=15 from public.document_type_catalog),'Document dossier has the complete neutral taxonomy');
+select pg_temp.assert_true((select count(*)=33 from public.document_field_catalog),'Document extraction field catalog is complete');
+select pg_temp.assert_true((select count(*)=17 from public.source_datasets),'All spreadsheet families have a staging dataset');
+select pg_temp.assert_true((select count(*)=12 from public.document_requirements),'Base dossier has all observed document families');
+select pg_temp.assert_true((select count(*)=3 and count(*) filter(where approval_status='rascunho')=3 from public.checklist_templates),'Checklist variants remain drafts');
+select pg_temp.assert_true((select count(*)=15 from public.checklist_items),'Observed checklist fields are represented');
+update public.documents set document_type_code='autorizacao_transferencia'
+where id='40000000-0000-0000-0000-000000000001';
+insert into public.document_requirement_sets(id,code,version_no,name)
+values('70000000-0000-0000-0000-000000000001','TEST-DOSSIER',1,'Synthetic dossier');
+insert into public.document_requirements(id,requirement_set_id,document_type_code,stage,owner_area)
+values('71000000-0000-0000-0000-000000000001','70000000-0000-0000-0000-000000000001','autorizacao_transferencia','E1','comercial');
+insert into public.operation_document_requirements(operation_id,requirement_id,document_id,status)
+values('20000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000001','40000000-0000-0000-0000-000000000001','recebido');
+do $$ begin
+ begin insert into public.operation_document_requirements(operation_id,requirement_id,status)
+ values('20000000-0000-0000-0000-000000000002','71000000-0000-0000-0000-000000000001','aprovado');
+ raise exception 'Approved requirement without document accepted'; exception when check_violation then null; end;
+end $$;
+insert into public.document_contract_links(document_id,operation_id,contract_id,link_role)
+values('40000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001','principal');
+insert into public.document_extractions(id,document_version_id,extractor,extractor_version,status)
+values('72000000-0000-0000-0000-000000000001','50000000-0000-0000-0000-000000000001','synthetic','1','extraido');
+insert into public.document_extracted_fields(extraction_id,field_key,value_type,value_number,unit,source_page,confidence)
+values('72000000-0000-0000-0000-000000000001','authorized_quantity','number',1000,'kg',1,0.9900);
+insert into public.import_runs(id,source_name,source_file_name,status)
+values('73000000-0000-0000-0000-000000000001','OUTRO','synthetic.xlsx','succeeded');
+insert into public.source_records(id,import_run_id,dataset_code,sheet_name,source_row_no,raw_data,row_sha256)
+values('74000000-0000-0000-0000-000000000001','73000000-0000-0000-0000-000000000001','CONTAS_RECEBER_POSICAO','Sheet',2,'{"reference":"synthetic"}',repeat('d',64));
+insert into public.operation_source_links(source_record_id,operation_id,contract_id,match_method)
+values('74000000-0000-0000-0000-000000000001','20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001','chave_composta');
+insert into public.operation_financial_checks(operation_id,contract_id,check_type,result,source_record_id)
+values('20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001','credito','pendente','74000000-0000-0000-0000-000000000001');
+insert into public.operation_inventory_checks(operation_id,item_code,result)
+values('20000000-0000-0000-0000-000000000001','TEST-ITEM','pendente');
+insert into public.checklist_templates(id,code,version_no,name)
+values('75000000-0000-0000-0000-000000000001','TEST-CHECKLIST',1,'Synthetic checklist');
+insert into public.checklist_items(id,template_id,document_requirement_id,field_key,label,stage,owner_area,input_type)
+values('76000000-0000-0000-0000-000000000001','75000000-0000-0000-0000-000000000001','71000000-0000-0000-0000-000000000001','authorization_received','Authorization received','E1','comercial','document');
+insert into public.operation_checklist_answers(operation_id,checklist_item_id,answer_status,document_id,answered_by,answered_at)
+values('20000000-0000-0000-0000-000000000001','76000000-0000-0000-0000-000000000001','sim','40000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001',now());
+select pg_temp.assert_true((select count(*)=1 from public.document_extracted_fields where field_key='authorized_quantity'),'Extracted document fields are persisted structurally');
 set local role authenticated;
 select set_config('request.jwt.claim.sub','10000000-0000-0000-0000-000000000001',true);
 select pg_temp.assert_true((select count(*)=2 from public.document_versions),'Internal user can read versions');
+select pg_temp.assert_true((select count(*)=1 from public.operation_document_requirements),'Internal user can read dossier requirements');
 do $$ begin
  begin insert into public.operation_contract_links(operation_id,contract_id,source_name) values('20000000-0000-0000-0000-000000000001','30000000-0000-0000-0000-000000000001','injected'); raise exception 'Client write accepted'; exception when insufficient_privilege then null; end;
 end $$;
 select set_config('request.jwt.claim.sub','10000000-0000-0000-0000-000000000002',true);
 select pg_temp.assert_true((select count(*)=0 from public.document_versions),'External user cannot read internal document versions');
+select pg_temp.assert_true((select count(*)=0 from public.document_extracted_fields),'External user cannot read extracted document fields');
 select set_config('request.jwt.claim.sub','10000000-0000-0000-0000-000000000003',true);
 select pg_temp.assert_true((select count(*)=0 from public.operation_stage_assessments),'Pending account has no operational access');
 reset role;
 select pg_temp.assert_true(not has_table_privilege('anon','public.document_versions','SELECT'),'Anonymous role has no grants');
+select pg_temp.assert_true(not has_table_privilege('anon','public.source_records','SELECT'),'Anonymous role has no source staging grants');
 select pg_temp.assert_true(not has_function_privilege('authenticated','public.recalculate_operation_farol(uuid)','EXECUTE'),'Browser cannot recalculate arbitrary operations');
 select pg_temp.assert_true((select count(*)>0 from public.audit_logs where table_name='public.operation_milestones'),'Milestones audited');
 select pg_temp.assert_true((select count(*)=0 from public.rules r join public.rule_versions v on v.rule_id=r.id where v.approval_status='aprovada'),'Historical rules are not implicitly approved');

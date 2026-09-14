@@ -1,6 +1,6 @@
 # Banco de Dados Supabase
 
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+> Atualização de 2026-09-13: o modelo versionado contém onze migrations e 51 tabelas com RLS, incluindo dossiê documental, checklist e staging para 17 famílias XLSX. Consulte o [modelo vigente](fiscal-schema.md), a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md) e a [ADR-0003](../decisions/ADR-0003-dossie-documental-e-fontes.md).
 
 > Status: Em revisão  
 > Responsável: @RodrigoFreitas16n91  
@@ -31,6 +31,12 @@ Este backend PostgreSQL modela os relatórios Datasul/TOTVS usados no portal de 
 - `logistics_orders`: OL/rota, transporte, origem/destino e status logístico.
 - `fiscal_documents`: documentos fiscais, CFOP, emissão e valores fiscais.
 - `documents`: documentos operacionais e evidências armazenadas.
+- `document_type_catalog`, `document_field_catalog` e `document_type_fields`: tipos de arquivo e campos esperados por família.
+- `document_requirement_sets`, `document_requirements` e `operation_document_requirements`: dossiê esperado e situação por OP.
+- `document_extractions` e `document_extracted_fields`: leitura estruturada, confiança e revisão dos valores do arquivo.
+- `source_datasets`, `source_records` e `operation_source_links`: preservação e reconciliação das 17 famílias XLSX.
+- `checklist_templates`, `checklist_items` e `operation_checklist_answers`: substituição controlada dos checklists manuais.
+- `operation_financial_checks` e `operation_inventory_checks`: resultados auxiliares de crédito, títulos, fixação e disponibilidade.
 - `rules`: regras parametrizadas do Farol E1..E6.
 - `pending_items`: pendências por regra, área, etapa e severidade.
 - `evidence`: evidências por arquivo, aba, coluna, linha e valor.

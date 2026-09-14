@@ -74,6 +74,8 @@ A interface deve apresentar somente a identidade RPA Automatic, sem comparativos
 
 Fontes tipográficas são distribuídas pelo próprio portal, sem requisições do navegador a serviços externos de fontes. Isso reduz o compartilhamento desnecessário de IP e metadados de navegação.
 
+O selo opcional inserido pela hospedagem fica oculto no portal, inclusive na árvore de acessibilidade, por `#nl-badge-frame`. A CSP já restringe sua execução. A desativação na configuração do projeto é preferível quando houver acesso administrativo autenticado; esta entrega não altera essa configuração remota. Referência operacional: [controle do selo opcional](https://docs.netlify.com/manage/projects/powered-by-netlify-badge/), consultado em 2026-09-13. Essa regra não remove avisos de licença dos assets distribuídos.
+
 
 
 [Voltar ao produto](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento)

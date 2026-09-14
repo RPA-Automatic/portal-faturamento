@@ -1,6 +1,6 @@
 # Supabase
 
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](fiscal-schema.md) e a [ADR-0002](../decisions/ADR-0002-banco-fiscal-unico.md). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+> Atualização de 2026-09-13: o modelo versionado possui onze migrations e 51 tabelas com RLS, incluindo dossiê documental, checklist e staging para 17 famílias XLSX. Consulte o [modelo vigente](fiscal-schema.md) e a [ADR-0003](../decisions/ADR-0003-dossie-documental-e-fontes.md).
 
 > Status: Em revisão  
 > Responsável: @RodrigoFreitas16n91  

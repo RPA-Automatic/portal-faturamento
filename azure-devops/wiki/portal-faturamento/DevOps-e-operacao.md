@@ -95,7 +95,7 @@ Consultas específicas:
 
 ## Ambientes
 
-O projeto usa Node.js 22, React/Vite e Supabase. `dev` é a branch de desenvolvimento; `main` publica produção no Netlify. O banco remoto fiscal é único, conforme a ADR-0002 (`docs/decisions/ADR-0002-banco-fiscal-unico.md`, fonte no repositório); testes de banco devem usar uma instância local isolada.
+O projeto usa Node.js 22, React/Vite e Supabase. `dev` é a branch de desenvolvimento; `main` publica produção no Netlify. O banco remoto fiscal é único, conforme a [ADR-0002](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FDecisoes); testes de banco devem usar uma instância local isolada.
 
 | Ambiente | Aplicação | Banco |
 |---|---|---|

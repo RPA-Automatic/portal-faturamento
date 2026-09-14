@@ -3,10 +3,12 @@
 > Status: Evidência técnica; homologação de negócio pendente  
 > Data: 2026-09-13
 
-- Nove migrations executadas do zero em PostgreSQL 16.15 local descartável.
+- Onze migrations executadas do zero em PostgreSQL 16.15 local descartável.
 - Mesma cadeia aplicada no Supabase fiscal `eukazzizamxratkavcap`, PostgreSQL 17.
 - SHA-256 dos statements remotos comparados aos arquivos e versões do histórico reconciliadas. Manifesto em `supabase/deployment-manifest.json`.
-- 32 tabelas em `public`, todas com RLS; cinco views operacionais com `security_invoker`.
+- 51 tabelas em `public`, todas com RLS; cinco views operacionais com `security_invoker`.
+- A cobertura histórica acrescenta 15 tipos documentais, 33 campos extraíveis, 17 famílias de planilha, 12 requisitos de dossiê e três checklists em rascunho.
+- O dry-run das 17 planilhas preservou 20.587 linhas no staging comum e mapeou 2.959 linhas nas cinco tabelas tipadas.
 - Cenários SQL de integridade, isolamento, histórico, auditoria e Farol passaram localmente e no remoto. Dados sintéticos remotos foram revertidos por ROLLBACK; contagem posterior: zero OP e zero contas `@example.test`.
 - TypeScript e build Vite passaram.
 - Teste de navegador com API simulada: abertura da ficha, conteúdo da pendência, fechamento por Escape, erro/retry e viewport móvel; nenhum erro JavaScript. Capturas desktop/mobile foram inspecionadas. Isso não comprova sessão OAuth ou cargas reais ponta a ponta.
@@ -15,7 +17,7 @@
 
 O Advisor não apontou tabela sem RLS nem exposição anônima. Apontou descoberta do schema GraphQL por `authenticated` em 29 objetos que precisam de SELECT para o frontend. Essa descoberta não equivale a leitura irrestrita: grants foram mantidos com policies e testes de acesso. [Explicação do aviso](https://supabase.com/docs/guides/database/database-linter?lint=0027_pg_graphql_authenticated_table_exposed).
 
-Os 23 índices de FK ausentes foram corrigidos por migration complementar. Restam avisos informativos de índices ainda não usados, esperados em banco novo e vazio; não removê-los com base em ausência de tráfego. [Explicação do aviso de índices](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index).
+Os índices de FK ausentes, inclusive os 24 introduzidos pelo dossiê, foram corrigidos por migrations complementares. O Advisor remoto não aponta FK sem índice. Restam avisos informativos de índices ainda não usados, esperados em banco novo e vazio; não removê-los com base em ausência de tráfego. [Explicação do aviso de índices](https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index).
 
 ## Limites
 

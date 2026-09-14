@@ -4,7 +4,7 @@
 
 # Especificação técnica — Portal de Liberação de Embarque
 
-> Atualização de 2026-09-13: nove migrations aplicadas no banco fiscal, 32 tabelas com RLS e ficha da OP disponível para consulta. Ambiente remoto único confirmado pelo usuário; DEV local. Consulte o [modelo vigente](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FModelo-de-dados) e a ADR-0002 (`docs/decisions/ADR-0002-banco-fiscal-unico.md`, fonte no repositório). As referências abaixo a DEV remoto pendente e sete migrations descrevem o diagnóstico anterior.
+> Atualização de 2026-09-13: o modelo versionado possui onze migrations e 51 tabelas com RLS, incluindo dossiê documental, checklist e cobertura das 17 famílias XLSX. Consulte o [modelo vigente](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FModelo-de-dados) e a [ADR-0003](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FDecisoes).
 
 > Status: Em revisão  
 > Responsável: @RodrigoFreitas16n91  
@@ -19,17 +19,17 @@ Uma linha por OP no Farol deve mostrar o que impede o embarque, a área respons�
 
 O frontend existente é React 18, TypeScript e Vite. `frontend/App.tsx` verifica a sessão, consulta `v_operations_farol` e `v_area_backlog`, apresenta indicadores, filtros, colunas E1–E6 e tabela de operações. O script `lint` executa TypeScript (`tsc --noEmit`); não equivale a uma configuração de ESLint. O build compila o frontend, sem provar autenticação ou conectividade remota.
 
-A ficha da OP implementa consulta de contratos, documentos/versões, verificações, pendências, locais, logística e histórico. Tratamento operacional e aprovações continuam planejados. As sete migrations locais e os scripts de ingestão constituem a base do backend; existência de arquivos não comprova implantação remota. O último diagnóstico documentado indica DEV exclusivo pendente e produção sem schema aplicado.
+A ficha da OP implementa consulta de contratos, dossiê documental, documentos/versões, checklist, verificações financeiras e de estoque, etapas, pendências, locais, logística e histórico. Tratamento operacional e aprovações continuam planejados. As migrations e os scripts de ingestão constituem a base do backend; existência de arquivo ou campo extraído não comprova aprovação.
 
 ## Componentes e contratos
 
 | Componente | Responsabilidade | Situação |
 |---|---|---|
 | SPA React/Vite | Login, Farol, filtros, indicadores e backlog por área | Implementado localmente |
-| Detalhe da OP | Contratos, documentos, versões, etapas, logística, impedimentos e histórico | Consulta implementada; validação com dados reais pendente |
+| Detalhe da OP | Contratos, dossiê, documentos, checklist, controles auxiliares, etapas, logística, impedimentos e histórico | Consulta implementada; validação com dados reais pendente |
 | Ações operacionais | Receber/associar/validar documento; resolver/reabrir pendência | Sprint 2 |
 | Cliente de dados | Consultas autenticadas às views do Farol e backlog | Implementado; validar no DEV correto |
-| PostgreSQL e políticas | Entidades, staging, evidências e autorização por perfil | Migrations locais; revisão e validação DEV pendentes |
+| PostgreSQL e políticas | Entidades, dossiê, staging integral, evidências e autorização por perfil | Cadeia local validada; aplicação remota deve usar a migration versionada |
 | Importadores Python | Leitura dos relatórios e carga controlada | Existentes; compras corrigidas localmente |
 | Reconciliação e regras | Idempotência, vínculos, pior estado e exceções parametrizadas | Consolidação e homologação na sprint 3 |
 | Rotina monitorada | Cargas, falhas, reprocessamento e alertas | Preparar antes da entrada em operação |
@@ -38,7 +38,9 @@ A ficha da OP implementa consulta de contratos, documentos/versões, verificaç�
 
 O modelo canônico é definido em `docs/architecture/domain-model.md` e `docs/data/database.md`. OP possui múltiplos contratos de compra/venda; documentos e movimentações logísticas não podem ser reduzidos a um par único. As chaves compostas e a cardinalidade OP–contrato–item–filial precisam de validação contra os relatórios.
 
-Fontes: ES4004, GG4164, GG2037, GPLP e Documentos Fiscais. Cada carga deve preservar fonte, aba, coluna, assinatura, data de extração e identificadores textuais. Ausência em arquivo antigo não comprova ausência no ERP. Vínculo ambíguo exige reconciliação explícita.
+As cinco fontes principais possuem staging tipado. As 17 famílias XLSX também entram em `source_records`, preservando aba, linha, hash e conteúdo bruto. Cada carga deve preservar fonte, assinatura, data de extração e identificadores textuais. Ausência em arquivo antigo não comprova ausência no ERP. Vínculo ambíguo exige reconciliação explícita.
+
+Arquivos de OP passam por inventário, classificação, upload privado, versionamento, extração de campos, associação e revisão. Autorizações, instruções, notas, liberações, procedimentos, manuais e comunicações mantêm tipos separados. Um documento pode se relacionar a múltiplas entidades da mesma OP.
 
 ## Estados e verificações
 

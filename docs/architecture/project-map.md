@@ -44,6 +44,7 @@ Fluxo basico do frontend:
 Arquivos principais:
 
 - `supabase/migrations/20260501000100_initial_backend_schema.sql`: schema inicial do Portal de Faturamento.
+- `supabase/migrations/20260913220000_document_dossier_and_source_catalog.sql`: dossiê documental, checklist e cobertura das fontes históricas.
 - `supabase/config.toml`: configuracao local do Supabase CLI.
 - `supabase/README Portal Liberacao Embarque.md`: visao do projeto, links e stack recomendada.
 - `supabase/readme.md`: documentacao herdada do backend do sistema legado.
@@ -53,6 +54,9 @@ O schema inicial cria:
 
 - tabelas normalizadas: `operations`, `contracts`, `partners`, `logistics_orders`, `fiscal_documents`, `documents`, `pending_items`, `evidence`, `state_history`;
 - tabelas de staging para XLSX: `stg_es4004_contracts`, `stg_gg4164_purchase_contracts`, `stg_gg2037_sales_contracts`, `stg_gplp40180_logistics_orders`, `stg_fiscal_documents`;
+- staging comum para as 17 famílias XLSX: `source_datasets`, `source_records` e `operation_source_links`;
+- dossiê e extração: catálogos, requisitos, vínculos N:N, versões e campos extraídos;
+- checklist, verificações financeiras e disponibilidade de estoque por OP;
 - views para o frontend: `v_operations_farol`, `v_area_backlog`, `v_contract_drilldown`;
 - regras iniciais, areas, etapas E1 a E6 e politicas RLS.
 

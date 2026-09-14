@@ -56,10 +56,22 @@
       "name": "fiscal_query_indexes",
       "sha256": "b863ec29939f476ebd8dc5dc99fbbcf8c6470be081d596467d7ffe25a0dafc66",
       "execution_version_before_alignment": "20260913214801"
+    },
+    {
+      "version": "20260913220000",
+      "name": "document_dossier_and_source_catalog",
+      "sha256": "2a6f72bed43b8f6a83fe17deecacf52e402379081d1ba8256c5d182d4a61530d",
+      "execution_version_before_alignment": "20260914005856"
+    },
+    {
+      "version": "20260914010500",
+      "name": "document_dossier_fk_indexes",
+      "sha256": "751692e7e8f80d8ba04bf4c85ace71a7d5c085236682fb62f54e40edc3051fbf",
+      "execution_version_before_alignment": "20260914010001"
     }
   ],
   "verification": {
-    "public_tables": 32,
+    "public_tables": 51,
     "tables_without_rls": 0,
     "local_postgres": "16.15",
     "remote_postgres": "17",
@@ -67,6 +79,6 @@
     "synthetic_users_remaining": 0,
     "operations_after_setup": 0,
     "security_advisor": "authenticated GraphQL schema discovery warning; RLS enforced",
-    "performance_advisor": "unused indexes only after fixing 23 missing FK indexes"
+    "performance_advisor": "unused indexes only after fixing all missing FK indexes"
   }
 }

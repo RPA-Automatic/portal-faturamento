@@ -12,14 +12,14 @@ SECTIONS = {
     'Arquitetura': ['architecture/overview.md'],
     'Especificacao-tecnica': ['architecture/SDD.md'],
     'Fluxo-operacional': ['product/operational-workflow.md'],
-    'Modelo-de-dados': ['data/fiscal-schema.md', 'architecture/domain-model.md'],
+    'Modelo-de-dados': ['data/fiscal-schema.md', 'data/legacy-source-coverage.md', 'architecture/domain-model.md'],
     'Referencias-de-mercado': ['product/market-benchmark.md'],
     'Integracoes': ['integrations/totvs-data-sources.md'],
     'Seguranca': ['security/security-lgpd-audit.md', 'security/oauth-auth-setup.md'],
     'Identidade-visual': ['product/brand.md'],
     'DevOps-e-operacao': ['operations/azure-devops.md', 'operations/development.md'],
     'To-do': ['product/delivery-plan.md'],
-    'Decisoes': ['decisions/ADR-0001-organizacao-azure-devops.md'],
+    'Decisoes': ['decisions/ADR-0001-organizacao-azure-devops.md', 'decisions/ADR-0002-banco-fiscal-unico.md', 'decisions/ADR-0003-dossie-documental-e-fontes.md'],
     'Qualidade': ['quality/auth-branding-2026-09-13.md', 'quality/schema-delivery-2026-09-13.md', 'quality/devops-planning-2026-09-13.md', 'quality/source-review-2026-09-13.md', 'quality/environment-audit-2026-09-13.md'],
 }
 
@@ -77,7 +77,7 @@ def main():
     intro = '# Portal Faturamento — Liberação de Embarque\n\n' + banner
     intro += '[Épico #26](' + cfg['organization'] + '/' + quote(cfg['project'], safe='') + '/_workitems/edit/26) · [Código no GitHub](' + cfg['repo_url'] + ')\n\n'
     intro += 'O portal antecipa impedimentos de embarque e apresenta, por OP, o que falta, quem resolve e qual evidência sustenta a liberação.\n\n'
-    intro += '## Situação verificada\n\nFarol inicial, filtros, indicadores e autenticação existem no código. Documentação organizada e correção local do importador de compras disponíveis. Ficha de consulta da OP e esquema fiscal de 32 tabelas implantados. Cargas, ações de aprovação, validação integral das regras e implantação operacional permanecem no plano. Typecheck e build locais passaram em 2026-09-13; isso não comprova operação remota.\n\n'
+    intro += '## Situação verificada\n\nFarol inicial, filtros, indicadores e autenticação existem no código. A ficha da OP consulta dossiê, checklist e verificações auxiliares. O esquema fiscal de 51 tabelas com RLS e os catálogos das 17 famílias XLSX estão implantados; a carga dos dados privados, ações de aprovação e homologação das regras permanecem no plano. A cadeia de onze migrations, o frontend e a leitura integral das planilhas passaram em 2026-09-13.\n\n'
     intro += '## Entrega em quatro sprints\n\nQuatro sprints de duas semanas (oito semanas), com início/capacidade a definir; 5 Features, 12 User Stories e 48 Tasks sob o épico #26.\n\n| Sprint | Foco |\n|---|---|\n| 1 | Requisitos, ambientes e qualidade base |\n| 2 | Farol, detalhe e tratamento operacional |\n| 3 | Integrações, regras e testes integrados |\n| 4 | Homologação, deploy, assistência e encerramento |\n\n'
     intro += '## Documentação\n\n'
     for section in [*SECTIONS, 'Diagramas']:
