@@ -18,8 +18,8 @@ port = 54323
 
 [auth]
 enabled = true
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://portal-liberacao-embarque.netlify.app"]
+site_url = "https://portal-fiscal-faturamento.netlify.app/"
+additional_redirect_urls = ["https://portal-fiscal-faturamento.netlify.app/"]
 jwt_expiry = 3600
 enable_signup = true
 

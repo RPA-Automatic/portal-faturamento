@@ -106,6 +106,23 @@ async function pageWithMock(handler) {
     await page.close();
   }
 
+  let resendRequest;
+  const expiredPage = await pageWithMock((req,url) => {
+    if(url.pathname.endsWith('/resend')) { resendRequest={body:req.postDataJSON(),redirectTo:url.searchParams.get('redirect_to')}; return {body:{}}; }
+  });
+  await expiredPage.goto(base+'?error=access_denied&error_code=otp_expired&error_description=Email+link+is+invalid+or+has+expired');
+  await expiredPage.getByRole('alert').filter({hasText:'link de confirmação expirou'}).waitFor();
+  assert.equal(new URL(expiredPage.url()).search,'');
+  const resendButton=expiredPage.getByRole('button',{name:'Reenviar confirmação',exact:true});
+  assert.ok(await resendButton.isDisabled());
+  await expiredPage.getByLabel('E-mail',{exact:true}).fill(user.email);
+  await resendButton.click();
+  await expiredPage.getByRole('status').filter({hasText:'novo link de confirmação'}).waitFor();
+  assert.equal(resendRequest.body.email,user.email);
+  assert.equal(resendRequest.body.type,'signup');
+  assert.equal(resendRequest.redirectTo,base);
+  await expiredPage.close();
+
   const gatedBase=await serve(5189,'');
   const gated=await pageWithMock(); await gated.goto(gatedBase);
   await gated.getByRole('heading',{name:'Acesse seu portal'}).waitFor();
@@ -127,5 +144,5 @@ async function pageWithMock(handler) {
   assert.equal(await missing.getByText('VITE_SUPABASE',{exact:false}).count(),0);
   await missing.close();
   assert.equal(errors.length,0,errors.join('\n'));
-  console.log('PASS Auth: email, signup, logout/session persistence, 3 OAuth PKCE redirects, single callback exchange, errors, disabled providers, missing config, brand, mobile. Synthetic mocks only.');
+  console.log('PASS Auth: email, signup, resend after expired link, logout/session persistence, 3 OAuth PKCE redirects, single callback exchange, errors, disabled providers, missing config, brand, mobile. Synthetic mocks only.');
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();servers.forEach(server=>server.kill());});

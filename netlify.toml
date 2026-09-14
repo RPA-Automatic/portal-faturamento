@@ -13,6 +13,7 @@
 [context.production.environment]
 # Habilitar individualmente após configurar e homologar cada aplicativo OAuth.
 VITE_AUTH_OAUTH_PROVIDERS = ""
+  VITE_PUBLIC_SITE_URL = "https://portal-fiscal-faturamento.netlify.app/"
   VITE_SUPABASE_URL = "https://eukazzizamxratkavcap.supabase.co"
   VITE_SUPABASE_ANON_KEY = "sb_publishable_ocqGpcA-fJGB7fsqWzcAHg_g07eOffM"
 

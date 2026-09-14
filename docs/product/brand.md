@@ -28,7 +28,7 @@ O ícone compacto usa o robô sem o texto e as órbitas, para preservar a leitur
 - Ciano: `#08BFF0`, para detalhes do símbolo.
 - Azul de leitura: `#123B82`; links da interface usam `#1254BC`.
 - Fundo de suporte dos logos e do formulário: branco `#FFFFFF`.
-- Painel de apresentação do login: azul profundo `#0D2855` a `#123B82`, com detalhes em ciano; fundo externo claro `#F0F4FA`.
+- Painel de apresentação do login: degradê suave de azul profundo `#081F47`, azul de marca `#123B82` e azul vivo `#1264ED`, com luz difusa em ciano; fundo externo claro `#F0F4FA`.
 
 Usar os arquivos sem distorção, preservar proporções e margens e não aplicar filtros que alterem as cores. Sobre fundos escuros, manter uma área branca de suporte. Verde, amarelo e vermelho continuam reservados aos significados operacionais do Farol.
 

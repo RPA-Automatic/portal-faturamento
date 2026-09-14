@@ -113,9 +113,12 @@ Copie `frontend/.env.example` para `frontend/.env.local` e configure URL e chave
 VITE_SUPABASE_URL=http://127.0.0.1:54321
 VITE_SUPABASE_ANON_KEY=<chave publica local>
 VITE_AUTH_OAUTH_PROVIDERS=
+VITE_PUBLIC_SITE_URL=http://localhost:3000/
 ```
 
 A lista de provedores sociais permanece vazia até os aplicativos estarem configurados. A chave publicável `sb_publishable_*` pode estar no frontend; `sb_secret_*`, `service_role` e Client Secrets OAuth nunca podem estar em arquivos públicos ou variáveis `VITE_`.
+
+`VITE_PUBLIC_SITE_URL` define o retorno de cadastro, reenvio de confirmação e OAuth. Em produção, deve corresponder exatamente à URL permitida no Supabase. No desenvolvimento local, pode ser omitida para usar automaticamente a origem aberta no navegador.
 
 ```bash
 npm --prefix frontend ci

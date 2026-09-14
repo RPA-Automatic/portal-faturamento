@@ -9,6 +9,12 @@ export const isSupabaseConfigured = /^https?:\/\//.test(supabaseUrl)
 export const authConfigurationMessage =
   'O acesso está temporariamente indisponível. Entre em contato com a administração do portal.';
 
+export function authRedirectUrl(): string {
+  const configuredUrl = (import.meta.env.VITE_PUBLIC_SITE_URL || '').trim();
+  if (configuredUrl) return new URL('/', configuredUrl).toString();
+  return new URL('/', window.location.origin).toString();
+}
+
 export const supabase = createClient(
   isSupabaseConfigured ? supabaseUrl : 'https://unconfigured.invalid',
   isSupabaseConfigured ? publicKey : 'sb_publishable_unconfigured',
@@ -28,6 +34,7 @@ export function authErrorMessage(error: unknown): string {
   if (code === 'over_request_rate_limit' || code === 'over_email_send_rate_limit') return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
   if (code === 'weak_password') return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.';
   if (code === 'user_already_exists') return 'Não foi possível concluir o cadastro. Tente entrar com seu e-mail.';
+  if (code === 'otp_expired') return 'O link de confirmação expirou ou já foi utilizado. Informe seu e-mail e solicite um novo link.';
   if (code === 'access_denied') return 'O login foi cancelado ou não foi autorizado. Você pode tentar novamente.';
   return 'Não foi possível concluir o acesso. Tente novamente; se o problema continuar, contate a administração do portal.';
 }
@@ -40,10 +47,11 @@ export function initializeAuth() {
     const url = new URL(window.location.href);
     const hash = new URLSearchParams(url.hash.slice(1));
     const callbackError = url.searchParams.get('error') || hash.get('error');
+    const callbackErrorCode = url.searchParams.get('error_code') || hash.get('error_code');
     const hasCode = url.searchParams.has('code');
     try {
       const { error: initializationError } = await supabase.auth.initialize();
-      if (callbackError) throw { code: callbackError };
+      if (callbackError) throw { code: callbackErrorCode || callbackError };
       if (initializationError) throw initializationError;
       const { data, error } = await supabase.auth.getSession();
       if (error) throw error;

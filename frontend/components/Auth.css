@@ -37,7 +37,10 @@
   gap: 30px;
   padding: 36px;
   color: #fff;
-  background: linear-gradient(135deg, #0d2855 0%, #123b82 54%, #1264ed 120%);
+  background:
+    radial-gradient(circle at 92% 88%, #08bff05c 0%, #1264ed2e 28%, transparent 58%),
+    radial-gradient(circle at 12% 4%, #1264ed66 0%, transparent 45%),
+    linear-gradient(145deg, #081f47 0%, #123b82 48%, #1264ed 100%);
 }
 .auth-hero::before, .auth-hero::after {
   content: '';
@@ -100,6 +103,11 @@
 .auth-notice { margin: 0 0 18px; padding: 12px 14px; border-radius: 9px; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
 .auth-notice-error { color: #991b1b; border: 1px solid #fecaca; background: #fff1f2; }
 .auth-notice-success { color: #115e59; border: 1px solid #99f6e4; background: #f0fdfa; }
+.auth-resend { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: -6px 0 18px; padding: 12px 14px; border: 1px solid #b9d0f2; border-radius: 9px; background: #f4f8ff; }
+.auth-resend p { margin: 0; color: #405572; font-size: 12px; line-height: 1.5; }
+.auth-resend button { flex-shrink: 0; padding: 8px 11px; border: 1px solid #1264ed; border-radius: 7px; background: #fff; color: #1254bc; font-size: 12px; font-weight: 600; }
+.auth-resend button:hover:enabled { background: #eaf2ff; }
+.auth-resend button:disabled { color: #6a7b91; border-color: #b8c5d6; background: #eef2f7; }
 .auth-footer { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 32px; padding: 8px 36px; border-top: 1px solid #dce4ef; background: #fff; }
 .auth-footer img { width: 190px; height: auto; max-width: 100%; object-fit: contain; }
 .auth-footer small { color: #52637b; font-size: 12px; line-height: 1.6; text-align: left; }
@@ -134,6 +142,7 @@
   .auth-footer { padding: 12px 24px; gap: 4px; flex-direction: column; }
   .auth-footer img { width: 160px; }
   .auth-footer small { font-size: 11px; text-align: center; }
+  .auth-resend { align-items: stretch; flex-direction: column; }
 }
 
 @media (min-width: 761px) and (max-height: 760px) {

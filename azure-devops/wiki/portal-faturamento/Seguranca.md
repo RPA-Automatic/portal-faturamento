@@ -235,6 +235,10 @@ O callback do provedor aponta para o Supabase. O retorno do Supabase aponta para
 
 Não adicionar curingas amplos de produção. O desenvolvimento usa banco local; não é necessário criar uma segunda branch paga no Supabase. [Referência de redirecionamentos](https://supabase.com/docs/guides/auth/redirect-urls).
 
+Essa configuração também controla o retorno da confirmação de cadastro por e-mail. Se a URL enviada pelo portal não estiver na lista permitida, o Supabase usa o **Site URL**; um valor antigo como `http://localhost:3000` faz o link abrir fora do portal publicado. O frontend de produção envia explicitamente `https://portal-fiscal-faturamento.netlify.app/`, reconhece links expirados e permite reenviar a confirmação. Cada link é de uso único; após um reenvio, deve-se abrir somente o e-mail mais recente.
+
+O SMTP padrão do Supabase é adequado apenas para avaliação e, em projetos novos, envia mensagens somente a integrantes da organização. Antes da homologação com usuários externos, configurar um SMTP próprio em **Project Settings → Authentication → SMTP Settings**, validar remetente e domínio e testar entrega, spam, expiração e reenvio. No plano gratuito, projetos novos com SMTP padrão também podem ter restrições para personalizar os templates de Auth. [Mudanças do provedor padrão de e-mail](https://supabase.com/changelog/29370-supabase-auth-changes-to-default-email-provider) e [mudanças nos templates do plano gratuito](https://supabase.com/changelog/46599-changes-to-email-template-customisation-on-free-tier).
+
 ## 2. GitHub
 
 1. Abra [GitHub OAuth Apps](https://github.com/settings/developers) → **New OAuth App**. Use uma conta administrativa da RPA Automatic; para propriedade organizacional, abra as configurações de desenvolvedor da organização.

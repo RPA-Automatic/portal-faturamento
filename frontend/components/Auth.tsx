@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BrandFooter } from './Brand';
 import './Auth.css';
-import { authConfigurationMessage, authErrorMessage, enabledOAuthProviders, isSupabaseConfigured, SocialProvider, supabase } from '../lib/supabase';
+import { authConfigurationMessage, authErrorMessage, authRedirectUrl, enabledOAuthProviders, isSupabaseConfigured, SocialProvider, supabase } from '../lib/supabase';
 
 interface AuthProps { onAuthSuccess: (user: any) => void; initialError?: string | null; }
 const providers: { id: SocialProvider; label: string; symbol: string }[] = [
@@ -19,6 +19,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(initialError);
   const [message, setMessage] = useState<string | null>(null);
+  const canResendConfirmation = Boolean(message?.includes('confirmar o cadastro') || error?.includes('Confirme seu e-mail') || error?.includes('link de confirmação'));
 
   async function handleEmail(event: React.FormEvent) {
     event.preventDefault();
@@ -27,7 +28,7 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
     try {
       if (mode === 'signup') {
         const { data, error } = await supabase.auth.signUp({ email: email.trim(), password,
-          options: { emailRedirectTo: window.location.origin + '/', data: { full_name: name.trim() } } });
+          options: { emailRedirectTo: authRedirectUrl(), data: { full_name: name.trim() } } });
         if (error) throw error;
         if (data.session && data.user) onAuthSuccess(data.user);
         else setMessage('Confira seu e-mail para confirmar o cadastro. Depois, seu acesso às operações dependerá da aprovação da administração.');
@@ -40,12 +41,27 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
     finally { setBusy(null); }
   }
 
+  async function handleResendConfirmation() {
+    if (!isSupabaseConfigured || busy || !email.trim()) return;
+    setBusy('resend'); setError(null); setMessage(null);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email.trim(),
+        options: { emailRedirectTo: authRedirectUrl() },
+      });
+      if (error) throw error;
+      setMessage('Enviamos um novo link de confirmação. Use somente o e-mail mais recente e verifique também a pasta de spam.');
+    } catch (error) { setError(authErrorMessage(error)); }
+    finally { setBusy(null); }
+  }
+
   async function handleSocial(provider: SocialProvider) {
     if (!isSupabaseConfigured || busy || !enabledOAuthProviders.has(provider)) return;
     setBusy(provider); setError(null); setMessage(null);
     try {
       const { error } = await supabase.auth.signInWithOAuth({ provider,
-        options: { redirectTo: window.location.origin + '/', scopes: provider === 'azure' ? 'email openid profile' : undefined } });
+        options: { redirectTo: authRedirectUrl(), scopes: provider === 'azure' ? 'email openid profile' : undefined } });
       if (error) throw error;
     } catch (error) { setError(authErrorMessage(error)); setBusy(null); }
   }
@@ -78,6 +94,10 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
           </div>
           {(!isSupabaseConfigured || error) && <p role="alert" className="auth-notice auth-notice-error">{!isSupabaseConfigured ? authConfigurationMessage : error}</p>}
           {message && <p role="status" className="auth-notice auth-notice-success">{message}</p>}
+          {canResendConfirmation && <div className="auth-resend">
+            <p>O novo link será enviado para o e-mail informado abaixo.</p>
+            <button type="button" onClick={handleResendConfirmation} disabled={Boolean(busy) || !email.trim()}>{busy === 'resend' ? 'Enviando...' : 'Reenviar confirmação'}</button>
+          </div>}
           <form onSubmit={handleEmail} className="auth-form">
             {mode === 'signup' && <div><label htmlFor="full-name">Nome completo</label><input id="full-name" autoComplete="name" value={name} onChange={e => setName(e.target.value)} required className={inputClass} /></div>}
             <div><label htmlFor="email">E-mail</label><input id="email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="voce@exemplo.com" className={inputClass} /></div>
