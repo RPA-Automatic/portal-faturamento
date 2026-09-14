@@ -9,7 +9,7 @@
 
 Data: 2026-05-06
 
-> Registro histórico. Os achados abaixo descrevem a situação de maio, antes do endurecimento de RLS. Para o estado atual consulte [validação do esquema](../quality/schema-delivery-2026-09-13.md) e [autenticação vigente](oauth-auth-setup.md).
+> Registro histórico. Os achados abaixo descrevem a situação de maio, antes do endurecimento de RLS. Para o estado atual consulte a [revisão de privacidade de setembro](lgpd-review-2026-09-13.md), a [validação do esquema](../quality/schema-delivery-2026-09-13.md) e [autenticação vigente](oauth-auth-setup.md).
 
 ## Escopo
 

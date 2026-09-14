@@ -1,6 +1,4 @@
-> Projeção operacional revisada em 2026-09-13. `docs/` é a fonte técnica canônica; consulte código e decisões no repositório canônico. Estado planejado não equivale a implantação.
-
-> Fonte: `docs/product/brand.md`
+> Fonte canônica: `docs/product/brand.md`
 
 # Identidade pública — RPA Automatic
 
@@ -68,6 +66,8 @@ Esta versão substitui a apresentação tipográfica provisória. Propostas ante
 
 A ordem de uso é fixa: marca completa no topo, robô nos recursos de assistência e monitoramento e marca horizontal no rodapé. O rodapé exibe “© ANO RPA Automatic. Todos os direitos reservados.”, com ano corrente. Cada aplicação serve cópias locais dos mesmos arquivos; `brand-manifest.json` registra papéis e hashes. Não criar variações por produto. O ícone não significa que um chat ou uma integração de IA esteja implementado. No portal fiscal, identifica o monitoramento existente do Farol.
 
+## Referências públicas e privacidade
 
+A interface deve apresentar somente a identidade RPA Automatic, sem comparativos ou divulgação de marcas de outras empresas. Use nomes funcionais para os serviços. Identificadores de APIs, dependências e licenças permanecem exatos no código e na documentação técnica; a identificação de operadores/suboperadores não deve ser omitida dos registros de privacidade. Login federado, quando habilitado, precisa identificar corretamente a conta de destino.
 
-[Voltar ao produto](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento)
+Fontes tipográficas são distribuídas pelo próprio portal, sem requisições do navegador a serviços externos de fontes. Isso reduz o compartilhamento desnecessário de IP e metadados de navegação.

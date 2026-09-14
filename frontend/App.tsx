@@ -51,7 +51,7 @@ const stageOrder = ['todos', 'E1', 'E2', 'E3', 'E4', 'E5', 'E6'];
 const kanbanStages = [
   { code: 'E1', name: 'Documentacao Basica' },
   { code: 'E2', name: 'Validacao Fiscal' },
-  { code: 'E3', name: 'Contratos e Regras TOTVS' },
+  { code: 'E3', name: 'Contratos e regras do ERP' },
   { code: 'E4', name: 'Logistica' },
   { code: 'E5', name: 'Faturamento' },
   { code: 'E6', name: 'Concluido' },
@@ -147,7 +147,7 @@ const App: React.FC = () => {
       setOperations(operationsResult.data || []);
       setBacklog(backlogResult.data || []);
     } catch (err: any) {
-      setError(err.message || 'Nao foi possivel carregar o Farol.');
+      setError('Não foi possível carregar o Farol. Tente novamente em instantes.');
     } finally {
       setLoadingData(false);
     }
@@ -384,7 +384,7 @@ const App: React.FC = () => {
                       </Td>
                       <Td>
                         <div className="font-semibold">{operation.current_stage}</div>
-                        <div className="text-xs text-slate-500">{operation.current_stage_name || '-'}</div>
+                        <div className="text-xs text-slate-500">{kanbanStages.find((stage) => stage.code === operation.current_stage)?.name || '-'}</div>
                       </Td>
                       <Td>
                         <span className={`inline-flex border rounded-full px-2.5 py-1 text-xs font-bold ${semaphoreStyle[operation.semaphore]}`}>

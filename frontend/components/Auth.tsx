@@ -110,17 +110,16 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
             <button type="submit" disabled={Boolean(busy) || !isSupabaseConfigured} className="auth-submit">{busy === 'email' ? 'Aguarde...' : mode === 'login' ? 'Entrar' : 'Criar conta'}<span aria-hidden="true">→</span></button>
           </form>
           <p className="auth-switch">{mode === 'login' ? 'Primeiro acesso? ' : 'Já possui uma conta? '}<button type="button" disabled={Boolean(busy)} onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setPassword(''); setError(null); setMessage(null); }}>{mode === 'login' ? 'Criar conta' : 'Entrar com e-mail'}</button></p>
-          <div className="auth-social">
+          {enabledOAuthProviders.size > 0 && <div className="auth-social">
             <p className="auth-social-heading">Outras formas de acesso</p>
-            <div className="auth-providers">{providers.map(provider => {
+            <div className="auth-providers">{providers.filter(provider => enabledOAuthProviders.has(provider.id)).map(provider => {
               const available = enabledOAuthProviders.has(provider.id);
               return <button key={provider.id} type="button" onClick={() => handleSocial(provider.id)} disabled={!available || !isSupabaseConfigured || Boolean(busy)} className="auth-provider" aria-label={busy === provider.id ? `Conectando com ${provider.label}` : `Continuar com ${provider.label}`} aria-describedby={!available ? 'social-setup' : undefined}>
                 <span className="auth-provider-name"><span className="auth-provider-symbol" aria-hidden="true">{provider.symbol}</span>{provider.label}</span>
                 {!available && <span className="auth-provider-status">Em configuração</span>}
               </button>;
             })}</div>
-            {providers.some(p => !enabledOAuthProviders.has(p.id)) && <p id="social-setup" className="auth-social-note">Enquanto o login social é configurado, acesse com e-mail e senha.</p>}
-          </div>
+          </div>}
         </section>
         <BrandFooter compact />
       </div>

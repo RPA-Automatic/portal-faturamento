@@ -19,7 +19,7 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 - [Identidade pública — RPA Automatic](product/brand.md)
 
 - [Contexto fiscal derivado do acervo privado](product/fiscal-context.md)
-- [Referências de mercado](product/market-benchmark.md)
+- [Critérios próprios do produto](product/market-benchmark.md)
 - [Visão do produto](product/vision.md)
 - [Fluxo operacional E1–E6](product/operational-workflow.md)
 - [Template do checklist](product/checklist-portal-template.md)
@@ -46,7 +46,8 @@ Este índice é a entrada oficial da documentação. Código, migrations e teste
 
 - [Separação dos bancos e recuperação das cargas](operations/database-separation.md)
 - [OAuth Supabase](security/oauth-auth-setup.md)
-- [Auditoria de segurança e LGPD](security/security-lgpd-audit.md)
+- [Revisão LGPD atual e pendências](security/lgpd-review-2026-09-13.md)
+- [Auditoria histórica de segurança e LGPD](security/security-lgpd-audit.md)
 - [Desenvolvimento local e ambientes](operations/development.md)
 - [Azure DevOps — wiki, épico e planejamento](operations/azure-devops.md)
 

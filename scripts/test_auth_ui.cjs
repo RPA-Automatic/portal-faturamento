@@ -126,7 +126,7 @@ async function pageWithMock(handler) {
   const gatedBase=await serve(5189,'');
   const gated=await pageWithMock(); await gated.goto(gatedBase);
   await gated.getByRole('heading',{name:'Acesse seu portal'}).waitFor();
-  for(const label of ['Microsoft','GitHub','Google']) assert.ok(await gated.getByRole('button',{name:`Continuar com ${label}`,exact:false}).isDisabled());
+  for(const label of ['Microsoft','GitHub','Google']) assert.equal(await gated.getByRole('button',{name:`Continuar com ${label}`,exact:false}).count(), 0);
   assert.ok(await gated.getByRole('button',{name:'Entrar',exact:true}).isEnabled());
   assert.equal(await gated.getByRole('alert').count(),0);
   assert.match(await gated.title(),/RPA Automatic/);
@@ -144,5 +144,5 @@ async function pageWithMock(handler) {
   assert.equal(await missing.getByText('VITE_SUPABASE',{exact:false}).count(),0);
   await missing.close();
   assert.equal(errors.length,0,errors.join('\n'));
-  console.log('PASS Auth: email, signup, resend after expired link, logout/session persistence, 3 OAuth PKCE redirects, single callback exchange, errors, disabled providers, missing config, brand, mobile. Synthetic mocks only.');
+  console.log('PASS Auth: email, signup, resend after expired link, logout/session persistence, 3 OAuth PKCE redirects, single callback exchange, errors, hidden unconfigured providers, missing config, brand, mobile. Synthetic mocks only.');
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{await browser?.close();servers.forEach(server=>server.kill());});
