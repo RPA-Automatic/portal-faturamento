@@ -13,7 +13,7 @@
 
 Data: 2026-05-06
 
-> Registro histórico. Os achados abaixo descrevem a situação de maio, antes do endurecimento de RLS. Para o estado atual consulte [validação do esquema](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FQualidade) e [autenticação vigente](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FSeguranca).
+> Registro histórico. Os achados abaixo descrevem a situação de maio, antes do endurecimento de RLS. Para o estado atual consulte a revisão de privacidade de setembro (`docs/security/lgpd-review-2026-09-13.md`, fonte no repositório), a [validação do esquema](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FQualidade) e [autenticação vigente](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento%2FSeguranca).
 
 ## Escopo
 

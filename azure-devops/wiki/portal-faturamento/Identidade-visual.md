@@ -1,4 +1,6 @@
-> Fonte canônica: `docs/product/brand.md`
+> Projeção operacional revisada em 2026-09-13. `docs/` é a fonte técnica canônica; consulte código e decisões no repositório canônico. Estado planejado não equivale a implantação.
+
+> Fonte: `docs/product/brand.md`
 
 # Identidade pública — RPA Automatic
 
@@ -36,13 +38,13 @@ Usar os arquivos sem distorção, preservar proporções e margens e não aplica
 
 ## Composição da tela de entrada
 
-A apresentação e o acesso formam um único conjunto: painel azul com a marca completa sobre branco, formulário branco e rodapé alinhado às duas colunas. O contraste separa a mensagem do produto dos campos de acesso. A marca tem tamanho contido para não empurrar o formulário para fora da área de leitura. No celular, as áreas se empilham e a apresentação fica compacta, com rolagem natural para cadastro e mensagens.
+A apresentação e o acesso formam um único conjunto imersivo: painel azul contínuo com a marca completa sobre branco, mensagem do produto, jornada visual E1–E6 e formulário branco. O contraste separa a narrativa operacional dos campos de acesso. No celular, as áreas se empilham e a apresentação fica compacta, com rolagem natural para cadastro e mensagens.
 
-No desktop, apresentação e formulário ocupam colunas de mesma largura. O rodapé repete essa grade: a marca horizontal fica centralizada sob o painel azul e o copyright começa no mesmo eixo horizontal dos campos do formulário. No celular, o rodapé passa para uma coluna. O enquadramento da marca considera as margens internas dos PNGs para manter o peso visual sem recorte.
+No desktop, a apresentação recebe ligeiramente mais espaço que o formulário, na proporção aproximada de 1,08 para 0,92. O cartão pode chegar a 1.240 px e ocupa a altura útil de notebooks compactos, preservando respiro nas bordas. O rodapé fica integrado ao fim da coluna de acesso; assim, o azul permanece contínuo até a base e a marca horizontal acompanha os direitos reservados sem dividir o painel. O enquadramento considera as margens internas dos PNGs para manter o peso visual sem recorte.
 
-O enquadramento usa uma área quadrada branca, imagem centralizada com `object-fit: contain` e margem de proteção. Nenhum logo é recortado, esticado ou recolorido. No desktop, a área da marca principal tem 176 px, o título do produto 23 px, a chamada principal até 48 px e o texto de apoio 17 px. As larguras intermediárias e o celular têm escalas próprias, sem reduzir a leitura aos tamanhos de legenda. O logo horizontal do rodapé usa 190 px no desktop e 160 px no celular, com os direitos reservados em duas linhas legíveis.
+O enquadramento usa uma área quadrada branca, imagem centralizada com `object-fit: contain` e margem de proteção. Nenhum logo é recortado, esticado ou recolorido. No desktop amplo, a área da marca principal tem 188 px, o título do produto 25 px, a chamada principal chega a 60 px e o texto de apoio usa 18 px. As larguras intermediárias e o celular têm escalas próprias, sem reduzir a leitura aos tamanhos de legenda. O logo horizontal do rodapé usa cerca de 152 px no desktop e 138 px no celular, com os direitos reservados em duas linhas legíveis.
 
-A mensagem de entrada é “Seu embarque. Sob controle.”, com destaque em ciano na segunda linha. Os textos de apoio descrevem o acompanhamento de operações, documentos e pendências, sem promessas de automações ainda não implementadas.
+A mensagem de entrada é “Embarques livres de pontos cegos.”, com destaque em ciano na segunda linha. O selo “Farol de liberação” e a sequência E1–E6 apresentam o propósito do produto antes do acesso; E6 recebe destaque como destino da jornada. Os textos de apoio descrevem a visão de operações, documentos e pendências, sem promessas de automações ainda não implementadas. A entrada do cartão usa uma transição curta e respeita a preferência de movimento reduzido do sistema.
 
 Os provedores sociais aparecem lado a lado com o estado “Em configuração” enquanto indisponíveis. O acesso principal por e-mail recebe destaque. O layout não altera autenticação, autorização nem o estado dos provedores. Os estilos de entrada são locais ao componente, incluindo foco de teclado, contraste e adaptação à largura da tela.
 
@@ -71,3 +73,7 @@ A ordem de uso é fixa: marca completa no topo, robô nos recursos de assistênc
 A interface deve apresentar somente a identidade RPA Automatic, sem comparativos ou divulgação de marcas de outras empresas. Use nomes funcionais para os serviços. Identificadores de APIs, dependências e licenças permanecem exatos no código e na documentação técnica; a identificação de operadores/suboperadores não deve ser omitida dos registros de privacidade. Login federado, quando habilitado, precisa identificar corretamente a conta de destino.
 
 Fontes tipográficas são distribuídas pelo próprio portal, sem requisições do navegador a serviços externos de fontes. Isso reduz o compartilhamento desnecessário de IP e metadados de navegação.
+
+
+
+[Voltar ao produto](https://dev.azure.com/rpa-automatic/RPA%20Automatic/_wiki/wikis/a872b434-77b1-4e65-ba18-923abf5021f1?pagePath=%2Fportal-faturamento)

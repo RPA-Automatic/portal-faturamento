@@ -78,12 +78,13 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
             <div className="auth-product"><span>Gestão de embarques</span><p>Portal de<br /> Faturamento</p></div>
           </div>
           <div className="auth-intro">
-            <h1>Seu embarque.<br /><span>Sob controle.</span></h1>
-            <p>Acompanhe operações, documentos e pendências, da análise à liberação.</p>
+            <p className="auth-hero-badge"><span aria-hidden="true" />Farol de liberação</p>
+            <h1>Embarques livres<br /><span>de pontos cegos.</span></h1>
+            <p>Uma visão clara de operações, documentos e pendências para decidir e liberar com confiança.</p>
           </div>
           <div className="auth-process" aria-label="Acompanhamento do embarque">
-            <p>Uma visão de ponta a ponta.</p>
-            <ul><li>Operações</li><li>Documentos</li><li>Liberação</li></ul>
+            <div><p>Jornada operacional</p><span>E1 a E6</span></div>
+            <ol><li><span>E1</span></li><li><span>E2</span></li><li><span>E3</span></li><li><span>E4</span></li><li><span>E5</span></li><li><span>E6</span></li></ol>
           </div>
         </section>
         <section className="auth-access" aria-label="Acesso ao portal">
@@ -120,8 +121,8 @@ export const Auth: React.FC<AuthProps> = ({ onAuthSuccess, initialError = null }
               </button>;
             })}</div>
           </div>}
+          <BrandFooter compact />
         </section>
-        <BrandFooter compact />
       </div>
     </main>
   );
